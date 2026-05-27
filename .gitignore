@@ -1,0 +1,28 @@
+# Python & Django
+pycache/
+*.pyc
+*.pyo
+*.pyd
+env
+*.sqlite3
+**/settings.py
+# Virtual Environment
+venv/
+.env/
+*.env
+
+# VSCode or PyCharm 설정
+.vscode/
+.idea/
+
+# Static & Media
+# static/
+
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# .pem key
