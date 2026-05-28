@@ -1,28 +1,91 @@
-# Python & Django
-pycache/
-*.pyc
+# ════════════════════════════════════════════════
+# POLICITY .gitignore
+# ════════════════════════════════════════════════
+
+# ── Python 캐시 ──────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
 *.pyo
-*.pyd
-env
-*.sqlite3
-**/settings.py
-# Virtual Environment
+.Python
+
+# ── 가상환경 ─────────────────────────────────────
+.venv/
 venv/
-.env/
+env/
+.env
 *.env
 
-# VSCode or PyCharm 설정
-.vscode/
-.idea/
+# ── API 키 / 환경변수 ────────────────────────────
+.env
+.env.*
+secrets.py
+config_secret.py
 
-# Static & Media
-# static/
+# ── Jupyter 노트북 실행 결과 ──────────────────────
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
 
-# OS 관련
+# ── DB 파일 (로컬 SQLite) ─────────────────────────
+# pipeline/politalk_dev.db 는 추적하지 않음
+# (init_db.py 로 재생성 가능)
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Qdrant 로컬 스토리지 ─────────────────────────
+# 실제 벡터 데이터는 재인덱싱으로 재생성 가능
+pipeline/qdrant_storage/
+qdrant_storage/
+pipeline/embedding_hf/qdrant_storage*/
+*.lock
+
+# ── ChromaDB (구버전, 미사용) ────────────────────
+pipeline/chroma_db/
+chroma_db/
+
+# ── 원본 크롤링 데이터 (대용량) ───────────────────
+# preprocessed/ 는 추적, raw/ 는 제외
+data/raw/
+
+# ── 실험/백업 파일 ───────────────────────────────
+pipeline/qdrant_storage.zip
+pipeline/output/
+pipeline/embedding_hf/10_embedding_experiment.ipynb
+
+# ── 사용하지 않는 구버전 코드 ────────────────────
+POLICITY_DB/
+generate_mock_cards.py
+test.ipynb
+pipeline/pipelines/card_generation.py
+pipeline/pipelines/policy_card_generator.py
+
+# ── 루트 중복 파일 ───────────────────────────────
+# 실제 사용: pipeline/politalk_dev.db
+politalk_dev.db
+
+# ── OS / 에디터 ──────────────────────────────────
 .DS_Store
+.DS_Store?
 Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
 
-# Docker
+# ── 빌드 / 배포 ──────────────────────────────────
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ── 로그 ─────────────────────────────────────────
 *.log
+logs/
+data/logs/
 
-# .pem key
+# ── HuggingFace 모델 캐시 ────────────────────────
+# 로컬 캐시는 커밋하지 않음
+.cache/
+~/.cache/huggingface/
