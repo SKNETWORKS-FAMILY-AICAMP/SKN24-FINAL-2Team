@@ -67,7 +67,6 @@ https://docs.google.com/spreadsheets/d/1lBx_-zMlK1x6_ZCEh6PZAWjJvdMrjnkb/edit?gi
 
 # 5. ERD
 <img width="4140" height="2022" alt="final project" src="https://github.com/user-attachments/assets/5d30a00f-ba1e-4b85-a6ba-261f6dfca59f" />
-> 설명 추가 필요
 
 # 6. 요구사항 명세서
 https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEGv0U/edit?gid=1374958457#gid=1374958457
