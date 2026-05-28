@@ -12,7 +12,6 @@ def web_search(query: str, max_results: int = 3) -> str:
     
     try:
         with DDGS() as ddgs:
-            # DDGS.text()는 제너레이터이므로 리스트로 변환하여 잘라냅니다.
             results = list(ddgs.text(query, max_results=max_results))
         
         if not results:

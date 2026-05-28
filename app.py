@@ -9,9 +9,8 @@ from pathlib import Path
 import streamlit as st
 from openai import OpenAI
 from sqlalchemy import create_engine
-from qdrant_client import QdrantClient  # 👈 QdrantClient 로드
+from qdrant_client import QdrantClient
 
-# 🎯 [맥락 유지 반영] 랭그래프의 add_messages 리듀서 싱크를 위한 메시지 객체 임포트
 from langchain_core.messages import HumanMessage, AIMessage
 
 ROOT_DIR     = Path(__file__).parent
@@ -25,7 +24,7 @@ from pipeline.db.rdb import (
     load_cards, load_card_tabs,
     create_chat_session,
 )
-# 👈 순정 Chroma 대신 마이그레이션된 Qdrant 검색 로더 연동
+
 from pipeline.db.vectordb_qdrant import get_qdrant_client
 from pipeline.pipelines.chatbot_rag import ChatbotRAGPipeline
 from pipeline.pipelines.debate import DebatePipeline
@@ -37,13 +36,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# app.py 상단 init_resources 함수 정밀 고도화본
-
 @st.cache_resource
 def init_resources():
     engine = get_engine(DB_URL)
-    
-    # 1. 프로젝트 루트 기준 절대 경로로 qdrant_storage 위치 강제 고정
     current_root = Path(__file__).parent.absolute()
     actual_storage_path = str(current_root / "qdrant_storage")
     
@@ -53,7 +48,6 @@ def init_resources():
     openai_client = OpenAI(api_key=OPENAI_API_KEY)
     init_tables(engine)
     
-    # 2. 멀티에이전트 파이프라인 빌드 (ko-sroberta 키 매핑)
     chat_pipe = ChatbotRAGPipeline(
         engine=engine, 
         chroma=qdrant_instance, 
@@ -69,12 +63,10 @@ def init_resources():
         model_key="ko-sroberta"
     )
     
-    # 🔥 [복구 완료] Streamlit 서버가 처음 켜질 때 임베딩 모델 가중치 미리 메모리에 적재
     with st.spinner("🚀 시연용 지능형 정치 교육 AI 엔진 워밍업 중..."):
         try:
             from embed_hf import get_embedder
             embedder = get_embedder("ko-sroberta")
-            # 더미 텍스트 연산으로 CUDA 가속 장치 미리 깨우기
             embedder.encode_query("시작")
             print("🚀 [POLICITY System] ko-sroberta 임베딩 모델 사전 적재 대성공!")
         except Exception as e:
@@ -244,22 +236,19 @@ elif st.session_state.page == "chat":
             with st.chat_message("user"):
                 st.markdown(user_input)
             st.session_state.chat_messages.append({"role": "user", "content": user_input})
-            
-            # 🔥 생성 중 레이아웃 꼬임을 막기 위해 비어있는 AI 말풍선 자리를 화면 최하단에 먼저 선언
+
             with st.chat_message("assistant"):
                 message_placeholder = st.empty()  # 👈 입력창 위에 공간 고정
                 with st.spinner("중립성 검수 및 Qdrant 문서 탐색 중..."):
                     try:
                         card_ctx = None
                         
-                        # 🔧 [정밀 타격 버그 픽스]: 인라인 카드 뷰어 가동 중일 때는 'chat_inline_card_id' 컨텍스트를 안정적으로 임포트합니다.
                         target_card_id = st.session_state.get("chat_inline_card_id") or st.session_state.active_card_id
                         if target_card_id:
                             t = get_card_tabs(target_card_id)
                             s = t.get("SUMMARY", {})
                             card_ctx = json.dumps(s, ensure_ascii=False) if isinstance(s, dict) else str(s)
                         
-                        # 랭그래프의 add_messages 리듀서 전용 대화 이력 빌더
                         langchain_messages = []
                         for m in st.session_state.chat_messages[:-1]:
                             if m["role"] == "user":
@@ -269,7 +258,6 @@ elif st.session_state.page == "chat":
                                 
                         langchain_messages.append(HumanMessage(content=user_input))
                         
-                        # 백엔드 파이프라인 가동 (수정된 messages 및 정밀 card_ctx 매핑 전송)
                         reply, recs = chat_pipeline.chat(
                             session_id=st.session_state.session_id,
                             user_message=user_input,
@@ -288,8 +276,6 @@ elif st.session_state.page == "chat":
                         msg = f"오류: {e}"
                         message_placeholder.error(msg)
                         st.session_state.chat_messages.append({"role": "assistant", "content": msg})
-            
-            # 리런하여 UI 완전 동기화
             st.rerun()
 
     with card_col:
