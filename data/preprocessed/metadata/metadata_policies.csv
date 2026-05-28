@@ -1,0 +1,6 @@
+﻿data_id,data_title,category_id,file_path,source_url,collected_at,updated_at,department,apply_start_date,apply_end_date
+149200005007,국민취업지원제도,1,preprocessed/policy/data/policies_json/149200005007_국민취업지원제도.json,https://www.gov.kr/portal/rcvfvrSvc/dtlEx/149200005007,2026-05-27,20260508,국민취업지원기획팀,상시신청,상시신청
+318000000414,취약계층을 위한 공공일자리 제공,1,preprocessed/policy/data/policies_json/318000000414_취약계층을 위한 공공일자리 제공.json,https://www.gov.kr/portal/rcvfvrSvc/dtlEx/318000000414,2026-05-27,20260430,일자리경제과,"상반기 사업(전년도 11~12월 중), 하반기 사업(당해년도 5월 중)","상반기 사업(전년도 11~12월 중), 하반기 사업(당해년도 5월 중)"
+494000000237,전남 청년 근속장려금 지원사업,1,preprocessed/policy/data/policies_json/494000000237_전남 청년 근속장려금 지원사업.json,https://www.gov.kr/portal/rcvfvrSvc/dtlEx/494000000237,2026-05-27,20260513,지역순환경제과,연초 2월경 신청,연초 2월경 신청
+569000000390,세종시 청년 구직활동비 지원,1,preprocessed/policy/data/policies_json/569000000390_세종시 청년 구직활동비 지원.json,https://www.gov.kr/portal/rcvfvrSvc/dtlEx/569000000390,2026-05-27,20260511,기업지원과,상시신청,상시신청
+611000019622,미래 청년 일자리,1,preprocessed/policy/data/policies_json/611000019622_미래 청년 일자리.json,https://www.gov.kr/portal/rcvfvrSvc/dtlEx/611000019622,2026-05-27,20251127,청년정책담당관,5월(추가모집 진행 시 7월 말~8월 중),5월(추가모집 진행 시 7월 말~8월 중)
