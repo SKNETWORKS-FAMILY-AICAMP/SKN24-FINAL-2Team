@@ -12,7 +12,7 @@ from sqlalchemy import Engine
 from openai import OpenAI
 from qdrant_client import QdrantClient
 from langgraph.graph import StateGraph, END, START
-from langgraph.graph.message import add_messages  # 👈 랭그래프 메시지 누적 리듀서 추가
+from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 
 from config import (
@@ -46,7 +46,6 @@ def _log(msg: str) -> None:
 class ChatState(TypedDict, total=False):
     session_id:        int
     user_message:      str
-    # 🎯 [맥락 유지 핵심] 전체 대화 시퀀스를 유실 없이 추적하고 라우터/RAG 에이전트와 상시 공유합니다.
     messages:          Annotated[List[BaseMessage], add_messages]
     card_context_json: Optional[str]
     intent:            str
@@ -177,12 +176,7 @@ class ChatbotRAGPipeline:
     ) -> Tuple[str, List[Dict]]:
         if len(user_message) > CHAT_MAX_INPUT_CHARS:
             return (f"입력은 {CHAT_MAX_INPUT_CHARS}자 이내로 해주세요.", [])
-
-        # ─────────────────────────────────────────────────────────────────
-        # 🎯 [챗봇 로직 내부 보정 가드레일]
-        # 유저가 "이 개정안 언제 나와?"처럼 대명사형 꼬리 질문을 던졌을 때,
-        # 우측에 인라인 카드가 켜져 있다면 질문 끝에 강제로 컨텍스트 키워드를 임베딩 힌트로 더해줍니다.
-        # ─────────────────────────────────────────────────────────────────
+        
         refined_message = user_message
         if card_context_json and ("개정안" in user_message or "이 정책" in user_message or "언제" in user_message or len(user_message) < 15):
             try:
@@ -200,7 +194,7 @@ class ChatbotRAGPipeline:
         # 초기 그래프 상태 구조 바인딩
         initial: ChatState = {
             "session_id":        session_id,
-            "user_message":      refined_message,  # 👈 보정된 쿼리를 검색 엔진 노드로 토스!
+            "user_message":      refined_message,
             "messages":          messages or [HumanMessage(content=refined_message)],
             "card_context_json": card_context_json,
             "intent":            "",
@@ -296,7 +290,7 @@ class ChatbotRAGPipeline:
     def _router_node(self, state: ChatState) -> Dict:
         card_ctx = state.get("card_context_json", "") or "없음"
         
-        # 🔧 대화 히스토리 맥락 문자열 요약 가공
+        # 대화 히스토리 맥락 문자열 요약 가공
         history_str = "\n".join([f"[{type(m).__name__}]: {m.content}" for m in state["messages"][:-1]])
         
         try:
@@ -317,7 +311,7 @@ class ChatbotRAGPipeline:
 
     def _rag_retrieve_node(self, state: ChatState) -> Dict:
         """기사 + 카드 컬렉션 Qdrant 실시간 하이브리드 검색 노드 (정밀 로그 추적 강화형)"""
-        # 🔧 "서울시 산다고 하면 어때?" 와 같은 생략형 질문 방어
+        # "서울시 산다고 하면 어때?" 와 같은 생략형 질문 방어
         # 직전 대화 2턴과 결합한 맥락 기반 프롬프트 힌트 생성
         recent_turns = state["messages"][-3:]
         context_hint = " ".join([m.content for m in recent_turns])
@@ -351,7 +345,7 @@ class ChatbotRAGPipeline:
                 title = meta.get("title", "제목 없음")
                 score = r.get("score", 0.0)
                 
-                # 🎯 [로그 추가] 터미널에 가져온 데이터 청크와 유사도 점수 상세 출력
+                # [로그 추가] 터미널에 가져온 데이터 청크와 유사도 점수 상세 출력
                 _log(f"  ({idx}) [출처: {pub}] {title} | 🎯 유사도 점수: {score:.4f}")
                 _log(f"      ㄴ [청크 원문 일부]: {r['content'][:150]}...")
                 
@@ -378,7 +372,7 @@ class ChatbotRAGPipeline:
                 title = meta.get("title", "카드 제목 없음")
                 score = r.get("score", 0.0)
                 
-                # 🎯 [로그 추가] 터미널에 가져온 정책 카드 정보와 유사도 점수 상세 출력
+                # [로그 추가] 터미널에 가져온 정책 카드 정보와 유사도 점수 상세 출력
                 _log(f"  ({idx}) [정책명: {title}] | 🎯 유사도 점수: {score:.4f}")
                 _log(f"      ㄴ [카드 원문 일부]: {r['content'][:120]}...")
                 
@@ -394,7 +388,7 @@ class ChatbotRAGPipeline:
         return {"rag_context": rag_context}
 
     def _answer_node(self, state: ChatState) -> Dict:
-        # 🔧 대화 세션 기반 랭체인 메시지 이력 정렬 구조 빌드
+        # 대화 세션 기반 랭체인 메시지 이력 정렬 구조 빌드
         messages = [{"role": "system", "content": _SYSTEM_PROMPT}]
         
         # 랭그래프의 누적된 messages 상태를 OpenAI API 호환 규격으로 변환하여 주입
@@ -471,7 +465,7 @@ class ChatbotRAGPipeline:
         save_chat_message(self.engine, state["session_id"], "user",      state["user_message"])
         save_chat_message(self.engine, state["session_id"], "assistant", reply)
 
-        # 🎯 [추천 팩트 보정] 우측 인라인 카드가 켜져 있다면, 질문 텍스트 대신 '현재 카드 제목'을 추천 쿼리로 전달합니다.
+        # [추천 팩트 보정] 우측 인라인 카드가 켜져 있다면, 질문 텍스트 대신 '현재 카드 제목'을 추천 쿼리로 전달합니다.
         recommend_query = state["user_message"]
         if state.get("card_context_json"):
             try:
@@ -488,8 +482,6 @@ class ChatbotRAGPipeline:
         return {"recommended_cards": recs}
 
     def _recommend_node(self, state: ChatState) -> Dict:
-        # RECOMMEND 의도: 사용자 질문을 그대로 검색 쿼리로 사용
-        # (열려있는 카드나 키워드와 무관하게 사용자가 요청한 내용 기준으로 추천)
         query = state["user_message"]
 
         recs  = self._get_recommendations(query, n=CHAT_RECOMMEND_COUNT + 1)
