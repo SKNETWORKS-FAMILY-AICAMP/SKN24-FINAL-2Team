@@ -125,7 +125,7 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 | **출처** | https://www.youthcenter.go.kr/main |
 | **저장 포맷 / 인코딩** | json |
 
-> 원본 json 파일에서 조회수와 같은 불필요한 필드를 제거하였고, 선정 기준, 지원 내용, 지원 대상 등에서는 특수문자가 텍스트 내용에 직접적으로 미치는 경우를 제외한 나머지 특수문자를 제거하였다.
+> 원본 json 파일에서 조회수와 같은 불필요한 필드를 제거하였고, 선정 기준, 지원 내용, 지원 대상 등에서는 특수문자가 텍스트 내용에 직접적으로 미치는 경우를 제외한 나머지 특수문자를 제거하였습니다.
 
 # 9. 모델 선정 과정
 > **BAAI/bge-m3 vs jhgan/ko-sroberta-multitask**
