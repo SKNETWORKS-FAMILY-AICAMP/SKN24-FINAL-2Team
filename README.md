@@ -8,3 +8,22 @@
 
 ![image_1](./readme_images/img_1.png)
 
+
+
+## 🛠️ 기술 스택
+
+
+| Category | Stack / Icons |
+| :--- | :--- |
+| **Frontend / Client** | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) |
+| **Backend Core** | ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white) ![Gunicorn](https://img.shields.io/badge/Gunicorn-499A4C?style=for-the-badge&logo=gunicorn&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) |
+| **AI Agent Layer** | ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white) ![Uvicorn](https://img.shields.io/badge/Uvicorn-434343?style=for-the-badge&logo=uvicorn&logoColor=white) ![LangChain](https://img.shields.io/badge/LangChain-1C3C3A?style=for-the-badge&logo=langchain&logoColor=white) ![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3A?style=for-the-badge&logo=langchain&logoColor=white) |
+| **AI / ML Models** | ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black) |
+| **Data Pipeline <br>(Serverless)** | ![AWS EventBridge](https://img.shields.io/badge/AWS%20EventBridge-FF4F8B?style=for-the-badge&logo=amazoneventbridge&logoColor=white) ![AWS Lambda](https://img.shields.io/badge/AWS%20Lambda-FF9900?style=for-the-badge&logo=awslambda&logoColor=white) ![RunPod](https://img.shields.io/badge/RunPod-6E56CF?style=for-the-badge&logo=runpod&logoColor=white) |
+| **Relational Database** |  ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![AWS RDS](https://img.shields.io/badge/AWS%20RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)  |
+| **Vector Database** | ![Qdrant](https://img.shields.io/badge/Qdrant-FF4034?style=for-the-badge&logo=qdrant&logoColor=white) |
+| **Infrastructure <br>& DevOps** | ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![Amazon EC2](https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) |
+| **Storage** | ![AWS S3](https://img.shields.io/badge/AWS%20S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white) |
+
+
+---
