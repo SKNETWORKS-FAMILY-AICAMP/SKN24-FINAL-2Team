@@ -1,7 +1,13 @@
 # SK네트웍스 Family AI 캠프 24기 최종 프로젝트 중간 발표
 
 # 1. 팀 소개
-좌우지간 (김은우, 김현수, 나혜린, 박정은, 전윤우)
+좌우지간
+<br>
+
+| 박정은 | 전윤우 | 나혜린 | 김현수 | 김은우 |
+| :---: | :---: | :---: | :---: | :---: |
+|  <a href="https://github.com/brainkat"><img src="https://img.shields.io/badge/brainkat-181717?style=for-the-badge&logo=github&logoColor=white"/></a> | <a href="https://github.com/Yunu-Jeon"><img src="https://img.shields.io/badge/Yunu--Jeon-181717?style=for-the-badge&logo=github&logoColor=white"/></a> | <a href="https://github.com/nngpfls"><img src="https://img.shields.io/badge/nngpfls-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |<a href="https://github.com/BarryKim34"><img src="https://img.shields.io/badge/BarryKim34-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |<a href="https://github.com/whitehole17"><img src="https://img.shields.io/badge/whitehole17-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |
+</br>
 
 # 2. 프로젝트 개요
 
