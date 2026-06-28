@@ -194,11 +194,8 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 #### 생성 및 검증 과정
 
 - 사실 추출 → SUMMARY 생성 → CORE / OPINION / 토론 주제 병렬 생성 → 카드 조립 → Qdrant 저장
-- CORE는 4개 파트 순차 생성
-- ①~③ 파트는 KR-ELECTRA 편향 검사 후 실패 시 최대 2회 재생성
-- ④ 청년 영향 파트는 편향 검사 제외
-- OPINION은 Generator → Supervisor 루프를 최대 3회 수행하여 균형 검증
-- Constitutional AI로 위반 언론사만 개별 재생성
+- CORE는 4개 파트 순차 생성, ①~③ 파트는 KR-ELECTRA 편향 검사 후 실패 시 최대 2회 재생성, ④ 청년 영향 파트는 편향 검사 제외
+- OPINION은 Generator → Supervisor 루프 최대 3회로 균형 검증, Constitutional AI로 위반 언론사만 개별 재생성
 - 편향 기준 초과 브랜치 존재 시 카드 전체 폐기
 
 ### 9-1-2. 정책 카드
@@ -216,11 +213,9 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 #### 생성 및 검증 과정
 
 - 사실 추출 → SUMMARY 생성 → CORE / 찬성 논거 / 반대 논거 병렬 생성 → 카드 조립 → 토론 주제 생성 → Qdrant 저장
-- CORE는 ①~③ 파트 KR-ELECTRA 편향 검사 후 실패 시 최대 2회 재생성
-- ④ 청년 영향 파트는 편향 검사 제외
-- Supervisor 판단 시 자료 부족이면 DuckDuckGo 웹 검색으로 자료 보강
+- CORE는 ①~③ 파트 KR-ELECTRA 편향 검사 후 실패 시 최대 2회 재생성, ④ 청년 영향 파트는 편향 검사 제외
 - 찬성·반대 논거는 각각 Constitutional AI로 편향 검토 후 실패 시 최대 2회 재생성
-- 반대 논거 자료 부족 시 DuckDuckGo로 비판 자료 자동 보강
+- 반대 논거는 자료 부족 시 DuckDuckGo(오픈소스 검색 엔진)로 비판 자료 자동 보강
 - 편향 기준 초과 브랜치 존재 시 카드 전체 폐기
 
 
