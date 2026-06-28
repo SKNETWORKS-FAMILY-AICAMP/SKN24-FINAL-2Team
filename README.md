@@ -77,23 +77,24 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 <img width="4850" height="2172" alt="final project (1)" src="https://github.com/user-attachments/assets/9b30bcaa-e787-4103-bd94-037b1fd88048" />
 
 # 6. 모델 선정
-> **BAAI/bge-m3 vs jhgan/ko-sroberta-multitask**
+## 6-1. 편향 분류 모델(KR-ELECTRA)
+- 뉴스 기사 및 카드 텍스트를 보수, 진보, 중립 세 가지로 분류하는 삼진 분류 모델
+- 편향된 사설과 중립적 정보 전달 텍스트 명확히 분리
 
-| 항목 | bge-m3 | ko-sroberta ⭐ 추천 모델 |
-|------|--------|------------------------|
-| **벡터** | Dense 1024-dim + Sparse (lexical weight) | Dense 768-dim only (Sparse 없음) |
-| **언어 지원** | 다국어 지원 / 최대 8,192 토큰 처리 | 한국어 특화 / SRoBERTa · KLUE 사전학습 |
-| **검색 방식** | 하이브리드 검색 — RRF Fusion (Dense + Sparse) | Dense 검색 — Cosine 유사도 |
-| **임베딩 속도** | ~20분 / 153건 (GPU 권장) | ~2분 / 153건 (경량, 빠름) |
+### 6-1-1. 편향 분류 정확도
+
+
+## 6-2. 임베딩 모델(ko-sroberta-multitask)
+## 6-3. 답변 생성 모델(GPT-4o-mini)
 
 
 # 7. 시스템 아키텍처
 <img width="1084" height="609" alt="system_architecture (1)" src="https://github.com/user-attachments/assets/16b7a535-fbd4-4fd2-a43c-111ddd3e1fbe" />
 
 # 8. 데이터 수집 및 전처리
-> 매일 오전 2시 정기 스케줄러(EventBridge Scheduler)에서 웹 크롤링을 수행하고, 수집된 원천 데이터(Raw Data)는 전처리된 형태로 AWS Fargate에 저장됩니다.
-> 
-> Runpod 서버에서 임베딩 처리가 진행되는데, 원천 데이터를 전처리한 후 ko-sroberta-multitask 모델을 통해 벡터로 변환하여 임베딩한 값이 Qdrant에 저장되며, 구조화된 정보 카드 및 원천 데이터는 AWS의 RDS(MySQL)에 최종적으로 연동됩니다.
+- 매일 오전 2시 정기 스케줄러(EventBridge Scheduler)에서 웹 크롤링을 수행하고, 수집된 원천 데이터(Raw Data)는 전처리된 형태로 AWS Fargate에 저장
+- 원천 데이터를 전처리한 후 ko-sroberta-multitask 모델을 통해 벡터로 변환하여 임베딩한 값과 구조화된 뉴스 카드 및 정책 카드는 Qdrant에 저장
+- ERD 기반 관계형 데이터는 AWS의 RDS(MySQL)에 연동
 
 ## 8-1. 정책 데이터
 ### 8-1-1. 정책 데이터
@@ -160,9 +161,11 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 | **출처** | https://news.naver.com/ |
 | **저장 포맷 / 인코딩** | txt, jsonl / utf-8 |
 
-> 뉴스 기사를 크롤링하는 과정에서 광고 문구, 뉴스 기사 내용 자체가 아닌 다른 뉴스 기사 추천 리스트, 불필요한 특수문자, SNS 홍보문구, 이메일 등 여러 노이즈가 많이 있었기 때문에 이를 처리하였습니다.
-> 
-> 단순 정규표현식만으로 정제를 하기에는 그 양상이 다양했고, 뉴스 기사처럼 종결어미가 ‘-다’로 끝나더라도 실제 내용은 뉴스 기사가 아닌 경우도 있었기 때문에 이를 처리 하기 위해서는 단순 정규표현식만으로는 제거하기 어려워서 Kiwi를 활용하여 품사를 구분한 뒤에 추가적인 노이즈를 제거하는 방법을 택했습니다.
+#### 전처리
+
+- 크롤링한 뉴스 본문에서 저작권 문구, 공유 버튼, 사이트 내비게이션, 반복 안내 문구 등 기사 내용과 관련 없는 노이즈를 제거
+- HTML 태그, 특수 공백, 중복 줄바꿈 등을 일반 텍스트 형식으로 정리
+- 동일 URL 및 본문 해시 기준으로 중복 기사를 제거하고, 본문 내용이 부족한 기사는 제외
 
 # 9. 구현 내용
 ## 9-1. 정보 카드
