@@ -105,7 +105,7 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 | **데이터명** | 행정안전부 대한민국 공공서비스(혜택) 정보 |
 | **수집 건수** | 초기 데이터 10,954건 / 청년 관련 필터링 후 1,690건 |
 | **데이터 출처** | 국무조정실 청년정책조정실 |
-| **URL** | https://www.youthcenter.go.kr/main |
+| **URL** | https://www.data.go.kr/data/15113968/openapi.do |
 | **저장 포맷 / 인코딩** | JSON |
 
 ### 8-1-2. 근거 법령 데이터
