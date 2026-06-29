@@ -15,7 +15,8 @@
 # 2. 프로젝트 개요
 
 ## 2-1. 프로젝트 명
- <img src="./readme_images/poly_wave.png" width="500"/>  ## **POLICITY**
+ <img src="./readme_images/poly_wave.png" width="200"/>  
+ <img src="./readme_images/logo.png" width="200"/>  
 
 ## 2-2. 프로젝트 소개
 - 청년층의 정치 참여 장벽을 낮추기 위해 설계된 AI 기반 정치 입문 플랫폼
