@@ -1,18 +1,21 @@
 # SK네트웍스 Family AI 캠프 24기 최종 프로젝트
 
+ <img src="./readme_images/landing_page.png"/>
+ 
 # 1. 팀 소개
-좌우지간
+## **좌우지간**
 <br>
 
 | 박정은 | 전윤우 | 나혜린 | 김현수 | 김은우 |
 | :---: | :---: | :---: | :---: | :---: |
-|  <a href="https://github.com/brainkat"><img src="https://img.shields.io/badge/brainkat-181717?style=for-the-badge&logo=github&logoColor=white"/></a> | <a href="https://github.com/Yunu-Jeon"><img src="https://img.shields.io/badge/Yunu--Jeon-181717?style=for-the-badge&logo=github&logoColor=white"/></a> | <a href="https://github.com/nngpfls"><img src="https://img.shields.io/badge/nngpfls-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |<a href="https://github.com/BarryKim34"><img src="https://img.shields.io/badge/BarryKim34-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |<a href="https://github.com/whitehole17"><img src="https://img.shields.io/badge/whitehole17-181717?style=for-the-badge&logo=github&logoColor=white"/></a> |
+|  <img src="./readme_images/kat.png" width="500"/> | <img src="./readme_images/yunu.png" width="900"/> | <img src="./readme_images/haerin.png" width="500"/> | <img src="./readme_images/hyunsoo.png" width="900"/> | <img src="./readme_images/eunwoo.png" width="500"/> |
+
 </br>
 
 # 2. 프로젝트 개요
 
 ## 2-1. 프로젝트 명
-POLICITY
+ <img src="./readme_images/poly_wave.png" width="500"/>  ## **POLICITY**
 
 ## 2-2. 프로젝트 소개
 - 청년층의 정치 참여 장벽을 낮추기 위해 설계된 AI 기반 정치 입문 플랫폼
@@ -279,7 +282,7 @@ LangGraph는 파이프라인 안에 포함된 하나의 단계이며, 그 출력
   - 사전필터가 못 잡는 문맥을 판단. 주제 이탈(정책 찬반·효과·반박은 매우 관대하게 통과, 일상·정치무관만 실패), 맥락 의존형 혐오(풍자·유머라도 집단 모욕이면 실패), 금칙어(성적 비하, 정치인·정당 비하, 인종·성별·종교 혐오) 순으로 검사.
 
 - 벡터 유사도
-    - 변형·신종 표현을 임베딩 유사도로 탐지. **`jhgan/ko-sroberta-multitask`(768차원)**으로 입력을 임베딩해 Qdrant `hate_speech` 컬렉션(Cosine)과 비교. `top_k=3` 검색 후 최고 유사도 **≥ 0.70**이면 차단하고 유사도(%)와 카테고리 메시지를 반환.
+    - 변형·신종 표현을 임베딩 유사도로 탐지. **`jhgan/ko-sroberta-multitask`(768차원)**으로 입력을 임베딩해 Qdrant `hate_speech` 컬렉션(Cosine)과 비교. `top_k=3` 검색 후 최고 유사도 **≥ 0.82**이면 차단하고 유사도(%)와 카테고리 메시지를 반환.
 
 **혐오표현 데이터셋 구축**
 - LLM 학습용 데이터 내 유해표현 검출 AI모델 학습용 데이터(2024, dataSetSn=71833) 활용
