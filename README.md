@@ -15,8 +15,7 @@
 # 2. 프로젝트 개요
 
 ## 2-1. 프로젝트 명
-<img width="1600" height="500" alt="image" src="https://github.com/user-attachments/assets/12984aea-1992-4b43-bd11-9a9e41f6df93" />
-
+<img width="2172" height="724" alt="image" src="https://github.com/user-attachments/assets/e7bb9c32-2194-4076-8431-09068a0dee79" />
 
 ## 2-2. 프로젝트 소개
 - 청년층의 정치 참여 장벽을 낮추기 위해 설계된 AI 기반 정치 입문 플랫폼
