@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="login-page">
+
+  <div class="sky-clouds" aria-hidden="true"></div>
+
+  <!-- 로고 + 슬로건 -->
+  <div class="login-top">
+    <a href="{% url 'landing' %}" class="login-logo-link">
+      <img class="login-logo" src="{% static 'assets/policity_logo.png' %}" alt="PoliCity">
+    </a>
+    <img class="login-ribbon" src="{% static 'assets/ribbon.png' %}" alt="정치를 쉽게, 함께 더 나은 미래로!">
+  </div>
+
+  <!-- 로그인 박스 + 동물 -->
+  <div class="login-content container-fluid px-0">
+    <div class="row g-0 mx-0 justify-content-center align-items-end login-row">
+
+      <!-- 가운데 로그인 박스 -->
+      <div class="col-12 col-sm-8 col-md-6 col-lg-auto d-flex justify-content-center align-items-end px-0 login-card-col">
+        <div class="login-card">
+
+          <!-- P 방패 뱃지 -->
+          <div class="login-badge">
+            <img src="{% static 'assets/logo_1.png' %}" alt="PoliCity">
+          </div>
+
+          <!-- 로그인 제목 + 반짝이 -->
+          <h1 class="login-title">
+            <span class="spark">✦</span>
+            로그인
+            <span class="spark">✦</span>
+          </h1>
+
+          <form class="login-form" method="post">
+            {% csrf_token %}
+
+            <div class="login-input-wrap">
+              <i class="login-input-icon bi bi-envelope"></i>
+              <input type="email" name="email" placeholder="이메일" autocomplete="email">
+            </div>
+
+            <div class="login-input-wrap">
+              <i class="login-input-icon bi bi-lock"></i>
+              <input type="password" id="password" name="password" placeholder="비밀번호" autocomplete="current-password">
+              <button class="login-eye" type="button" id="togglePassword">
+                <i class="bi bi-eye-slash"></i>
+              </button>
+            </div>
+
+
+            <p style="margin:0 0 4px 0; color:var(--text-muted); font-size:12px; text-align:center;">
+              비밀번호 5회 오류 시 계정이 잠길 수 있습니다.
+            </p>
+            <div class="login-error-area" id="login-error-wrap"></div>
+            <button type="submit" class="login-submit">로그인</button>
+            <a href="/signup/" class="login-join">회원가입</a>
+            <a href="/password/find/" class="login-find">비밀번호 찾기 <span>›</span></a>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- 동물 수동 조절 그룹 -->
+      <div class="login-characters d-none d-lg-block" aria-hidden="true">
+        <img class="login-polly" src="{% static 'assets/polly.png' %}" alt="">
+        <img class="login-chani" src="{% static 'assets/chani.png' %}" alt="">
+        <img class="login-bani" src="{% static 'assets/bani_thumbsup.png' %}" alt="">
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<div class="ground" aria-hidden="true">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+</script>
+<script src="{% static 'js/login.js' %}"></script>
+<script>
+  const toggleBtn = document.getElementById('togglePassword');
+  const pwInput   = document.getElementById('password');
+
+  if (toggleBtn && pwInput) {
+    toggleBtn.addEventListener('click', () => {
+      const isPw = pwInput.type === 'password';
+      pwInput.type = isPw ? 'text' : 'password';
+      toggleBtn.querySelector('i').className = isPw ? 'bi bi-eye' : 'bi bi-eye-slash';
+    });
+  }
+</script>
+{% endblock %}

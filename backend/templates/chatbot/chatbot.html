@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PoliCity · 챗봇{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chatbot/chatbot.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== scenery ===== -->
+<div class="scenery">
+  <div class="sky-clouds"></div>
+</div>
+
+
+<!-- ===== main ===== -->
+<main class="page-wrap w-100 px-0">
+  <div class="row g-3 chat-stage pt-lg-3">
+
+    <!-- ===== history column ===== -->
+    <div class="col-lg-2 collapsed" id="historyCol">
+      <div class="panel-card h-100 p-0 history-panel">
+        <div class="history-head">
+          <span class="history-title">대화 목록</span>
+          <button class="new-chat-btn" id="newChatBtn" title="새 대화 시작" aria-label="새 대화 시작">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- ===== chat column ===== -->
+    <div class="col-lg-12" id="chatCol">
+      <div class="panel-card h-100 p-0 chat-panel">
+        <div class="chat-head">
+          <button class="history-toggle-btn" id="historyToggleBtn" title="대화 목록 토글" aria-label="대화 목록 토글">
+            <i class="bi bi-layout-sidebar"></i>
+          </button>
+          <div class="pixframe" style="width:44px;height:44px;">
+            <div class="imgslot"><img src="/static/assets/poli_profile.png" alt=""></div>
+          </div>
+          <div class="ch-title">폴리와 이야기 중이에요!</div>
+          <span class="ch-card-badge" id="chCardBadge">
+            <i class="bi bi-paperclip"></i>
+            <span id="chCardBadgeTitle"></span>
+          </span>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+          <!-- messages rendered dynamically by chatbot.js -->
+        </div>
+
+        <div class="chat-input">
+          <div class="card-context-bar" id="cardContextBar">
+            <div class="card-context-stripe"></div>
+            <div class="card-context-text"><i class="bi bi-paperclip"></i> <span id="cardContextTitle"></span> 카드에 대한 질문으로 전달돼요</div>
+            <button class="card-context-dismiss" id="cardContextDismiss" aria-label="카드 컨텍스트 해제" title="해제">✕</button>
+          </div>
+          <div class="quote-bar" id="quoteBar">
+            <div class="quote-bar-stripe"></div>
+            <div class="quote-bar-text" id="quoteBarText"></div>
+            <button class="quote-bar-dismiss" id="quoteBarDismiss" aria-label="인용 제거" title="제거">✕</button>
+          </div>
+          <div class="ci-row" id="ciRow">
+            <textarea id="chatInput" placeholder="폴리에게 질문해보세요!" aria-label="질문 입력" maxlength="500" rows="1"></textarea>
+            <!-- 폴리한테 질문해보세요 폴리에게 질문해보세요 -->
+            <!-- <span class="ci-attach" title="첨부">📎</span> -->
+            <button class="ci-send" id="sendBtn" aria-label="보내기"><span>➤</span></button>
+          </div>
+          <div id="inputMeta"
+            style="display:flex; justify-content:space-between; align-items:center; padding:4px 6px 0;">
+            <span id="inputError"
+              style="font-size:var(--font-size-xs); color:var(--color-danger, #d94f4f); display:none;">입력은 500자 이내로 작성해
+              주세요.</span>
+            <span id="charCounter"
+              style="font-size:var(--font-size-xs); color:var(--text-placeholder); margin-left:auto;">0 / 500</span>
+          </div>
+          <!-- <div class="chat-foot">폴리는 AI 생성 답변을 제공하며, 특정 정당·단체를 지지하지 않습니다. 중요한 결정은 공식 정보를 확인해 주세요.</div> -->
+          <div class="chat-foot">폴리의 답변은 AI를 기반으로 한 참고용 정보입니다. 폴리는 특정 정당이나 이념에 편향되지 않으며, 중요한 결정이 필요하신 경우 꼭 공식 채널을 이용해
+            주시기 바랍니다.</div>
+        </div>
+      </div>
+    </div>
+
+    {% include "components/card.html" %}
+
+  </div>
+</main>
+
+<!-- ===== ground scene ===== -->
+<div class="ground">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+
+
+{% include "components/profanity_modal.html" %}
+{% include "components/welcome_modal.html" %}
+
+
+<!-- floating selection copy button -->
+<button class="sel-copy-btn" id="selCopyBtn" aria-label="선택 텍스트 인용">
+  <i class="bi bi-chat-quote"></i> 인용하기
+</button>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/chatbot/chatbot_card_panel.js' %}"></script>
+<script src="{% static 'js/chatbot/profanity_modal.js' %}"></script>
+<script src="{% static 'js/chatbot/welcome_modal.js' %}"></script>
+<script src="{% static 'js/chatbot/chatbot.js' %}"></script>
+
+
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+</script>
+
+
+{% endblock %}

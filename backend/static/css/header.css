@@ -1,0 +1,751 @@
+/* ===========================================================
+   PoliCity Header
+   variables.css 기준
+   비로그인 / 로그인 상태 통합
+   =========================================================== */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+:root {
+  --font-family: 'Pretendard', 'Pretendard Variable', -apple-system, system-ui, sans-serif;
+}
+
+.site-header,
+.site-header a,
+.site-header button {
+  font-family: var(--font-family);
+}
+
+/* ===============================
+   Header Frame
+================================ */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  width: 100%;
+  z-index: var(--z-header, 200);
+
+  background: var(--bg-header, rgba(255, 255, 255, 0.97));
+  backdrop-filter: blur(6px);
+
+  border: 0;
+  border-bottom: 1px solid var(--border-color, #c8dfd1);
+  box-shadow: 0 4px 0 rgba(30, 92, 50, 0.04);
+}
+
+.site-header::before,
+.site-header::after,
+.nav-inner::before,
+.nav-inner::after,
+.brand-logo::before,
+.brand-logo::after {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+}
+
+.site-header .nav-inner {
+  width: 100%;
+  max-width: var(--content-max-width, 1200px);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 230px 1fr 230px;
+  align-items: center;
+
+  padding: 12px var(--page-padding-x, 40px);
+
+  border: 0 !important;
+}
+
+/* ===============================
+   Logo
+================================ */
+
+.brand-logo {
+  justify-self: start;
+
+  display: inline-flex;
+  align-items: center;
+
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+
+  text-decoration: none;
+  user-select: none;
+
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.brand-logo img {
+  height: 58px;
+  width: auto;
+  display: block;
+
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+
+  clip-path: inset(0 0 0 3px);
+}
+
+/* ===============================
+   Main Nav
+================================ */
+
+.main-nav {
+  justify-self: center;
+  align-self: stretch;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 22px;
+}
+
+.main-nav .nav-link {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 10px;
+
+  color: var(--text-secondary, #3d5c48);
+  font-size: 17px;
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+
+  border-radius: var(--border-radius-sm, 8px);
+  background: transparent;
+
+  transition:
+    color var(--transition-fast, 0.15s ease),
+    background var(--transition-fast, 0.15s ease);
+}
+
+.main-nav .nav-link i {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.main-nav .nav-link::after {
+  content: "";
+  position: absolute;
+
+  left: 10px;
+  right: 10px;
+  bottom: 3px;
+
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-primary, #1e5c32);
+
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--transition-base, 0.22s ease);
+}
+
+.main-nav .nav-link:hover {
+  color: var(--text-primary, #1a2e1e);
+  background: var(--bg-sidebar, #f2faf5);
+}
+
+.main-nav .nav-link:hover::after {
+  transform: scaleX(0.5);
+}
+
+.main-nav .nav-link.active {
+  color: var(--color-primary, #1e5c32);
+  font-weight: var(--font-weight-extrabold, 800);
+  background: transparent;
+}
+
+.main-nav .nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ===============================
+   Dropdown
+================================ */
+
+.nav-dropdown {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+}
+
+.nav-dropdown .nav-link {
+  height: 100%;
+}
+
+.nav-dropdown .caret {
+  margin-left: 2px;
+  font-size: 13px !important;
+  transition: transform var(--transition-fast, 0.15s ease);
+}
+
+.nav-dropdown:hover .caret,
+.nav-dropdown.open .caret {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown .nav-menu {
+  position: absolute;
+  /* nav-dropdown의 상대 위치가 아니라, site-header의 실측 높이/x좌표(JS가 채워주는
+     --header-h, --dropdown-x)를 기준으로 잡아서 폰트/로고 크기와 무관하게 항상 헤더 밑선에 정확히 붙음 */
+  top: var(--header-h, 100%);
+  left: var(--dropdown-x, 0);
+
+  min-width: 190px;
+  margin-top: 0ch;
+  padding: 7px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #c8dfd1);
+  border-radius: var(--border-radius-md, 12px);
+  box-shadow: var(--shadow-card, 0 2px 12px rgba(30, 92, 50, 0.08));
+
+  z-index: var(--z-dropdown, 100);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+
+  transition:
+    opacity var(--transition-fast, 0.15s ease),
+    transform var(--transition-fast, 0.15s ease),
+    visibility var(--transition-fast, 0.15s ease);
+}
+
+.nav-dropdown:hover .nav-menu,
+.nav-dropdown.open .nav-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown .nav-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 11px 14px;
+
+  color: var(--text-secondary, #3d5c48);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold, 700);
+  white-space: nowrap;
+  text-decoration: none;
+
+  border-radius: var(--border-radius-sm, 8px);
+
+  transition:
+    background var(--transition-fast, 0.15s ease),
+    color var(--transition-fast, 0.15s ease);
+}
+
+.nav-dropdown .nav-menu a i {
+  font-size: 18px;
+  color: var(--color-primary, #1e5c32);
+}
+
+.nav-dropdown .nav-menu a:hover {
+  background: var(--bg-sidebar-active, #daf2e6);
+  color: var(--color-primary-hover, #154424);
+}
+
+/* ===============================
+   Icon Colors
+================================ */
+
+.nav-recommend i {
+  color: var(--color-primary, #1e5c32);
+}
+
+.nav-tour,
+.nav-tour i {
+  color: var(--color-primary, #1e5c32) !important;
+}
+
+.nav-policy,
+.nav-policy i,
+.nav-policy .caret {
+  color: var(--color-primary, #1e5c32) !important;
+}
+
+.nav-tour:hover,
+.nav-tour:hover i,
+.nav-tour.active,
+.nav-tour.active i,
+.nav-policy:hover,
+.nav-policy:hover i,
+.nav-policy:hover .caret,
+.nav-policy.active,
+.nav-policy.active i,
+.nav-policy.active .caret {
+  color: var(--color-primary, #1e5c32) !important;
+}
+
+.nav-history i {
+  color: var(--nav-history-color, #4a4a6a);
+}
+
+/* ===============================
+   Right Actions (공통)
+================================ */
+
+.header-actions {
+  justify-self: end;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===============================
+   비로그인 버튼
+================================ */
+
+.header-btn {
+  min-width: 88px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 18px;
+
+  font-size: 17px;
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+  text-decoration: none;
+
+  border-radius: var(--border-radius-sm, 8px);
+
+  transition:
+    transform var(--transition-fast, 0.15s ease),
+    box-shadow var(--transition-fast, 0.15s ease),
+    background var(--transition-fast, 0.15s ease),
+    color var(--transition-fast, 0.15s ease);
+}
+
+.header-login-btn {
+  color: var(--color-primary, #1e5c32);
+  background: var(--bg-card, #ffffff);
+  border: 2px solid var(--color-primary, #1e5c32);
+
+  box-shadow:
+    0 3px 0 rgba(21, 68, 36, 0.28),
+    var(--shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.06));
+}
+
+.header-signup-btn {
+  color: var(--text-white, #ffffff);
+  background: var(--color-primary, #1e5c32);
+  border: 2px solid var(--color-primary-hover, #154424);
+
+  box-shadow:
+    0 3px 0 var(--color-primary-hover, #154424),
+    var(--shadow-xs, 0 1px 4px rgba(0, 0, 0, 0.06));
+}
+
+.header-login-btn:hover {
+  color: var(--color-primary-hover, #154424);
+  background: var(--bg-sidebar-active, #daf2e6);
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 0 rgba(21, 68, 36, 0.28),
+    var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.09));
+}
+
+.header-signup-btn:hover {
+  color: var(--text-white, #ffffff);
+  background: var(--color-primary-light, #2e7d52);
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 0 var(--color-primary-hover, #154424),
+    var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.09));
+}
+
+.header-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(21, 68, 36, 0.25);
+}
+
+/* ===============================
+   로그인 상태 오른쪽 영역
+================================ */
+
+.header-actions-login {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-user-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--text-secondary, #3d5c48);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+
+  white-space: nowrap;
+}
+
+.header-user-link i {
+  color: var(--color-primary, #1e5c32);
+  font-size: 21px;
+  line-height: 1;
+}
+
+.header-user-link:hover {
+  color: var(--color-primary, #1e5c32);
+  text-decoration: none;
+}
+
+.header-logout-form {
+  margin: 0;
+  padding: 0;
+
+  position: relative;
+  padding-left: 14px;
+}
+
+.header-logout-form::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+
+  width: 1px;
+  height: 15px;
+
+  background: var(--border-color, #c8dfd1);
+  transform: translateY(-50%);
+}
+
+.header-logout-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+
+  color: var(--text-secondary, #3d5c48);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.header-logout-text:hover {
+  color: var(--color-primary, #1e5c32);
+}
+
+/* ===============================
+   Mobile
+================================ */
+
+.nav-toggle {
+  display: none;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--text-secondary, #3d5c48);
+  font-size: 28px;
+  line-height: 1;
+}
+
+@media (max-width: 1300px) {
+  .site-header .nav-inner {
+    grid-template-columns: auto auto;
+  }
+
+  .brand-logo {
+    justify-self: start;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    /* nav-inner의 max-width(1200px) 제약과 무관하게
+       항상 브라우저(헤더) 진짜 오른쪽 끝에 붙도록 분리 고정 */
+    position: fixed;
+    top: 0;
+    right: var(--page-padding-x, 40px);
+    bottom: 0;
+    margin: auto 0;
+    height: fit-content;
+    z-index: 1000;
+  }
+
+  .main-nav {
+    display: none;
+  }
+
+  .header-actions {
+    display: none;
+  }
+
+  /* ← 이거 추가 */
+  .main-nav.open {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    left: auto;
+    width: 220px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    padding: 8px;
+
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #c8dfd1);
+    border-radius: var(--border-radius-md, 12px);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.09));
+    z-index: 999;
+  }
+
+  .main-nav.open .nav-link {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 17px;
+  }
+
+  .main-nav.open .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    width: 100%;
+    margin: 8px 0 0;
+    padding-top: 12px;
+
+    border-top: 1px solid var(--border-color, #c8dfd1);
+  }
+
+  .main-nav.open .header-actions .header-btn {
+    width: 100%;
+  }
+
+  /* 로그인 상태: 닉네임/로그아웃 글씨 크기를 다른 메뉴 항목(17px)과 동일하게 */
+  .main-nav.open .header-actions.header-actions-login {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .main-nav.open .header-user-link {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 17px;
+  }
+
+  .main-nav.open .header-logout-form {
+    padding-left: 0;
+  }
+
+  .main-nav.open .header-logout-form::before {
+    display: none;
+  }
+
+  .main-nav.open .header-logout-text {
+    width: 100%;
+    padding: 14px 16px !important;
+    justify-content: flex-start;
+    font-size: 17px;
+  }
+
+  .nav-dropdown {
+    display: block;
+    position: relative;
+  }
+
+  .nav-dropdown .nav-menu {
+      position: absolute;
+      top: 0;
+      right: 210px;
+      left: auto;
+      margin: 0;
+      min-width: 160px;
+
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+
+      background: var(--bg-card, #ffffff);
+      border: 1px solid var(--border-color, #c8dfd1);
+      box-shadow: var(--shadow-card, 0 2px 12px rgba(30, 92, 50, 0.08));
+      border-radius: var(--border-radius-md, 12px);
+
+      display: none;
+    }
+
+  .nav-dropdown:hover .nav-menu,
+  .nav-dropdown.open .nav-menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 1100px) {
+  .site-header .nav-inner {
+    grid-template-columns: 200px 1fr 200px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .brand-logo img {
+    height: 50px;
+  }
+
+  .main-nav {
+    gap: 12px;
+  }
+
+  .main-nav .nav-link,
+  .header-btn {
+    font-size: 15px;
+  }
+
+  .main-nav .nav-link i {
+    font-size: 18px;
+  }
+
+  .header-btn {
+    min-width: 78px;
+    height: 38px;
+    padding: 0 12px;
+  }
+
+  .header-user-link,
+  .header-logout-text {
+    font-size: 14px;
+  }
+
+  .header-user-link i {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 991px) {
+  .brand-logo img {
+    height: 42px;
+  }
+}
+
+@media (max-width: 575px) {
+  .site-header .nav-inner {
+    padding: 9px 18px;
+  }
+
+  .brand-logo img {
+    height: 36px;
+  }
+}
+
+/* ── user dropdown ── */
+.user-dropdown {
+  position: relative;
+}
+
+.user-dropdown .header-user-link {
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--border-radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.user-dropdown .header-user-link:hover,
+.user-dropdown:hover .header-user-link {
+  background: var(--bg-sidebar, #f2faf5);
+}
+
+.user-dropdown .nav-menu {
+  top: 180%;   
+  right: auto;
+  left: 0;
+}
+
+.user-menu-divider {
+  height: 1px;
+  background: var(--border-color, #c8dfd1);
+  margin: 4px 0;
+}
+
+.user-menu-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary, #3d5c48);
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--border-radius-sm, 8px);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.user-menu-logout:hover {
+  background: var(--bg-sidebar-active, #daf2e6);
+  color: var(--color-primary-hover, #154424);
+}
+
+.user-menu-logout i {
+  font-size: 18px;
+  color: var(--color-primary, #1e5c32);
+}
+
+.user-menu-danger {
+  color: #d94f4f !important;
+}
+
+.user-menu-danger i {
+  color: #d94f4f !important;
+}
+
+.user-menu-danger:hover {
+  background: #fff5f5 !important;
+  color: #b33c3c !important;
+}
+

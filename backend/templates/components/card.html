@@ -1,0 +1,490 @@
+{% load static %}
+<style>
+    /* 상단 고정 및 하단 스크롤을 위한 Flexbox 설정 */
+    .detail-panel {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        /* 패널 전체 스크롤 방지 */
+    }
+
+    .detail-header-wrap {
+        flex-shrink: 0;
+        /* 상단 영역 크기 고정 */
+    }
+
+    .detail-content-wrap {
+        flex: 1 1 0;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 4px 24px 24px 24px;
+    }
+
+    .detail-pad-top {
+        padding: 24px 24px 0 24px;
+        /* 상단 고정 영역의 여백 */
+    }
+
+    /* 카테고리 배지 스타일 */
+    .detail-category-badge {
+        display: inline-block;
+        background-color: #1e5c32;
+        color: #fff;
+        font-size: var(--font-size-xs, 12px);
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        /* 제목과의 간격 */
+    }
+
+    /* 액션 버튼 그룹 (토론/채팅) */
+    .detail-action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+        margin-bottom: 20px;
+    }
+
+    .detail-action-buttons a {
+        flex: 1;
+        text-decoration: none;
+        display: flex;
+        /* a 태그 안의 button이 꽉 차도록 설정 */
+    }
+
+    /* 💬 채팅하기 버튼 (지정해주신 다크 그린) */
+    .btn-action-chat {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 0;
+        border: none;
+        border-radius: 8px;
+        background: #1e5c32;
+        /* 요청하신 색상 */
+        color: #fff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .btn-action-chat:hover {
+        background: #154224;
+        /* 호버 시 살짝 어둡게 */
+    }
+
+    /* 🗣️ 토론하기 버튼 (솔리드 레드) */
+    .btn-action-debate {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 0;
+        border: none;
+        border-radius: 8px;
+        background: #d94f4f;
+        color: #fff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .btn-action-debate:hover {
+        background: #c03a3a;
+    }
+
+    /* 💡 토론 주제 툴팁 (말풍선) 스타일 */
+    .tooltip-wrap {
+        position: relative;
+    }
+
+    /* 새로운 HTML 기반 툴팁 박스 */
+    .debate-tooltip {
+        position: absolute;
+        top: 125%;
+        left: 0;
+        /* 버튼의 왼쪽 끝에 맞춤 */
+        width: 100%;
+        /* 버튼 너비와 정확히 100% 일치시킴 */
+        box-sizing: border-box;
+        /* 패딩을 포함해서 100% 너비가 되도록 설정 */
+        background: rgba(40, 40, 40, 0.95);
+        color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        z-index: 100;
+        pointer-events: none;
+        /* 툴팁이 마우스 클릭을 방해하지 않도록 처리 */
+    }
+
+    /* 말풍선 꼬리(삼각형) */
+    .debate-tooltip::before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        /* 툴팁 박스 상단에 딱 붙임 */
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent rgba(40, 40, 40, 0.95) transparent;
+    }
+
+    /* 마우스 호버 시 툴팁 표시 */
+    .tooltip-wrap:hover .debate-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* 툴팁 내부 텍스트 디자인 */
+    .tooltip-side {
+        font-size: 12px;
+        line-height: 1.5;
+        word-break: keep-all;
+        text-align: center;
+        /* 텍스트를 중앙 정렬하여 안정감 부여 */
+    }
+
+    .tooltip-vs {
+        font-size: 12px;
+        font-weight: 800;
+        color: #ff7676;
+        /* 어두운 배경에 잘 띄는 밝은 레드(코랄)로 포인트 */
+        text-align: center;
+        margin: 6px 0;
+    }
+</style>
+
+<div class="col-lg-4 d-none" id="detailCol">
+    <div class="resize-handle" id="detailResizeHandle" title="드래그하여 너비 조절" aria-label="패널 너비 조절"></div>
+    <div class="panel-card h-100 p-0 detail-panel">
+
+        <div class="detail-header-wrap">
+            <div class="detail-head">
+                <div class="panel-title text-center" id="cardPanelTitle"><span class="spark">✦</span><span
+                        id="cardPanelTitleText">정책 카드</span><span class="spark">✦</span></div>
+                <div class="detail-close" id="detailClose" title="닫기">✕</div>
+            </div>
+
+            <!-- <div class="detail-hero">
+                <img id="detailHeroImg" src="{% static 'assets/category_cards/주거.png' %}" alt="카테고리 이미지"
+                    style="width:100%;height:100%;object-fit:cover;">
+            </div> -->
+
+            <div class="detail-pad-top">
+                <div class="detail-category-badge" id="detailCategory">🏷️주거</div>
+
+                <div class="detail-title" id="detailTitle">청년 월세 지원 <button class="detail-bookmark" id="detailBookmark"
+                        type="button" aria-label="북마크" title="북마크에 추가"><i class="bi bi-bookmark"></i></button></div>
+
+                <div class="detail-sub" id="detailSub">청년의 주거비 부담을 덜어주는 월세 지원 정책이에요.</div>
+
+                <div class="detail-action-buttons">
+                    <a id="chatAboutLink" href="#">
+                        <button class="btn-action-chat" type="button" id="chatAboutBtn">
+                            💬 채팅하기
+                        </button>
+                    </a>
+                    <a id="debateShortcutLink" href="#" class="tooltip-wrap"
+                        data-topic="청년 월세 지원은 주거비 부담 경감에 효과적이다 vs 예산 한계로 인한 형평성 문제와 임대료 상승 가능성이 크다.">
+                        <button class="btn-action-debate" type="button" id="debateShortcutBtn">
+                            🗣️ 토론하기
+                        </button>
+
+                        <div class="debate-tooltip">
+                            <div class="tooltip-side">청년 월세 지원은 주거비 부담 경감에 효과적이다</div>
+                            <div class="tooltip-vs">VS</div>
+                            <div class="tooltip-side">예산 한계로 인한 형평성 문제와 임대료 상승 가능성이 크다.</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="tabs" id="tabs">
+                    <div class="tab active">요약</div>
+                    <div class="tab">상세 정보</div>
+                    <div class="tab">찬반의견</div>
+                    <div class="tab news-tab" style="display:none;">언론사별 시각</div>
+                    <div class="tab">출처 정보</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-content-wrap">
+
+            <div class="tab-panel active" id="tabPanel0">
+
+                <div class="sum-points">
+                    <div class="sum-point">
+                        <div class="sum-point-dot">1</div>
+                        <span>🏥 충청남도민에게 입원 생활비 지원</span>
+                    </div>
+                    <div class="sum-point">
+                        <div class="sum-point-dot">2</div>
+                        <span>💼 근로소득 또는 사업소득이 있는 도민 대상</span>
+                    </div>
+                    <div class="sum-point">
+                        <div class="sum-point-dot">3</div>
+                        <span>💰 연간 최대 14일 지원 · 1일 93,840원</span>
+                    </div>
+                    <div class="sum-point">
+                        <div class="sum-point-dot">4</div>
+                        <span>📬 방문 또는 등기우편 신청 가능</span>
+                    </div>
+                    <div class="sum-point">
+                        <div class="sum-point-dot">5</div>
+                        <span>🟢 상시 신청 가능</span>
+                    </div>
+                </div>
+
+                <div class="sum-youth">
+                    <div class="sum-youth-label">✨ 청년에게 이런 점이 유용해요!</div>
+                    <div class="sum-youth-text">이 제도는 직장 생활이나 학업 중에 질병으로 인한 입원이 필요한 청년들에게 경제적인 부담을 덜어줄 수 있는 실질적인 지원책입니다.
+                        특히 자영업자나 프로젝트 기반으로 근무하는 청년들에게 유용할 수 있습니다.</div>
+                </div>
+
+                <div class="sum-detail-grid">
+                    <div class="sum-detail-row">
+                        <div class="sum-detail-icon">👤</div>
+                        <div class="sum-detail-body">
+                            <div class="sum-detail-label">지원 대상</div>
+                            <div class="sum-detail-value">국민건강보험 지역가입자 중 근로·사업소득이 있는 기준중위소득 120% 이하 도민</div>
+                        </div>
+                    </div>
+                    <div class="sum-detail-row">
+                        <div class="sum-detail-icon">💵</div>
+                        <div class="sum-detail-body">
+                            <div class="sum-detail-label">지원 내용</div>
+                            <div class="sum-detail-value">연간 최대 14일 입원 생활비 · 최대 <strong>1,313,760원</strong></div>
+                        </div>
+                    </div>
+                    <div class="sum-detail-row">
+                        <div class="sum-detail-icon">📅</div>
+                        <div class="sum-detail-body">
+                            <div class="sum-detail-label">신청 기간</div>
+                            <div class="sum-detail-value">상시 신청 🟢</div>
+                        </div>
+                    </div>
+                    <div class="sum-detail-row">
+                        <div class="sum-detail-icon">📋</div>
+                        <div class="sum-detail-body">
+                            <div class="sum-detail-label">신청 방법</div>
+                            <div class="sum-detail-value">방문 신청 원칙 · 부득이한 경우 등기우편 신청 가능</div>
+                        </div>
+                    </div>
+                    <div class="sum-detail-row">
+                        <div class="sum-detail-icon">📞</div>
+                        <div class="sum-detail-body">
+                            <div class="sum-detail-label">문의처</div>
+                            <button class="sum-contact-toggle" id="contactToggle">
+                                지역별 연락처 보기 <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <div class="sum-contact-list" id="contactList">
+                                <div class="sum-contact-item">🏙️ 천안시 · 041-521-5352</div>
+                                <div class="sum-contact-item">🏙️ 공주시 · 041-840-8124</div>
+                                <div class="sum-contact-item">🏙️ 보령시 · 041-930-3364</div>
+                                <div class="sum-contact-item">🏙️ 아산시 · 041-530-6520</div>
+                                <div class="sum-contact-item">🏙️ 서산시 · 041-660-2322</div>
+                                <div class="sum-contact-item">🏙️ 논산시 · 041-746-5345</div>
+                                <div class="sum-contact-item">🏙️ 계룡시 · 042-840-2313</div>
+                                <div class="sum-contact-item">🏙️ 당진시 · 041-350-3682</div>
+                                <div class="sum-contact-item">🏡 금산군 · 041-750-2133</div>
+                                <div class="sum-contact-item">🏡 부여군 · 041-830-2063</div>
+                                <div class="sum-contact-item">🏡 서천군 · 041-950-4081</div>
+                                <div class="sum-contact-item">🏡 청양군 · 041-940-2072</div>
+                                <div class="sum-contact-item">🏡 홍성군 · 041-630-1510</div>
+                                <div class="sum-contact-item">🏡 예산군 · 041-339-7402</div>
+                                <div class="sum-contact-item">🏡 태안군 · 041-670-2392</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-panel" id="tabPanel1">
+                <div class="info-list">
+
+                    <div class="info">
+                        <div class="ii">💡</div>
+                        <div>
+                            <div class="il">이 정책이 왜 생겼나</div>
+                            <div class="iv">충청남도에서는 소득이 적거나 불안정한 근로자들이 입원 시 발생하는 생활비 부담 때문에 필요한 치료를 제때 받지 못하는 문제가 있었다.
+                                특히 임시직,
+                                일용근로자, 아르바이트 등 노동취약계층의 경우, 입원으로 인한 소득 중단 시 생계 유지가 어려워지는 경우가 많았다.</div>
+                            <div class="iv" style="margin-top:8px;">이에 따라 충청남도는 국민건강보험 지역가입자 중 기준 중위소득 120% 이하인 도민을 대상으로
+                                입원
+                                생활비 지원 제도를 마련했다. 기존에는 일부 기초생활수급자나 의료급여 수급자에게만 제한적으로 제공되던 혜택이었으나, 이번 정책을 통해 보다 폭넓은 계층에게
+                                의료비와 생활비
+                                부담을 덜어주고자 한 것이다.</div>
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <div class="ii">📋</div>
+                        <div>
+                            <div class="il">정책 내용이 뭔가</div>
+                            <div class="iv">충청남도에서 시행하는 <strong>입원 생활비 지원</strong> 제도는 국민건강보험 지역가입자 중 근로소득이나 사업소득이 있는
+                                충청남도민을
+                                대상으로 합니다. 지원 대상은 기준중위소득 120% 이하의 소득을 가진 사람들입니다.</div>
+                            <div class="iv" style="margin-top:8px;">질병이나 부상으로 입원할 경우 연간 최대 14일(입원 치료 최대 13일 + 건강검진 1일)동안
+                                지원하며,
+                                <strong>1일당 93,840원 · 최대 1,313,760원</strong>을 계좌이체로 지급합니다.
+                            </div>
+                            <div class="iv" style="margin-top:8px;">신청은 상시 가능하며, 주민등록이 충청남도에 있어야 합니다. 거주지 읍·면·동 행정복지센터
+                                방문 신청이
+                                원칙이며, 부득이한 사정이 있을 경우 등기우편으로도 신청할 수 있습니다.</div>
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <div class="ii">🏛️</div>
+                        <div>
+                            <div class="il">관련 기관·단체 입장</div>
+                            <div class="iv">충청남도는 이 제도를 통해 경제적 부담 없이 치료에 전념할 수 있는 환경을 제공하겠다는 입장이며, 충남 지역 사회복지 단체도
+                                노동취약계층에 실질적
+                                도움이 될 것으로 긍정 평가하고 있습니다.</div>
+                            <div class="iv"
+                                style="margin-top:8px; padding:10px 12px; background:var(--bg-sidebar); border-left:3px solid var(--color-secondary); border-radius:var(--border-radius-sm);">
+                                ⚠️ 일부 전문가들은 중위소득 기준 제한으로 실제 도움이 필요한 이들이 배제될 가능성과, 복잡한 신청 절차로 인한 참여 장벽을 우려하고 있습니다.</div>
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <div class="ii">🌱</div>
+                        <div>
+                            <div class="il">청년에게 어떤 영향이 있나</div>
+                            <div class="iv">20~30대 청년, 특히 기준 중위소득 120% 이하의 자영업자·프리랜서가 갑작스러운 질병으로 입원해야 할 때, 최대
+                                <strong>1,313,760원</strong>의 지원금이 소득 손실을 보완하는 실질적 완충 역할을 합니다.
+                            </div>
+                            <div class="iv" style="margin-top:8px;">경제적 부담이 줄어 건강 회복에 집중할 수 있고, 경제 활동 복귀 시간도 단축될 수 있습니다.
+                            </div>
+                            <div class="iv"
+                                style="margin-top:10px; padding:10px 12px; background:var(--bg-sidebar-active); border:1px solid var(--color-secondary); border-radius:var(--border-radius-sm);">
+                                <div
+                                    style="font-size:var(--font-size-xs);font-weight:800;color:var(--color-primary);margin-bottom:6px;">
+                                    📌 청년 주의사항</div>
+                                <div style="font-size:var(--font-size-xs);color:var(--text-secondary);line-height:1.7;">
+                                    • 주민등록이
+                                    충남에 <strong>30일 이상</strong> 등록되어 있어야 함<br>• 입원 또는 건강검진 후 <strong>6개월 이내</strong>에
+                                    신청해야 함</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tabPanel2">
+
+                <div
+                    style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+                    <i class="bi bi-chat-square-quote" style="color:var(--color-primary);"></i>
+                    이 정책에 대한 다양한 입장을 살펴보세요
+                </div>
+
+                <div class="debate-list">
+
+                    <div class="debate-card for">
+                        <div class="debate-card-head">
+                            <span class="debate-badge">✔ 찬성</span>
+                            <span style="font-size:var(--font-size-xs);color:var(--color-primary);font-weight:700;">충청남도
+                                노동취약계층연합회</span>
+                        </div>
+                        <div class="debate-card-body">
+                            이 제도는 기준중위소득 120% 이하의 도민을 대상으로 하여, 건강상의 이유로 입원하게 된 경우 최대 14일 동안 하루 <strong>93,840원</strong>의
+                            생활비를
+                            지원합니다. 이를 통해 노동취약계층, 특히 일용직·임시근로자·아르바이트생 등이 병원비 외에도 생계비 걱정 없이 치료에만 전념할 수 있는 환경을 제공합니다.
+                            <div
+                                style="margin-top:10px;padding:8px 10px;background:linear-gradient(135deg,#eaf6ef,#d4eedf);border-radius:var(--border-radius-sm);font-size:var(--font-size-xs);color:var(--color-primary);font-weight:700;">
+                                💚 상시 신청 가능 · 충남 주민등록 요건 충족 시 즉시 혜택 · 지역 주민 건강 증진 및 경제적 안정 효과 기대
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="debate-card against">
+                        <div class="debate-card-head">
+                            <span class="debate-badge">✖ 반대</span>
+                            <span style="font-size:var(--font-size-xs);color:#d94f4f;font-weight:700;">제도적 한계 지적</span>
+                        </div>
+                        <div class="debate-card-body">
+                            긍정적 취지에도 불구하고 여러 한계가 드러납니다. 소득 제한으로 인해 차상위계층이나 소득 파악이 어려운 비정규직·무직 상태의 개인들은 지원받지 못할 가능성이 크고,
+                            일용직·임시근로자는 서류 제출 시점에 따라 자격에서 배제될 수도 있습니다.
+                            <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+                                <div
+                                    style="display:flex;align-items:flex-start;gap:8px;font-size:var(--font-size-xs);color:var(--text-secondary);line-height:1.6;">
+                                    <span style="flex:0 0 auto;color:#d94f4f;font-weight:800;">①</span>방문 신청 원칙 → 시간 없는
+                                    근로자·교통 불편
+                                    지역 주민에게 진입 장벽
+                                </div>
+                                <div
+                                    style="display:flex;align-items:flex-start;gap:8px;font-size:var(--font-size-xs);color:var(--text-secondary);line-height:1.6;">
+                                    <span style="flex:0 0 auto;color:#d94f4f;font-weight:800;">②</span>심사·지급 절차 복잡 시 긴급
+                                    의료 상황에 신속
+                                    대처 어려움
+                                </div>
+                                <div
+                                    style="display:flex;align-items:flex-start;gap:8px;font-size:var(--font-size-xs);color:var(--text-secondary);line-height:1.6;">
+                                    <span style="flex:0 0 auto;color:#d94f4f;font-weight:800;">③</span>최대 14일 제한 → 장기 치료
+                                    환자에게는
+                                    충분하지 않을 수 있음
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="tab-panel news-panel" id="tabPanel3" style="display:none;">
+                <div class="info-list" id="perspectivesList">
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tabPanel4">
+                <div class="info-list">
+                    <div class="info">
+                        <div class="ii">🔗</div>
+                        <div>
+                            <div class="il">공식 안내</div>
+                            <div class="iv">복지로 (www.bokjiro.go.kr) &gt; 서비스 신청 &gt; 주거</div>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="ii">📞</div>
+                        <div>
+                            <div class="il">문의처</div>
+                            <div class="iv">주거급여 콜센터 1600-0777 (평일 09:00~18:00)</div>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="ii">🏛️</div>
+                        <div>
+                            <div class="il">소관 부처</div>
+                            <div class="iv">국토교통부 주거복지정책과</div>
+                        </div>
+                    </div>
+                    <div class="info">
+                        <div class="ii">📅</div>
+                        <div>
+                            <div class="il">정보 기준일</div>
+                            <div class="iv">2025년 6월 기준 (변경 가능, 공식 사이트 확인 권장)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

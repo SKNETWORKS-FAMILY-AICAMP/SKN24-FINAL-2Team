@@ -1,0 +1,263 @@
+/* ===============================
+   PoliCity Bus Stop Page
+================================ */
+
+/* 스크롤 차단 */
+body {
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+}
+
+/* 이미지 드래그 방지 */
+.bus-stop-page img { -webkit-user-drag: none; user-select: none; }
+.board-btn { pointer-events: auto !important; }
+
+/* ===============================
+   페이지 래퍼
+================================ */
+.bus-stop-page {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: calc(100vh - var(--header-height, 82px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===============================
+   타이틀
+================================ */
+.bus-stop-title {
+  flex-shrink: 0;
+  text-align: center;
+  
+  /* 🌟 핵심: padding-top을 줄이고 margin-top을 추가하여 타이틀 블록 전체를 아래로 밀어냄 */
+  padding-top: 180px; 
+  margin-top: 40px; 
+  
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  z-index: 20;
+}
+
+.bus-stop-title h1 {
+  font-weight: 900;
+  font-size: clamp(26px, 3.5vw, 48px);
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  text-shadow: 0 2px 12px rgba(255,255,255,0.95);
+}
+
+.bus-stop-title h1 .hl { color: var(--color-primary-light); }
+
+.bus-stop-title .spark {
+  display: inline-block;
+  width: clamp(22px, 2.8vw, 34px);
+  height: clamp(22px, 2.8vw, 34px);
+  flex: 0 0 auto;
+  background: url("/static/assets/star.png") center / contain no-repeat;
+  image-rendering: pixelated;
+}
+
+@keyframes spark-tw {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.05); }
+}
+
+.bus-stop-title .sub {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: clamp(12px, 1.1vw, 15px);
+  font-weight: 600;
+  text-shadow: 0 1px 6px rgba(255,255,255,0.9);
+}
+
+/* ===============================
+   씬 래퍼 — 정류장 + 버스 + 폴리
+   타이틀 padding만큼 margin 음수로 당김
+================================ */
+.bus-scene {
+  position: relative;
+  width: 100%;
+  max-width: 1700px;
+  flex: 1 1 auto;
+  
+  /* 🌟 핵심: 타이틀이 내려온 만큼 음수 마진도 조절하여 간격 최적화 */
+  margin: -200px auto 0; 
+  
+  z-index: 2;
+  min-height: 0;
+}
+
+/* 정류장 지붕 — z:2 (버스 뒤) */
+.bus-shelter-img {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 108%;
+  max-width: 1700px;
+  height: 620px; 
+  object-fit: fill; 
+  pointer-events: none;
+  top:80px;
+}
+
+/* 버스 열 — z:3 (지붕 앞) */
+.bus-row {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(3px, 0.6vw, 10px);
+  padding-left:  clamp(10px, 2vw, 40px);
+  padding-right: clamp(10px, 2vw, 40px);
+  padding-top: clamp(120px, 14vw, 185px);
+  margin-left: -4px;
+  height:111%;
+}
+
+/* ===============================
+   버스 카드
+================================ */
+.bus-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  max-width: 230px;
+  transition: transform 0.16s cubic-bezier(0.3,1.2,0.4,1);
+  cursor: pointer;
+}
+
+.bus-card:hover { transform: translateY(-8px); }
+
+.bus-figure {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.bus-img {
+  width: 100%;
+  height: clamp(150px, 30vh, 500px);
+  object-fit: fill;
+  object-position: bottom;
+  image-rendering: auto;
+  filter: drop-shadow(0 6px 6px rgba(23,58,41,0.22));
+}
+
+.board-btn {
+  margin-top: 5px;
+  width: 100%;
+  background: var(--bus-color, var(--color-primary));
+  color: #fff;
+  border: 0;
+  font-weight: 700;
+  font-size: clamp(10px, 1vw, 13px);
+  border-radius: var(--border-radius-sm);
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  box-shadow: 0 3px 0 rgba(23,58,41,0.28);
+  letter-spacing: 0.3px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.board-btn:hover {
+  color: #fff; transform: translateY(-1px);
+  filter: brightness(1.08); box-shadow: 0 5px 0 rgba(23,58,41,0.28);
+}
+
+.board-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(23,58,41,0.28); }
+.board-btn i { margin-right: 4px; }
+
+/* 폴리 — 씬 좌측 하단, z:5 */
+.polly-wrap {
+  position: fixed;
+  z-index: 15;
+  left: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.polly-wrap img {
+  width: clamp(180px, 20vw, 310px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 6px rgba(23,58,41,0.18));
+}
+
+/* ===============================
+   설명 박스 — 씬 바로 아래 정적 배치
+================================ */
+.info-bar {
+  flex-shrink: 0;
+  width: 88%;
+  max-width: 1080px;
+  margin: 0 auto 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 10;
+}
+
+.info-item {
+  padding: 12px 18px;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.info-item:first-child { border-radius: calc(var(--border-radius-lg) - 1px) 0 0 calc(var(--border-radius-lg) - 1px); }
+.info-item:last-child { border-right: none; border-radius: 0 calc(var(--border-radius-lg) - 1px) calc(var(--border-radius-lg) - 1px) 0; }
+
+.info-title {
+  font-weight: 800;
+  font-size: clamp(11px, 1vw, 14px);
+  color: var(--text-primary);
+}
+
+.info-desc {
+  font-weight: 500;
+  font-size: clamp(10px, 0.85vw, 12px);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ===============================
+   반응형
+================================ */
+@media (max-width: 1100px) {
+  .bus-row { padding-top: clamp(70px, 10vw, 130px); }
+  .bus-card { max-width: 200px; }
+}
+
+@media (max-width: 780px) {
+  .bus-row { flex-wrap: wrap; padding: clamp(50px,8vw,100px) 8px 0; }
+  .bus-card { max-width: 30%; }
+  .info-bar { grid-template-columns: repeat(2,1fr); }
+  .polly-wrap { display: none; }
+}
+
+@media (max-width: 480px) {
+  .bus-card { max-width: 45%; }
+  .info-bar { grid-template-columns: 1fr; }
+}

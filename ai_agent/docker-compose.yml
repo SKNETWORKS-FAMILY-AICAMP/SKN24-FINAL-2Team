@@ -1,0 +1,47 @@
+services:
+
+  # ── FastAPI AI Agent ──────────────────────────────────────────────────────
+  ai_agent:
+    build: .
+    restart: always
+    env_file: .env
+    ports:
+      - "8001:8001"
+    volumes:
+      # (requirements.txt 변경 시에만 --build 필요)
+      # - .:/app    # 소스 bind-mount: 호스트 코드 수정 → restart 만으로 반영(재빌드 불필요)
+      # LangGraph SQLite checkpoint 영속 (위 bind-mount 위에 덮어써 /app/checkpoints 는 named volume 유지)
+      
+      - checkpoint_volume:/app/checkpoints
+      # Qdrant 로컬 스토리지를 컨테이너에 마운트
+      # (이미 데이터가 있는 qdrant_storage/ 디렉터리를 재사용)
+      - ./qdrant_storage:/qdrant/storage
+    depends_on:
+      - qdrant
+    # --reload 제거: 프로덕션에서는 불필요, 로컬 개발 시만 추가
+    command: uvicorn main:app --host 0.0.0.0 --port 8001
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8001/docs || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s   # 모델 로드 시간 고려
+
+  # ── Qdrant 벡터 DB ────────────────────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:v1.9.0
+    restart: always
+    ports:
+      - "6333:6333"   # HTTP REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - ./qdrant_storage:/qdrant/storage   # 기존 로컬 데이터 재사용
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  checkpoint_volume:
+  # qdrant_storage는 named volume 대신 bind mount 사용 (위 volumes: 항목에서 제거)

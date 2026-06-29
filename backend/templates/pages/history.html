@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="scenery"><div class="sky-clouds"></div></div>
+
+<main class="page-wrap">
+  <div style="display:flex; gap:24px; align-items:flex-start;">
+
+    <div style="flex:1; min-width:0; max-width:1000px; margin:0 auto;">
+      <h1 class="page-title" style="justify-content:center; letter-spacing:1.5px; margin-top: 50px;"><span class="spark">✦</span>히스토리<span class="spark">✦</span></h1>
+      <p class="page-sub" style="justify-content:center;text-align:center;">지금까지 나눈 대화와 토론을 확인하고 이어서 진행해 보세요.</p>
+
+      <div class="panel-card mb-4 hist-card" data-hist="debate">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <span class="section-chip"><i class="bi bi-people-fill"></i>토론 히스토리</span>
+          <div class="hist-tools">
+            <button class="bm-select-btn" data-act="select"><i class="bi bi-check2-square"></i>선택</button>
+            <div class="bm-select-actions d-none" data-actions>
+              <span class="bm-count"><b>0</b>개 선택됨</span>
+              <button class="bm-all-btn" data-act="all"><i class="bi bi-check-all"></i>전체 선택</button>
+              <button class="btn-danger-soft" data-act="delete"><i class="bi bi-trash3"></i>삭제</button>
+              <button class="bm-cancel-btn" data-act="cancel">취소</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="poli-table hist-table" id="debateTable">
+            <thead><tr><th class="sel-col"></th><th>토론 주제</th><th class="center">라운드</th><th class="center">모드</th><th>참여 일시</th><th class="center">상태</th><th class="center">&nbsp;</th></tr></thead>
+            <tbody id="debateTbody"></tbody>
+          </table>
+        </div>
+        <div class="hist-pager"></div>
+        <p class="table-note text-center mt-3">※ 삭제된 히스토리는 복구할 수 없습니다.</p>
+      </div><!-- /panel-card debate -->
+
+      <div class="panel-card hist-card" data-hist="chat">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <span class="section-chip"><i class="bi bi-chat-dots-fill"></i>채팅 히스토리</span>
+          <div class="hist-tools">
+            <button class="bm-select-btn" data-act="select"><i class="bi bi-check2-square"></i>선택</button>
+            <div class="bm-select-actions d-none" data-actions>
+              <span class="bm-count"><b>0</b>개 선택됨</span>
+              <button class="bm-all-btn" data-act="all"><i class="bi bi-check-all"></i>전체 선택</button>
+              <button class="btn-danger-soft" data-act="delete"><i class="bi bi-trash3"></i>삭제</button>
+              <button class="bm-cancel-btn" data-act="cancel">취소</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="poli-table hist-table" id="chatTable">
+            <thead><tr><th class="sel-col"></th><th>대화 제목</th><th>참여 일시</th><th class="center">&nbsp;</th></thead>
+            <tbody id="chatTbody"></tbody>
+          </table>
+        </div>
+        <div class="hist-pager"></div>
+        <p class="table-note text-center mt-3">※ 삭제된 히스토리는 복구할 수 없습니다.</p>
+      </div><!-- /panel-card chat -->
+    </div><!-- /left -->
+</main>
+
+<div id="deleteModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:var(--border-radius-lg);padding:28px 28px 22px;max-width:320px;width:90%;box-shadow:var(--shadow-lg);text-align:center;">
+    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+    <div id="deleteModalTitle" style="font-weight:800;font-size:var(--font-size-lg);color:var(--text-primary);margin-bottom:8px;"></div>
+    <div id="deleteModalMsg" style="font-size:var(--font-size-md);color:var(--text-secondary);margin-bottom:22px;line-height:1.6;"></div>
+    <div style="display:flex;gap:10px;">
+      <button id="deleteModalCancel" style="flex:1;padding:10px;border:1.5px solid var(--border-color);border-radius:var(--border-radius-md);background:#fff;font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:var(--text-secondary);cursor:pointer;">취소</button>
+      <button id="deleteModalConfirm" style="flex:1;padding:10px;border:none;border-radius:var(--border-radius-md);background:var(--color-danger,#d94f4f);font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:#fff;cursor:pointer;">삭제</button>
+    </div>
+  </div>
+</div>
+<div id="alertModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:var(--border-radius-lg);padding:28px 28px 22px;max-width:320px;width:90%;box-shadow:var(--shadow-lg);text-align:center;">
+    <div id="alertModalMsg" style="font-size:var(--font-size-md);color:var(--text-secondary);margin-bottom:22px;line-height:1.6;"></div>
+    <button id="alertModalOk" style="width:100%;padding:10px;border:1.5px solid var(--border-color);border-radius:var(--border-radius-md);background:#fff;font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:var(--text-secondary);cursor:pointer;">확인</button>
+  </div>
+</div>
+<div class="ground">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/history.js' %}?v=5"></script>
+{% endblock %}

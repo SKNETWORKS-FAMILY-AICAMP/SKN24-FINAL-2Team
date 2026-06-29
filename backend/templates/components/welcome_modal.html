@@ -1,0 +1,42 @@
+<!-- ===== first-visit welcome modal ===== -->
+<div id="welcomeModal" style="
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,.35); align-items:center; justify-content:center;">
+  <div style="
+    background:#fff; border-radius:var(--border-radius-lg);
+    padding:28px 28px 22px; max-width:700px; width:90%;
+    box-shadow:var(--shadow-lg);">
+    <div style="font-size:36px; margin-bottom:10px; font-weight:600;">🐻‍❄️ 안녕! 난 백곰 '폴리'야. 만나서 반가워!</div>
+    <!-- <div style="font-weight:800; font-size:var(--font-size-lg); color:var(--text-primary); margin-bottom:10px;"></div> -->
+    <div style="font-size:var(--font-size-md); color:var(--text-secondary); white-space:pre-line;">
+      "나는 너와 함께 정치와 다양한 정책을 알아갈 정보 전달 챗봇이야. 우리 플랫폼을 100% 활용할 수 있는 간단한 사용법을 알려줄게!"
+
+      <strong style="font-weight: 10rem; font-size: 20px;">🔍 맞춤형 카드 추천</strong>
+      네가 관심 있는 키워드나 우리와 나눈 대화를 바탕으로, 너에게 꼭 필요한 뉴스와 정부 정책을 카드로 추천해 줄게.
+
+      <strong style="font-weight: 10rem; font-size: 20px;">💬 자유로운 대화</strong>
+      추천받은 카드에 대해 더 자세히 물어봐도 좋고, 일상적인 이야기나 다른 정치적 이슈에 대해 자유롭게 대화해도 괜찮아!
+
+      <strong style="font-weight: 10rem; font-size: 20px;">💡 나에게 맞는 정책 찾기</strong>
+      어려운 정치뿐만 아니라, "지금 내가 신청할 수 있는 지원금이나 정책이 있을까?" 같은 실속 있는 질문도 언제든 환영이야.
+
+      <strong style="font-weight: 10rem; font-size: 20px;"> ⚠️ 폴리와의 대화 규칙!</strong>
+
+      중립을 지켜요: 나는 특정 정당을 지지하거나 비난하지 않고, 언제나 중립적인 정보만 전달해.
+
+      존중을 담아 대화해요: 우리 플랫폼에서는 모두의 안전한 학습을 위해 혐오 표현이나 비방은 사용할 수 없어. 서로 존중하며 유익한 시간을 만들어 가자!
+
+
+
+
+    </div>
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <button id="welcomeModalConfirm" style="
+        flex:1; padding:10px; border:1.5px solid transparent;
+        border-radius:var(--border-radius-md); background:var(--color-primary, #4f8ef7);
+        font-family:inherit; font-size:var(--font-size-md); font-weight:700;
+        color:#fff; cursor:pointer;
+        transition:background .15s;">시작하기</button>
+    </div>
+  </div>
+</div>

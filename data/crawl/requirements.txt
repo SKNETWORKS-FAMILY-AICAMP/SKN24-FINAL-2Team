@@ -1,9 +1,0 @@
-requests
-beautifulsoup4
-lxml
-pandas
-python-dotenv
-apscheduler
-trafilatura
-newspaper3k
-openai

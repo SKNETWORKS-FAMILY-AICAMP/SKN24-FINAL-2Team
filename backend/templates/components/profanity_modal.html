@@ -1,0 +1,30 @@
+<!-- ===== profanity warning modal ===== -->
+<div id="profanityModal" style="
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,.35); align-items:center; justify-content:center;">
+  <div style="
+    background:#fff; border-radius:var(--border-radius-lg);
+    padding:28px 28px 22px; max-width:400px; width:90%;
+    box-shadow:var(--shadow-lg); text-align:center;">
+    <div style="font-size:28px; margin-bottom:10px;" id="warning_icon">⚠️</div>
+    <div id="profanityModalTitle"
+      style="font-weight:800; font-size:var(--font-size-lg); color:var(--text-primary); margin-bottom:8px;">경고
+    </div>
+    <div
+      style="font-size:var(--font-size-md); font-weight:700; color:var(--color-danger, #d94f4f); margin-bottom:10px;">
+      경고 <span id="profanityFoulCount">1</span>/3
+    </div>
+    <div id="profanityModalMsg"
+      style="font-size:var(--font-size-md); color:var(--text-secondary); margin-bottom:22px; line-height:1.6; white-space:pre-line;">
+      욕설, 모욕,
+      혐오 및 차별적 표현이 감지되었습니다. 부적절한 이용 행위가 지속될 경우 운영 정책에 의해 사전 통보 없이 서비스 이용이 영구 차단될 수 있습니다.</div>
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <button id="profanityModalConfirm" style="
+        flex:1; padding:10px; border:1.5px solid var(--border-color);
+        border-radius:var(--border-radius-md); background:var(--color-primary, #4f6ef7);
+        font-family:inherit; font-size:var(--font-size-md); font-weight:700;
+        color:rgb(255, 255, 255);
+        transition:background .15s, border-color .15s;">확인</button>
+    </div>
+  </div>
+</div>

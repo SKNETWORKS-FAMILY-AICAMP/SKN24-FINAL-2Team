@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+<link rel="stylesheet" href="{% static 'css/cards/card_list.css' %}"
+{% endblock %}
+{% block content %}
+<!-- ===== scenery ===== -->
+<div class="scenery"><div class="sky-clouds"></div></div>
+
+<!-- ===== page ===== -->
+<main class="page-wrap">
+  <div class="row g-4">
+
+    <!-- sidebar -->
+    <div class="col-lg-3" style="font-family: Pretendard">
+      <aside class="mp-side" style="margin: 80px 0px 0px;">
+        <div class="crest"><img src="{% static 'assets/badge_p.png' %}" alt="PoliCity"></div>
+        <div class="mp-title"><span class="spark">✦</span>마이페이지<span class="spark">✦</span></div>
+        <nav class="mp-nav" id="mpNav">
+          <a href="#" class="active" data-view="profile" style="font-family: Pretendard"><i class="bi bi-person"></i>회원정보 관리</a>
+          <a href="#" data-view="bookmark" style="font-family: Pretendard"><i class="bi bi-bookmark"></i>북마크</a>
+          <a href="#" data-view="withdraw" style="font-family: Pretendard"><i class="bi bi-shield-lock"></i>회원 탈퇴</a>
+        </nav>
+      </aside>
+    </div>
+
+    <!-- content -->
+    <div class="col-lg-9 mp-content">
+
+    <!-- ============ VIEW: 회원정보 관리 ============ -->
+    <section class="mp-view" data-view="profile">
+        <img class="twinkle" src="{% static 'assets/shine.png' %}" style="top:6px; right:18%;" alt="">
+  
+        <h1 class="page-title" style="justify-content:center; gap:10px; letter-spacing:1.5px;"><span class="spark">✦</span>회원정보 관리<span class="spark">✦</span></h1>
+        
+        <p class="page-sub" style="justify-content:center; text-align:center;">회원님의 정보를 확인하고 수정할 수 있습니다.</p>
+
+        <!-- profile header -->
+        <div class="panel-card mb-4 profile-card">
+          <div class="profile-head">
+            <div class="profile-avatar">
+              <img id="profileAvatar" src="" alt="프로필" style="width:100%;height:100%;object-fit:cover;object-position:top;display:none;">
+            </div>
+
+            <div class="name-edit" id="nameEdit">
+              <span id="displayName" class="name-text" title="클릭하여 닉네임 수정"></span>
+              <input class="name-input d-none" type="text" maxlength="12" value="정책 탐험가" aria-label="닉네임 수정">
+              <button class="name-pencil" type="button" aria-label="닉네임 수정"><i class="bi bi-pencil"></i></button>
+              <span class="name-err"></span>
+            </div>
+
+            <div class="gender-toggle" id="genderToggle">
+              <button type="button" data-gender="male"><i class="bi bi-gender-male"></i>남성</button>
+              <button type="button" data-gender="female"><i class="bi bi-gender-female"></i>여성</button>
+              <button type="button" data-gender="other">선택하지 않음</button>
+            </div>
+            <div class="tag mt-3"><i class="bi bi-calendar-check"></i>회원 가입일</div>
+
+            <div class="d-grid gap-3 mt-4" style="width:100%;max-width:380px;">
+              <div class="form-row-card" data-field="email">
+                <span class="lbl">이메일</span>
+                <span class="val"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- password + residence -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <div class="panel-card h-100">
+              <h3 class="mini-title"><i class="bi bi-lock-fill"></i>비밀번호 변경</h3>
+              <div class="d-grid gap-3">
+                <div class="input-with-eye">
+                  <input type="password" class="poli-input" id="pwCurrent" placeholder="현재 비밀번호를 입력하세요">
+                  <button class="eye" type="button"><i class="bi bi-eye-slash"></i></button>
+                </div>
+                <div class="input-with-eye">
+                  <input type="password" class="poli-input" id="pwNew" placeholder="새 비밀번호 (8~16자, 영문/숫자/특수문자)">
+                  <button class="eye" type="button"><i class="bi bi-eye-slash"></i></button>
+                </div>
+                <div class="input-with-eye">
+                  <input type="password" class="poli-input" id="pwConfirm" placeholder="새 비밀번호를 다시 입력하세요">
+                  <button class="eye" type="button"><i class="bi bi-eye-slash"></i></button>
+                </div>
+              </div>
+              <p id="pwError" style="font-size:12px; color:var(--color-danger); margin:4px 0 0; display:none;"></p>
+              <p id="pwSuccess" style="font-size:12px; color:var(--color-success); margin:4px 0 0; display:none;"></p>
+              <p class="help-note" style="font-size: 11px">※ 비밀번호는 8~16자이며, 영문 대소문자/숫자/특수문자를 포함해야 합니다.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel-card h-100">
+              <h3 class="mini-title"><i class="bi bi-geo-alt-fill"></i>거주지 수정</h3>
+              <div class="d-grid gap-3">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="field-icon-label" style="font-family: Pretendard"><i class="bi bi-building"></i>시 / 도</span>
+                  <select class="poli-select flex-fill" id="sidoSelect"></select>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <span class="field-icon-label" style="font-family: Pretendard"><i class="bi bi-pin-map"></i>시 / 군 / 구</span>
+                  <select class="poli-select flex-fill" id="sigunguSelect"></select>
+                </div>
+              </div>
+              <p class="help-note" style="font-size: 12px">※ 거주지는 service 이용에 맞는 정보 제공을 위해 사용됩니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- interests -->
+        <div class="panel-card mb-4">
+          <h3 class="mini-title"><i class="bi bi-hash"></i>관심사 키워드 수정 <span style="font-weight:600;color:var(--text-muted);font-size:var(--font-size-sm);">(최대 3개 선택)</span></h3>
+          <div class="kw-grid" id="kwGrid">
+            <div class="kw-chip" data-kw="job" style="font-family: Pretendard"><img class="kwi" src="{% static 'assets/job.png' %}" alt="">일자리<span class="check"><i class="bi bi-check"></i></span></div>
+            <div class="kw-chip" data-kw="housing" style="font-family: Pretendard"><img class="kwi" src="{% static 'assets/housing.png' %}" alt="">주거<span class="check"><i class="bi bi-check"></i></span></div>
+            <div class="kw-chip" data-kw="education"><img class="kwi" src="{% static 'assets/education.png' %}" alt="">교육<span class="check"><i class="bi bi-check"></i></span></div>
+            <div class="kw-chip" data-kw="culture"><img class="kwi" src="{% static 'assets/culture.png' %}" alt="">문화<span class="check"><i class="bi bi-check"></i></span></div>
+            <div class="kw-chip" data-kw="finance" style="font-family: Pretendard"><img class="kwi" src="{% static 'assets/finance.png' %}" alt="">금융<span class="check"><i class="bi bi-check"></i></span></div>
+            <div class="kw-chip" data-kw="welfare" style="font-family: Pretendard"><img class="kwi" src="{% static 'assets/welfare.png' %}" alt="">생활복지<span class="check"><i class="bi bi-check"></i></span></div>
+          </div>
+          <p class="help-note">※ 최대 3개까지 선택할 수 있습니다.</p>
+        </div>
+
+        <div class="text-center">
+          <button class="btn-big-save" id="btnSave" style="font-family: Pretendard"><i class="bi bi-save"></i>변경사항 저장</button>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: 회원 탈퇴 ============ -->
+      <section class="mp-view d-none" data-view="withdraw">
+        <h1 class="page-title" style="justify-content:center; gap:12px; letter-spacing:1.5px;"><span class="spark">✦</span>회원 탈퇴<span class="spark">✦</span></h1>
+        <p class="page-sub" style="justify-content:center; text-align:center;">회원 탈퇴를 진행하기 전, 아래 내용을 꼭 확인해주세요.</p>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-7">
+            <div class="warn-box h-100">
+              <div class="wt"><i class="bi bi-exclamation-triangle-fill"></i>탈퇴 시 유의사항</div>
+              <ul>
+                <li>탈퇴 시 계정에 저장된 모든 정보가 즉시 삭제됩니다.</li>
+                <li>삭제된 정보는 복구할 수 없습니다.</li>
+                <li>본인 확인을 위해 현재 비밀번호를 입력해야 합니다.</li>
+                <li>탈퇴 후 동일한 이메일 및 닉네임으로 재가입이 가능합니다.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="panel-card text-center h-100 d-flex flex-column align-items-center justify-content-center" style="border-color:#cbe2d4;">
+              <img src="{% static 'assets/bear_warn.png' %}" alt="폴리" style="width:200px;height:auto;margin-bottom:10px;">
+              <div style="font-weight:900;color:var(--text-primary);font-size:var(--font-size-xl);">정말 떠나시나요?</div>
+              <div style="color:var(--text-muted);font-weight:600;margin-top:4px;">탈퇴 전에 다시 한 번 확인해주세요!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card mb-4">
+          <h3 class="mini-title"><i class="bi bi-person-check-fill"></i>본인 확인</h3>
+          <label class="field-label">현재 비밀번호 입력 <span class="req">*</span></label>
+          <div class="input-with-eye" style="max-width:520px;">
+            <input type="password" class="poli-input" placeholder="현재 비밀번호를 입력해주세요.">
+            <button class="eye" type="button"><i class="bi bi-eye-slash"></i></button>
+          </div>
+        </div>
+
+        <div class="panel-card mb-4">
+          <h3 class="mini-title"><i class="bi bi-check2-square"></i>탈퇴 확인</h3>
+          <div class="agree-row">
+            <input type="checkbox" id="agreeWithdraw">
+            <label for="agreeWithdraw">위 안내 사항을 모두 확인하였으며, 회원 탈퇴에 동의합니다. <span class="req-tag">(필수)</span></label>
+          </div>
+        </div>
+
+        <button class="btn-big-danger"><i class="bi bi-box-arrow-right"></i>회원 탈퇴 진행</button>
+      </section>
+
+      <!-- ============ VIEW: 북마크 ============ -->
+      <section class="mp-view d-none" data-view="bookmark">
+        <h1 class="page-title" style="justify-content:center;gap:10px; letter-spacing:1.5px;"><span class="spark">✦</span>북마크<span class="spark">✦</span></h1>
+        <p class="page-sub" style="justify-content:center;text-align:center;">북마크한 카드를 선택하면 해당 카드가 열린 새로운 채팅이 시작됩니다.</p>
+
+        <div class="row g-4 mt-1">
+          <!-- list -->
+          <div class="col-lg-7">
+            <div class="panel-card">
+              <div class="bm-tabs mb-3" id="bmTabs">
+                <button class="active" data-tab="policy"><i class="bi bi-journal-bookmark-fill"></i>정책 카드</button>
+                <button data-tab="news"><i class="bi bi-newspaper"></i>뉴스 카드</button>
+              </div>
+
+              <!-- toolbar: select / delete -->
+              <div class="bm-toolbar">
+                <span class="bm-toolbar-label"><i class="bi bi-grid-fill"></i>북마크한 카드</span>
+                <button class="bm-select-btn" id="bmSelectBtn"><i class="bi bi-check2-square"></i>선택 </button>
+                <div class="bm-select-actions d-none" id="bmSelectActions">
+                  <span class="bm-count"><b id="bmSelCount">0</b>개 선택됨</span>
+                  <button class="bm-all-btn" id="bmAllBtn"><i class="bi bi-check-all"></i>전체 선택</button>
+                  <button class="btn-danger-soft" id="bmDeleteBtn"><i class="bi bi-trash3"></i>삭제</button>
+                  <button class="bm-cancel-btn" id="bmCancelBtn">취소</button>
+                </div>
+              </div>
+
+              <!-- POLICY list -->
+              <div class="bm-list" data-tab="policy">
+                <div class="d-grid gap-3 bm-grid" id="bmGridPolicy"></div>
+                <div class="bm-pager" data-pager="policy"></div>
+              </div>
+
+              <!-- NEWS list -->
+              <div class="bm-list d-none" data-tab="news">
+                <div class="d-grid gap-3 bm-grid" id="bmGridNews"></div>
+                <div class="bm-pager" data-pager="news"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- right rail -->
+          <div class="col-lg-5">
+            <div class="panel-card mb-4">
+              <h3 class="mini-title mb-3"><i class="bi bi-eye-fill"></i>선택한 카드 미리보기</h3>
+              <div class="d-flex gap-3 align-items-start mb-3">
+                <div class="thumb" style="width:78px;height:78px;border-radius:var(--border-radius-md);overflow:hidden;flex:0 0 auto;border:1px solid var(--border-color);background:linear-gradient(180deg,#eaf6ef,#d9eede);">
+                  <img id="pvCardImg" src="" alt="" style="width:100%;height:100%;object-fit:contain;padding:8px;display:none;">
+                </div>
+                <div>
+                  <div id="pvCardTitle" style="font-weight:800;color:var(--text-primary);">카드를 선택해주세요</div>
+                  <div id="pvCardDesc" style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px;line-height:1.5;"></div>
+                </div>
+              </div>
+              <a href="#" id="btnStartChat" class="btn-poli-outline w-100 justify-content-between" style="padding:11px 16px; pointer-events:none; opacity:0.5;">카드 확인하기<i class="bi bi-chevron-right"></i></a>
+            </div>
+
+            <div class="panel-card">
+              <h3 class="mini-title mb-1"><i class="bi bi-diagram-3-fill"></i>북마크 클러스터</h3>
+              <p class="help-note mt-0 mb-2">분야를 누르면 담긴 카드 제목을 볼 수 있어요.</p>
+              <div class="cluster">
+                <svg viewBox="0 0 300 248" preserveAspectRatio="none">
+                  <g stroke="#cfe0d4" stroke-width="1.5" fill="none">
+                    <line x1="150" y1="124" x2="150" y2="42"></line>
+                    <line x1="150" y1="124" x2="46"  y2="80"></line>
+                    <line x1="150" y1="124" x2="254" y2="80"></line>
+                    <line x1="150" y1="124" x2="46"  y2="184"></line>
+                    <line x1="150" y1="124" x2="254" y2="184"></line>
+                    <line x1="150" y1="124" x2="150" y2="214"></line>
+                  </g>
+                </svg>
+                <div class="center"><i class="bi bi-bookmark-fill"></i></div>
+                <button class="node" data-cat="job" style="left:50%;top:4px;transform:translateX(-50%);"><img class="ni" src="{% static 'assets/job.png' %}" alt="">일자리 <span class="cnt">2</span></button>
+                <button class="node" data-cat="housing" style="left:0;top:60px;"><img class="ni" src="{% static 'assets/housing.png' %}" alt="">주거 <span class="cnt">2</span></button>
+                <button class="node" data-cat="education" style="right:0;top:60px;"><img class="ni" src="{% static 'assets/education.png' %}" alt="">교육 <span class="cnt">1</span></button>
+                <button class="node" data-cat="finance" style="left:0;bottom:52px;"><img class="ni" src="{% static 'assets/finance.png' %}" alt="">금융 <span class="cnt">1</span></button>
+                <button class="node" data-cat="culture" style="right:0;bottom:52px;"><img class="ni" src="{% static 'assets/culture.png' %}" alt="">문화 <span class="cnt">1</span></button>
+                <button class="node" data-cat="welfare" style="left:50%;bottom:4px;transform:translateX(-50%);"><img class="ni" src="{% static 'assets/welfare.png' %}" alt="">생활복지 <span class="cnt">0</span></button>
+              </div>
+              <div class="cluster-cap" id="clusterCap"><span class="cap-empty"><i class="bi bi-hand-index"></i> 분야를 누르면 담긴 카드 제목이 여기에 표시돼요.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+
+<!-- ===== 삭제 확인 모달 ===== -->
+<div id="deleteModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:var(--border-radius-lg);padding:28px 28px 22px;max-width:320px;width:90%;text-align:center;">
+    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+    <div id="deleteModalTitle" style="font-weight:800;font-size:var(--font-size-lg);color:var(--text-primary);margin-bottom:8px;"></div>
+    <div id="deleteModalMsg" style="font-size:var(--font-size-md);color:var(--text-secondary);margin-bottom:22px;line-height:1.6;"></div>
+    <div style="display:flex;gap:10px;">
+      <button id="deleteModalCancel" style="flex:1;padding:10px;border:1.5px solid var(--border-color);border-radius:var(--border-radius-md);background:#fff;font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:var(--text-secondary);cursor:pointer;">취소</button>
+      <button id="deleteModalConfirm" style="flex:1;padding:10px;border:none;border-radius:var(--border-radius-md);background:#d94f4f;font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:#fff;cursor:pointer;">삭제</button>
+    </div>
+  </div>
+</div>
+<!-- ===== 알림 모달 ===== -->
+<div id="alertModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:var(--border-radius-lg);padding:28px 28px 22px;max-width:320px;width:90%;text-align:center;">
+    <div id="alertModalTitle" style="font-weight:800;font-size:var(--font-size-lg);color:var(--text-primary);margin-bottom:8px;"></div>
+    <div id="alertModalMsg" style="font-size:var(--font-size-md);color:var(--text-secondary);margin-bottom:22px;line-height:1.6;"></div>
+    <button id="alertModalOk" style="width:100%;padding:10px;border:1.5px solid var(--border-color);border-radius:var(--border-radius-md);background:#fff;font-family:inherit;font-size:var(--font-size-md);font-weight:700;color:var(--text-secondary);cursor:pointer;">확인</button>
+  </div>
+</div>
+
+<!-- ===== ground scene ===== -->
+<div class="ground">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+
+<div id="detailOverlay"></div>
+{% include 'components/card.html' %}
+{% endblock %}
+
+{% block script %}
+<!-- 스크립트 에셋 로드 및 자바스크립트 본문 -->
+<script src="{% static 'js/regions.js' %}"></script>
+<script src="{% static 'js/mypage.js' %}?v=3"></script>
+<script src="{% static 'js/card_panel.js' %}"></script>
+{% endblock %}

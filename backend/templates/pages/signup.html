@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}회원가입 — PoliCity{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="signup-page">
+
+  <div class="sky-clouds" aria-hidden="true"></div>
+
+  <section class="signup-content container-fluid px-0">
+    <div class="row g-0 mx-0 align-items-end signup-row">
+
+      <!-- 왼쪽: 로고 + 문구 + 동물 -->
+      <div class="col-12 col-lg-6 signup-left-col">
+
+        <div class="signup-intro">
+          <h1>
+            폴리시티에 오신 것을<br>
+            <span>환영해요!</span>
+          </h1>
+
+          <p>
+            정책과 뉴스, 토론을 더 쉽고<br>
+            재미있게 시작해보세요.
+          </p>
+        </div>
+
+        <div class="signup-characters">
+          <img class="signup-polly" src="{% static 'assets/polly.png' %}" alt="폴리">
+          <img class="signup-chani" src="{% static 'assets/chani.png' %}" alt="찬이">
+          <img class="signup-bani" src="{% static 'assets/bani_thumbsup.png' %}" alt="반이">
+        </div>
+
+      </div>
+
+      <!-- 오른쪽: 회원가입 박스 -->
+      <div class="col-12 col-lg-6 signup-card-col">
+        <section class="signup-card">
+
+          <div class="signup-badge">
+            <img src="{% static 'assets/logo_1.png' %}" alt="PoliCity">
+          </div>
+
+          <h1 class="signup-title">
+            <span class="spark">✦</span>
+            회원가입
+            <span class="spark">✦</span>
+          </h1>
+
+          <form class="signup-form" method="post">
+            {% csrf_token %}
+
+            <!-- 닉네임 -->
+            <div class="signup-field">
+              <label for="nickname">닉네임</label>
+              <input id="nickname" name="nickname" type="text" placeholder="닉네임을 입력하세요 (2~12자)" autocomplete="off">
+            </div>
+
+            <!-- 이메일 -->
+            <div class="signup-field">
+              <label for="email">이메일</label>
+              <div class="signup-email-row">
+                <input id="email" name="email" type="email" placeholder="이메일을 입력하세요" autocomplete="off">
+                <button type="button" class="signup-send-btn" disabled>인증코드 발송</button>
+              </div>
+            </div>
+
+            <!-- 인증코드 -->
+            <div class="signup-field">
+              <label for="emailCode">인증코드</label>
+              <div class="signup-code-row">
+                <input id="emailCode" name="email_code" type="text" placeholder="인증코드를 입력하세요" maxlength="6" disabled>
+                <button type="button" class="signup-check-btn">인증번호 확인</button>
+              </div>
+            </div>
+
+            <!-- 비밀번호 -->
+            <div class="signup-field">
+              <label for="password">비밀번호</label>
+              <div class="signup-password-wrap">
+                <input id="password" name="password" type="password" placeholder="비밀번호를 입력하세요">
+                <button type="button" class="signup-eye" data-target="password" aria-label="비밀번호 보기">
+                  <i class="bi bi-eye-slash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 비밀번호 확인 -->
+            <div class="signup-field">
+              <label for="passwordConfirm">비밀번호 확인</label>
+              <div class="signup-password-wrap">
+                <input id="passwordConfirm" name="password_confirm" type="password" placeholder="비밀번호를 다시 입력하세요">
+                <button type="button" class="signup-eye" data-target="passwordConfirm" aria-label="비밀번호 확인 보기">
+                  <i class="bi bi-eye-slash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 성별 -->
+            <div class="signup-field">
+              <label>성별</label>
+              <div class="signup-radio-group">
+                <label>
+                  <input type="radio" name="gender" value="MALE">
+                  남성
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="FEMALE">
+                  여성
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="OTHER" checked>
+                  선택하지 않음
+                </label>
+              </div>
+            </div>
+
+            <!-- 생년월일 -->
+            <div class="signup-field">
+              <label>생년월일</label>
+              <div class="signup-birth-row">
+                <input id="birthYear" name="birth_year" type="number" inputmode="numeric" min="1900" max="2026"
+                  placeholder="YYYY">
+                <input id="birthMonth" name="birth_month" type="number" inputmode="numeric" min="1" max="12"
+                  placeholder="MM">
+                <input id="birthDay" name="birth_day" type="number" inputmode="numeric" min="1" max="31"
+                  placeholder="DD">
+              </div>
+            </div>
+
+            <!-- 관심사 키워드 -->
+            <div class="signup-interest-block">
+              <div class="signup-interest-title">
+                관심사 키워드
+                <small>(최대 3개 선택)</small>
+              </div>
+
+              <div class="signup-interest-grid">
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="job">
+                  <span><img src="{% static 'assets/job.png' %}" alt="">일자리</span>
+                </label>
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="housing">
+                  <span><img src="{% static 'assets/housing.png' %}" alt="">주거</span>
+                </label>
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="education">
+                  <span><img src="{% static 'assets/education.png' %}" alt="">교육</span>
+                </label>
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="culture">
+                  <span><img src="{% static 'assets/culture.png' %}" alt="">문화</span>
+                </label>
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="finance">
+                  <span><img src="{% static 'assets/finance.png' %}" alt="">금융</span>
+                </label>
+                <label class="interest-item">
+                  <input type="checkbox" name="interests" value="welfare">
+                  <span><img src="{% static 'assets/welfare.png' %}" alt="">생활복지</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 거주지 (선택) -->
+            <div class="signup-field">
+              <label>거주지<small
+                  style="font-weight:var(--font-weight-semibold); color:var(--color-primary-light); font-size:var(--font-size-md);">
+                  (선택)</small></label>
+              <div class="signup-location-row">
+                <select name="sido">
+                  <option value="">시/도 선택</option>
+                </select>
+                <select name="sigungu">
+                  <option value="">시/군/구 선택</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 약관 -->
+            <div class="signup-terms">
+              <label>
+                <input type="checkbox" name="agree_service">
+                <span>이용약관에 동의합니다. (필수)</span>
+                <button type="button" class="terms-modal-btn" data-src="/terms/">보기</button>
+              </label>
+              <label>
+                <input type="checkbox" name="agree_privacy">
+                <span>개인정보 수집 및 이용에 동의합니다. (필수)</span>
+                <button type="button" class="terms-modal-btn" data-src="/privacy/">보기</button>
+              </label>
+              <label>
+                <input type="checkbox" name="agree_age">
+                <span>만 14세 이상입니다. (필수)</span>
+              </label>
+            </div>
+
+
+            <!-- 제출 버튼 -->
+            <button type="submit" class="signup-submit" disabled>
+              회원가입 완료
+            </button>
+
+          </form>
+
+        </section>
+      </div>
+
+    </div>
+  </section>
+  <!-- 모달 -->
+  <div class="terms-modal-overlay" id="terms-modal">
+    <div class="terms-modal-box">
+      <button class="terms-modal-close" type="button">✕</button>
+      <iframe class="terms-modal-iframe" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+</main>
+
+</main>
+
+<div class="ground" aria-hidden="true">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+</script>
+<script src="{% static 'js/regions.js' %}"></script>
+<script src="{% static 'js/signup.js' %}"></script>
+{% endblock %}

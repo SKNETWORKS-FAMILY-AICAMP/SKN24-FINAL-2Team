@@ -1,0 +1,564 @@
+/* ===============================
+   PoliCity Login Page - Bootstrap 기준
+   회원가입 페이지처럼 동물 변수 수동 조절
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+/* base.html 공통 헤더/푸터 숨김 */
+/* .site-header {
+  display: none !important;
+} */
+
+body {
+  min-height: 100vh;
+  background: #ffffff;
+  overflow-x: hidden;
+  position: relative;
+
+  font-family: var(--font-family);
+  color: var(--text-primary);
+}
+
+/* ===============================
+   바닥 배경
+================================ */
+
+.ground {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  line-height: 0;
+}
+
+.ground .plaza {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ===============================
+   전체 페이지
+================================ */
+
+.login-page {
+  position: relative;
+  z-index: 10;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===============================
+   구름
+   로고 뒤로 지나가게
+================================ */
+
+.sky-clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ===============================
+   로고 + 슬로건
+================================ */
+
+.login-top {
+  width: 100%;
+
+  position: relative;
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 76px;
+  margin-bottom: -30px;
+}
+
+.login-logo {
+  position: relative;
+  z-index: 30;
+
+  width: clamp(270px, 25vw, 400px);
+  height: auto;
+  display: block;
+
+  transform: translateY(18px);
+}
+
+.login-ribbon {
+  position: relative;
+  z-index: 30;
+
+  width: clamp(340px, 31vw, 480px);
+  height: auto;
+  display: block;
+
+  margin-top: -28px;
+  transform: none;
+}
+
+/* ===============================
+   로그인 중앙 영역
+================================ */
+
+.login-content {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+
+  padding-bottom: 0;
+  transform: translateY(18px);
+}
+
+.login-row {
+  position: relative;
+  width: 100%;
+  align-items: flex-end !important;
+}
+
+.login-card-col {
+  position: relative;
+  z-index: 40;
+}
+
+/* ===============================
+   동물
+================================ */
+
+.login-characters {
+  position: absolute;
+
+  left: 50%;
+  bottom: 0;
+
+  z-index: 30;
+
+  width: 1180px;
+  height: 430px;
+
+  transform: translateX(-50%);
+
+  /* 폴리 */
+  --polly-left: 85px;
+  --polly-bottom: -100px;
+  --polly-width: 330px;
+
+  /* 찬이 */
+  --chani-left: 740px;
+  --chani-bottom: -117px;
+  --chani-width: 275px;
+
+  /* 반이 */
+  --bani-left: 920px;
+  --bani-bottom: -38px;
+  --bani-width: 190px;
+}
+
+.login-characters img {
+  position: absolute;
+  display: block;
+  height: auto;
+  image-rendering: pixelated;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 폴리 */
+.login-polly {
+  left: var(--polly-left);
+  bottom: var(--polly-bottom);
+  width: var(--polly-width);
+  z-index: 3;
+}
+
+/* 찬이 */
+.login-chani {
+  left: var(--chani-left);
+  bottom: var(--chani-bottom);
+  width: var(--chani-width);
+  z-index: 4;
+}
+
+/* 반이 */
+.login-bani {
+  left: var(--bani-left);
+  bottom: var(--bani-bottom);
+  width: var(--bani-width);
+  z-index: 5;
+}
+
+/* ===============================
+   로그인 박스
+================================ */
+
+.login-card {
+  position: relative;
+  z-index: 50;
+
+  width: 420px;
+  padding: 58px 36px 60px;
+
+  background: var(--bg-card);
+
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-2xl);
+
+  box-shadow: none;
+
+  backdrop-filter: blur(2px);
+}
+
+/* ===============================
+   P 방패 뱃지
+================================ */
+
+.login-badge {
+  position: absolute;
+  left: 50%;
+  top: -46px;
+  transform: translateX(-50%);
+
+  width: 100px;
+  height: 100px;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* ===============================
+   policity.css 방식 반짝이
+   ✦ 글자를 이미지로 대체
+================================ */
+
+.spark {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+
+  background: url("../assets/star.png") center / contain no-repeat;
+
+  color: transparent !important;
+  font-size: 1em;
+  line-height: 1;
+  vertical-align: -0.12em;
+  flex: 0 0 auto;
+
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+/* ===============================
+   제목
+================================ */
+
+.login-title {
+  margin: 0 0 22px;
+
+  color: #111111;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 반짝이 크기 조절 */
+.login-title .spark {
+  font-size: 20px;
+}
+
+/* ===============================
+   form
+================================ */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.login-input-wrap input {
+  width: 100%;
+  height: 52px;
+
+  padding: 0 44px 0 46px;
+
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-card);
+
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.login-input-wrap input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: var(--font-weight-medium);
+}
+
+.login-input-wrap input:focus {
+  border-color: var(--border-color-focus);
+  box-shadow: none;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  color: var(--text-muted);
+  font-size: 16px;
+  z-index: 1;
+}
+
+.login-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 28px;
+  height: 28px;
+
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 17px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 로그인 버튼 */
+.login-submit {
+  width: 100%;
+  height: 54px;
+  margin-top: -10px;
+
+  border: 0;
+  border-radius: var(--border-radius-sm);
+
+  background: var(--color-primary);
+
+  color: var(--text-white);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+
+  box-shadow: none;
+  transition: none;
+  cursor: pointer;
+}
+
+.login-submit:hover {
+  background: var(--color-primary);
+  transform: none;
+  box-shadow: none;
+}
+
+.login-submit:active {
+  background: var(--color-primary);
+  transform: none;
+  box-shadow: none;
+}
+
+/* 회원가입 */
+/* 회원가입 */
+.login-join {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 2px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+
+  background: #ffffff;
+  color: var(--color-primary);
+
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  text-decoration: none;
+
+  box-shadow: none;
+  transition: none;
+}
+
+.login-join:hover,
+.login-join:focus,
+.login-join:active {
+  background: #ffffff;
+  color: var(--color-primary);
+  border-color: var(--border-color);
+
+  box-shadow: none;
+  transform: none;
+  filter: none;
+  text-decoration: none;
+}
+
+/* 아이디/비밀번호 찾기 */
+.login-find {
+  margin-top: 2px;
+
+  text-align: center;
+
+  color: var(--text-muted);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.login-find span {
+  margin-left: 6px;
+}
+
+.login-find:hover {
+  color: var(--color-primary);
+}
+
+/* ===============================
+   태블릿 이하
+================================ */
+
+@media (max-width: 991px) {
+  .login-top {
+    padding-top: 64px;
+    margin-bottom: -20px;
+  }
+
+  .login-logo {
+    width: 270px;
+    transform: translateY(28px);
+  }
+
+  .login-ribbon {
+    width: 310px;
+    margin-top: 4px;
+  }
+
+  .login-content {
+    transform: translateY(10px);
+  }
+
+  .login-characters {
+    display: none !important;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+/* ===============================
+   모바일
+================================ */
+
+@media (max-width: 575px) {
+  .login-top {
+    padding-top: 56px;
+    margin-bottom: -24px;
+  }
+
+  .login-logo {
+    width: 270px;
+    transform: translateY(28px);
+  }
+
+  .login-ribbon {
+    width: 310px;
+    margin-top: 4px;
+  }
+
+  .login-content {
+    transform: translateY(10px);
+  }
+
+  .login-card {
+    padding: 52px 22px 58px;
+    border-radius: var(--border-radius-xl);
+  }
+
+  .login-badge {
+    width: 86px;
+    height: 86px;
+    top: -40px;
+  }
+
+  .login-title {
+    font-size: 26px;
+  }
+
+  .login-title .spark {
+    font-size: 16px;
+  }
+}
+
+.login-error-area {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -6px;
+  margin-bottom: 6px;
+}
+
+.login-warn {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}

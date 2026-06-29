@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PoliCity · 정보 카드{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards/card_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+
+  <!-- ── 타입 탭 ── -->
+  <div class="type-tabs pt-3">
+    <a href="?type=policy" class="type-tab {% if card_type == 'policy' %}active{% endif %}">정책 카드</a>
+    <a href="?type=news"   class="type-tab {% if card_type == 'news'   %}active{% endif %}">뉴스 카드</a>
+  </div>
+  <!-- ── 검색창 ── -->
+  <div class="search-bar">
+    <i class="bi bi-search search-icon"></i>
+    <input type="text" id="searchInput" placeholder="카드 제목 또는 내용 검색...">
+    <button class="search-clear" id="searchClear" style="display:none;">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+  <!-- ── 카테고리 필터 ── -->
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-chip active" data-cat-id="all">전체</button>
+    {% for cat in categories %}
+    <button class="filter-chip" data-cat-id="{{ cat.category_id }}">{{ cat.category_name }}</button>
+    {% endfor %}
+  </div>
+
+  <!-- ── 카드 그리드 ── -->
+  <div class="card-grid" id="cardGrid">
+    <div id="jsEmptyState" class="empty-state" style="display: none; grid-column: 1 / -1; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;">
+      <i class="bi bi-exclamation-circle" style="font-size: 2rem; color: #ccc;"></i>
+      <p style="margin-top: 10px; color: #666;">해당 카테고리에 등록된 카드가 없습니다.</p>
+    </div>
+    {% for card in cards %}
+    <div class="card-item" data-cat-id="{{ card.category.category_id }}"
+        data-cat-id="{{ card.category.category_id }}"
+        data-title="{{ card.card_title }}"
+        data-intro="{{ card.intro }}">
+      <div class="policy-card" data-card-id="{{ card.card_id }}">
+        <img
+          class="card-thumb"
+          src="{% static 'assets/category_cards/' %}{{ card.category.category_name }}.png"
+          alt="{{ card.category.category_name }}"
+          onerror="this.style.display='none'"
+        >
+        <div class="card-body-inner">
+          <span class="card-cat-badge">{{ card.category.category_name }}</span>
+          <p class="card-title">{{ card.card_title }}</p>
+          <p class="card-desc">{{ card.intro }}</p>
+          <div class="card-footer-inner">
+            <span class="card-type-badge {% if card.type == 'news' %}news{% endif %}">
+              {% if card.type == 'news' %}📰 뉴스{% else %}📋 정책{% endif %}
+            </span>
+            <button class="card-bkmk" data-card-id="{{ card.card_id }}" aria-label="북마크">
+              <i class="bi bi-bookmark"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="bi bi-search"></i>
+      <p>카드가 없습니다.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="pagi-bar" id="pagiBar"></div>
+
+</div>
+
+<!-- 오버레이 -->
+<div id="detailOverlay"></div>
+
+<!-- 카드 상세 패널 -->
+{% include 'components/card.html' %}
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/card_panel.js' %}"></script>
+<script>
+(function () {
+  var PAGE_SIZE = 12;
+  var currentPage = 1;
+  var activeCatId = 'all';
+  var allItems = Array.from(document.querySelectorAll('.card-item'));
+  var pagiBar  = document.getElementById('pagiBar');
+
+  /* ── 카테고리 필터 ── */
+  document.querySelectorAll('.filter-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      document.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      activeCatId = chip.dataset.catId;
+      currentPage = 1;
+      render();
+    });
+  });
+
+  var searchQuery = '';
+
+  document.getElementById('searchInput').addEventListener('input', function () {
+    searchQuery = this.value.trim().toLowerCase();
+    document.getElementById('searchClear').style.display = searchQuery ? '' : 'none';
+    currentPage = 1;
+    render();
+  });
+
+  document.getElementById('searchClear').addEventListener('click', function () {
+    document.getElementById('searchInput').value = '';
+    searchQuery = '';
+    this.style.display = 'none';
+    currentPage = 1;
+    render();
+  });
+
+  function getVisible() {
+    return allItems.filter(function (item) {
+      var catMatch  = activeCatId === 'all' || item.dataset.catId === activeCatId;
+      var textMatch = !searchQuery
+        || (item.dataset.title || '').toLowerCase().includes(searchQuery)
+        || (item.dataset.intro || '').toLowerCase().includes(searchQuery);
+      return catMatch && textMatch;
+    });
+  }
+
+  function render() {
+    var visible = getVisible();
+    var total   = visible.length;
+    var pages   = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  
+    var jsEmptyState = document.getElementById('jsEmptyState');
+    if (jsEmptyState) {
+      if (total === 0) {
+        jsEmptyState.style.display = 'flex';
+        jsEmptyState.querySelector('p').textContent = searchQuery
+          ? '"' + searchQuery + '" 검색 결과가 없습니다.'
+          : '해당 카테고리에 등록된 카드가 없습니다.';
+      } else {
+        jsEmptyState.style.display = 'none';
+      }
+    }
+  
+    if (currentPage > pages) currentPage = 1;
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var end   = start + PAGE_SIZE;
+    allItems.forEach(function (item) { item.style.display = 'none'; });
+    visible.forEach(function (item, i) { item.style.display = (i >= start && i < end) ? '' : 'none'; });
+    renderPagi(pages);
+  }
+
+  function renderPagi(pages) {
+    pagiBar.innerHTML = '';
+    if (pages <= 1) return;
+    function btn(label, page, disabled, active) {
+      var b = document.createElement('button');
+      b.className = 'pagi-btn' + (active ? ' active' : '');
+      b.innerHTML = label;
+      b.disabled  = disabled;
+      b.addEventListener('click', function () { currentPage = page; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+      pagiBar.appendChild(b);
+    }
+    btn('<i class="bi bi-chevron-left"></i>', currentPage - 1, currentPage === 1, false);
+    for (var p = 1; p <= pages; p++) btn(p, p, false, p === currentPage);
+    btn('<i class="bi bi-chevron-right"></i>', currentPage + 1, currentPage === pages, false);
+  }
+
+  /* ── 카드 클릭 → 상세 패널 ── */
+  document.getElementById('cardGrid').addEventListener('click', function (e) {
+    if (e.target.closest('.card-bkmk')) return;
+    var card = e.target.closest('.policy-card');
+    if (!card) return;
+    CardPanel.open(card.dataset.cardId);
+  });
+
+  /* ── 북마크 클릭 ── */
+  document.getElementById('cardGrid').addEventListener('click', function (e) {
+    var bkmk = e.target.closest('.card-bkmk');
+    if (!bkmk) return;
+    e.stopPropagation();
+    CardPanel.toggleBookmark(bkmk.dataset.cardId, bkmk);
+  });
+
+  /* ── 탭 클릭 ── */
+  document.querySelectorAll('#tabs .tab').forEach(function (tab, i) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('#tabs .tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      var panel = document.getElementById('tabPanel' + i);
+      if (panel) { panel.style.display = ''; panel.classList.add('active'); }
+    });
+  });
+
+  /* ── 패널 리사이즈 핸들 ── */
+  (function initResizeHandle() {
+    var handle = document.getElementById('detailResizeHandle');
+    var detailCol = document.getElementById('detailCol');
+    if (!handle || !detailCol) return;
+
+    var MIN_WIDTH = 360;
+    var startX = 0;
+    var startWidth = 0;
+
+    function onPointerMove(e) {
+      var dx = startX - e.clientX;
+      var maxWidth = window.innerWidth;
+      var width = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + dx));
+      detailCol.style.setProperty('--detail-width', width + 'px');
+    }
+
+    function onPointerUp() {
+      detailCol.classList.remove('resizing');
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+    }
+
+    handle.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      startX = e.clientX;
+      startWidth = detailCol.getBoundingClientRect().width;
+      detailCol.classList.add('resizing');
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+    });
+  })();
+
+  /* ── 닫기 버튼 ── */
+  document.getElementById('detailClose').addEventListener('click', CardPanel.close);
+  document.getElementById('detailOverlay').addEventListener('click', CardPanel.close);
+
+  /* ── 연락처 토글 ── */
+  var contactToggle = document.getElementById('contactToggle');
+  if (contactToggle) {
+    contactToggle.addEventListener('click', function () {
+      this.classList.toggle('open');
+      document.getElementById('contactList').classList.toggle('open');
+    });
+  }
+
+  /* ── 북마크 토글 (패널) — card_panel.js의 initBookmarkBtn이 처리 ── */
+
+  /* ── 채팅하기 버튼 표시 ── */
+  var chatAboutLink = document.getElementById('chatAboutLink');
+  if (chatAboutLink) chatAboutLink.style.display = '';
+
+  render();
+
+  /* ── URL ?open=CARD_ID 파라미터로 카드 패널 자동 열기: 강사님 수정 요청 사항 반영── */
+  (function autoOpenCard() {
+    var params = new URLSearchParams(location.search);
+    var openId = params.get('open');
+    if (openId) CardPanel.open(openId);
+  })();
+
+  /* ── 페이지 로드 시 북마크 상태 반영 ── */
+  (function initBookmarkStates() {
+    var token  = localStorage.getItem('access_token');
+    if (!token) return;
+    var payload = null;
+    try { payload = JSON.parse(atob(token.split('.')[1])); } catch (e) { return; }
+    var userId = payload && (payload.user_id || payload.sub);
+    if (!userId) return;
+
+    fetch('/cards/api/bookmarks/' + userId + '/', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(function (res) { return res.ok ? res.json() : []; })
+    .then(function (bookmarks) {
+      var bookmarkedIds = bookmarks.map(function (b) { return String(b.card); });
+      document.querySelectorAll('.card-bkmk').forEach(function (btn) {
+        if (bookmarkedIds.includes(btn.dataset.cardId)) {
+          btn.classList.add('on');
+          btn.querySelector('i').className = 'bi bi-bookmark-fill';
+        }
+      });
+    })
+    .catch(function () {});
+  })();
+
+})();
+</script>
+{% endblock %}

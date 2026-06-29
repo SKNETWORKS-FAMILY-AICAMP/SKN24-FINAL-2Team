@@ -1,0 +1,7 @@
+/* mypage.css — extracted from templates/pages/mypage.html */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear { display: none; }
+
+/* 콘텐츠: 데이터 채우기 전엔 숨겨 하드코딩/빈 상태 깜빡임 방지 */
+.mp-content { opacity: 0; transition: opacity .25s ease; }
+.mp-content.loaded { opacity: 1; }

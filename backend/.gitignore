@@ -1,0 +1,58 @@
+# ── Python ───────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# ── 가상환경 ─────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── 환경변수 ─────────────────────────────────────
+.env
+.env.*
+secrets.py
+
+# ── Django ───────────────────────────────────────
+*.sqlite3
+*.db
+db.sqlite3
+staticfiles/
+mediafiles/
+
+# ── 빌드 ─────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+
+# ── 로그 ─────────────────────────────────────────
+*.log
+logs/
+
+# ── OS / 에디터 ──────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+
+# ── Jupyter ──────────────────────────────────────
+.ipynb_checkpoints/
+*.vscode
+
+# ── AWS ──────────────────────────────────────
+policity-aiagent.pem
+
+# ── 등등 ──────────────────────────────────────
+.claude
+
+# 토론 테스트
+sim_debate.test.js
+DEBATE_ARCHITECTURE.md
+FOUL_COUNT_GUIDE.md
+ENGLISH_BLOCK_GUIDE.md
+DEBATE_FEATURES_GUIDE.md
+CHECKPOINT_CONTAMINATION_FIX_GUIDE.md
+DEBATE_3BUGS_FIX_GUIDE.md
+DEBATE_ASKBTN_FIX_GUIDE.md

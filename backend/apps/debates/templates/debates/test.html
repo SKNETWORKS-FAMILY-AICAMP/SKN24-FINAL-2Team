@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>토론 테스트</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; }
+
+  /* 헤더 */
+  header { background: #1a1a2e; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 18px; font-weight: 600; }
+  #round-badge { background: #e94560; color: white; border-radius: 12px; padding: 3px 12px; font-size: 13px; }
+
+  /* 레이아웃 */
+  .container { display: flex; flex: 1; overflow: hidden; }
+
+  /* 설정 패널 */
+  .setup-panel { width: 280px; background: white; border-right: 1px solid #e0e0e0; padding: 20px; overflow-y: auto; flex-shrink: 0; }
+  .setup-panel h2 { font-size: 14px; font-weight: 700; color: #444; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; font-weight: 600; }
+  .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+  #user-stance-group { display: none; }
+  #start-btn { width: 100%; padding: 10px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+  #start-btn:hover { background: #c73652; }
+  #start-btn:disabled { background: #ccc; cursor: not-allowed; }
+  .session-info { margin-top: 16px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 12px; color: #555; }
+
+  /* 토론 영역 */
+  .debate-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* 메시지 카드 */
+  .msg-card { max-width: 75%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+  .msg-card.pro     { background: #e8f4fd; border: 1px solid #b3d9f5; align-self: flex-start; }
+  .msg-card.con     { background: #fdecea; border: 1px solid #f5b3b3; align-self: flex-end; }
+  .msg-card.user    { background: #e8fde8; border: 1px solid #b3f5b3; align-self: flex-start; }
+  /* AI vs User 모드: 유저 입장에 따라 방향/색상 */
+  .msg-card.user-pro { background: #e8f4fd; border: 1px solid #b3d9f5; align-self: flex-start; }
+  .msg-card.user-con { background: #fdecea; border: 1px solid #f5b3b3; align-self: flex-end; }
+  .msg-card.system  { background: #fff8e1; border: 1px solid #ffe082; align-self: center; max-width: 90%; }
+  .msg-label { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 4px; text-transform: uppercase; }
+  .msg-sources { margin-top: 8px; font-size: 11px; color: #999; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 6px; }
+  .msg-sources a { color: #4a90e2; text-decoration: none; }
+
+  /* 상태 표시 */
+  .status-bar { padding: 8px 20px; background: #fffbf0; border-top: 1px solid #ffe082; font-size: 12px; color: #888; display: flex; align-items: center; gap: 8px; }
+  .spinner { width: 14px; height: 14px; border: 2px solid #ddd; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 컨트롤 패널 */
+  .controls { padding: 16px 20px; background: white; border-top: 1px solid #e0e0e0; }
+  .action-btns { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .action-btn { padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; font-size: 13px; cursor: pointer; background: white; transition: all 0.2s; }
+  .action-btn:hover { background: #f5f5f5; }
+  .action-btn.primary { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .user-input-area { display: none; gap: 8px; }
+  .user-input-area textarea { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; resize: none; height: 60px; }
+  .user-input-area button { padding: 0 20px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .char-count { font-size: 11px; color: #aaa; text-align: right; margin-top: 2px; }
+
+  /* 요약 */
+  .summary-card { background: #1a1a2e; color: white; border-radius: 12px; padding: 16px; }
+  .summary-card h3 { font-size: 14px; margin-bottom: 10px; color: #e94560; }
+  .summary-section { margin-bottom: 12px; }
+  .summary-section h4 { font-size: 12px; color: #aaa; margin-bottom: 4px; }
+  .summary-section ul { padding-left: 16px; font-size: 13px; line-height: 1.6; }
+
+  /* 경고 */
+  .warning-toast { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #856404; }
+
+  /* 성능 메트릭 */
+  .msg-metrics { margin-top: 7px; font-size: 11px; color: #888; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 6px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .metric-item { display: flex; align-items: center; gap: 4px; }
+  .score-badges { display: inline-flex; gap: 4px; }
+  .score-badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; line-height: 1.4; }
+  .score-good { background: #d4edda; color: #155724; }  /* ≥ 0.6 */
+  .score-warn { background: #fff3cd; color: #856404; }  /* 0.4 ~ 0.6 */
+  .score-bad  { background: #f8d7da; color: #721c24; }  /* < 0.4 */
+
+  /* 초기 로딩 정보 카드 */
+  .loading-info-card { background: #e8f4fd; border: 1px solid #b3d9f5; border-radius: 8px; padding: 10px 16px; font-size: 12px; color: #1a6496; text-align: center; align-self: center; max-width: 90%; }
+  .loading-info-card strong { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎤 토론 테스트</h1>
+  <span id="round-badge">대기 중</span>
+</header>
+
+<div class="container">
+  <!-- 설정 패널 -->
+  <div class="setup-panel">
+    <h2>토론 설정</h2>
+
+    <div class="form-group">
+      <label>카드 ID</label>
+      <input type="number" id="card-id" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>유저 ID</label>
+      <input type="number" id="user-id" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>모드</label>
+      <select id="mode">
+        <option value="ai_vs_ai">AI vs AI</option>
+        <option value="ai_vs_user">AI vs User</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>난이도</label>
+      <select id="difficulty">
+        <option value="hard">하드</option>
+        <option value="easy">이지</option>
+      </select>
+    </div>
+    <div class="form-group" id="user-stance-group">
+      <label>내 입장</label>
+      <select id="user-stance">
+        <option value="pro">찬성</option>
+        <option value="con">반대</option>
+      </select>
+    </div>
+    <button id="start-btn" onclick="startDebate()">토론 시작</button>
+    <div class="session-info" id="session-info" style="display:none"></div>
+  </div>
+
+  <!-- 토론 영역 -->
+  <div class="debate-area">
+    <div class="messages" id="messages">
+      <div style="text-align:center; color:#aaa; margin-top:60px; font-size:14px;">
+        ← 설정 후 토론을 시작하세요
+      </div>
+    </div>
+
+    <div class="status-bar" id="status-bar" style="display:none">
+      <div class="spinner" id="spinner"></div>
+      <span id="status-text">AI 발언 생성 중...</span>
+    </div>
+
+    <div class="controls" id="controls" style="display:none">
+      <div class="action-btns" id="action-btns"></div>
+      <div class="user-input-area" id="user-input-area">
+        <div style="flex:1">
+          <textarea id="user-text" placeholder="발언을 입력하세요 (500자 이내)" maxlength="500"
+            oninput="document.getElementById('char-count').textContent=this.value.length+'/500'"></textarea>
+          <div class="char-count" id="char-count">0/500</div>
+        </div>
+        <button onclick="submitUserInput()">전송</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let sessionId = null;
+let eventSource = null;
+let currentMode = 'ai_vs_ai';
+let userStance = 'pro';
+let waitType = null;
+
+// ── 타이밍 추적 ────────────────────────────────────────────────────────────
+let debateStartTime   = null;   // 토론 시작 버튼 클릭 시각 (ms)
+let generationStartMs = null;   // 첫 generation_start 이벤트 수신 시각
+let firstAiMsgShown   = false;  // 최초 AI 메시지 표시 여부
+
+// 모드 변경 시 user-stance 토글
+document.getElementById('mode').addEventListener('change', (e) => {
+  currentMode = e.target.value;
+  document.getElementById('user-stance-group').style.display =
+    e.target.value === 'ai_vs_user' ? 'block' : 'none';
+});
+
+const ROUND_LABELS = { '1':'입장 제시', '2':'찬성 세부주장', '3':'반대 세부주장', '4':'주장 다지기' };
+const PARTICIPANT_LABELS = { pro:'찬성 AI', con:'반대 AI', user:'사용자', system:'시스템' };
+
+// ── 토론 시작 ────────────────────────────────────────────────────────────────
+async function startDebate() {
+  const cardId     = parseInt(document.getElementById('card-id').value);
+  const userId     = parseInt(document.getElementById('user-id').value);
+  const mode       = document.getElementById('mode').value;
+  const difficulty = document.getElementById('difficulty').value;
+  const userStance = document.getElementById('user-stance').value;
+
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('messages').innerHTML = '';
+  setStatus(true, '토론 세션 생성 중...');
+
+  // 타이밍 리셋
+  debateStartTime   = Date.now();
+  generationStartMs = null;
+  firstAiMsgShown   = false;
+
+  const body = { card_id: cardId, user_id: userId, mode, difficulty };
+  if (mode === 'ai_vs_user') body.user_stance = userStance;
+
+  try {
+    const resp = await fetch('/api/debates/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok) { alert('세션 생성 실패: ' + JSON.stringify(data)); return; }
+
+    sessionId = data.debate_session_id;
+    document.getElementById('session-info').style.display = 'block';
+    document.getElementById('session-info').textContent = `세션 ID: ${sessionId}`;
+
+    startStream();
+  } catch(e) {
+    alert('오류: ' + e.message);
+    document.getElementById('start-btn').disabled = false;
+    setStatus(false);
+  }
+}
+
+// ── SSE 스트리밍 ─────────────────────────────────────────────────────────────
+function startStream() {
+  if (eventSource) eventSource.close();
+  setStatus(true, 'AI 발언 생성 중...');
+  hideControls();
+
+  eventSource = new EventSource(`/api/debates/${sessionId}/stream/`);
+
+  eventSource.onmessage = (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      handleEvent(data);
+    } catch(err) { console.warn('파싱 오류:', e.data); }
+  };
+
+  eventSource.onerror = () => {
+    eventSource.close();
+    setStatus(false);
+  };
+}
+
+function handleEvent(data) {
+  switch(data.type) {
+    case 'generation_start':
+      // 첫 generation_start만 기록 (초기 로딩 = 여기까지의 시간)
+      if (!generationStartMs) {
+        generationStartMs = Date.now();
+      }
+      break;
+
+    case 'message':
+      // 첫 AI 발언 직전에 초기 로딩 시간 카드 삽입
+      if (!firstAiMsgShown && data.participant !== 'user' && debateStartTime && generationStartMs) {
+        const initLoadSec = ((generationStartMs - debateStartTime) / 1000).toFixed(1);
+        const card = document.createElement('div');
+        card.className = 'loading-info-card';
+        card.innerHTML = `🚀 초기 로딩 시간: <strong>${initLoadSec}s</strong>
+          <span style="margin-left:8px; color:#888; font-size:11px;">(세션 생성 + 그래프 초기화)</span>`;
+        document.getElementById('messages').appendChild(card);
+        firstAiMsgShown = true;
+      }
+      addMessage(data);
+      break;
+
+    case 'round_update':
+      document.getElementById('round-badge').textContent =
+        ROUND_LABELS[data.round] || `라운드 ${data.round}`;
+      break;
+
+    case 'summary':
+      eventSource.close();
+      setStatus(false);
+      addSummary(data.data);
+      document.getElementById('start-btn').disabled = false;
+      break;
+
+    case 'waiting':
+      eventSource.close();
+      setStatus(false);
+      waitType = data.wait_type;
+      showControls(data);
+      break;
+
+    case 'warning':
+      addWarning(data.message);
+      break;
+
+    case 'error':
+      setStatus(false);
+      addWarning('오류: ' + data.message);
+      document.getElementById('start-btn').disabled = false;
+      break;
+  }
+}
+
+// ── 메시지 렌더링 ────────────────────────────────────────────────────────────
+function addMessage(data) {
+  const div = document.createElement('div');
+  // AI vs User 모드에서 유저 메시지는 입장(stance)에 따라 방향/색상 결정
+  let cardClass = data.participant;
+  if (data.participant === 'user' && currentMode === 'ai_vs_user') {
+    cardClass = `user-${userStance}`;
+  }
+  div.className = `msg-card ${cardClass}`;
+
+  const label = PARTICIPANT_LABELS[data.participant] || data.participant;
+  const typeLabel = { position:'입장 제시', argument:'세부주장', rebuttal:'반박',
+    response:'답변', question_ans:'질문 답변', extra_rebuttal:'추가 반박',
+    extra_response:'추가 답변' }[data.msg_type] || data.msg_type;
+
+  let html = `<div class="msg-label">${label} · ${typeLabel}</div>`;
+  html += `<div>${data.content.replace(/\n/g,'<br>')}</div>`;
+
+  if (data.sources && data.sources.length > 0) {
+    html += `<div class="msg-sources">📎 출처: `;
+    html += data.sources.slice(0,3).map(s => {
+      const url = s.metadata?.source_url || s.metadata?.url || '';
+      const title = s.metadata?.title || s.metadata?.publisher || '원문';
+      return url ? `<a href="${url}" target="_blank">${title}</a>` : title;
+    }).join(', ');
+    html += `</div>`;
+  }
+
+  // ── 성능 메트릭 (AI 발언만) ───────────────────────────────────────────
+  if (data.participant !== 'user' && data.participant !== 'system') {
+    const metrics = [];
+
+    // 응답시간
+    const rtMs = data.response_time_ms || 0;
+    if (rtMs > 0) {
+      const rtSec = (rtMs / 1000).toFixed(1);
+      const rtColor = rtMs <= 10000 ? '#155724' : '#721c24';
+      metrics.push(`<span class="metric-item">⏱ 응답시간: <strong style="color:${rtColor}">${rtSec}s</strong></span>`);
+    }
+
+    // RAG 코사인 유사도 점수
+    if (data.sources && data.sources.length > 0) {
+      const scores = data.sources
+        .map(s => s.score)
+        .filter(sc => sc != null && sc !== undefined);
+      if (scores.length > 0) {
+        const badgeHtml = scores.slice(0, 5).map(sc => {
+          const cls = sc >= 0.6 ? 'score-good' : (sc >= 0.4 ? 'score-warn' : 'score-bad');
+          return `<span class="score-badge ${cls}">${sc.toFixed(3)}</span>`;
+        }).join('');
+        metrics.push(`<span class="metric-item">🔍 유사도: <span class="score-badges">${badgeHtml}</span></span>`);
+      }
+    }
+
+    if (metrics.length > 0) {
+      html += `<div class="msg-metrics">${metrics.join('')}</div>`;
+    }
+  }
+
+  div.innerHTML = html;
+  document.getElementById('messages').appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth' });
+}
+
+function addWarning(msg) {
+  const div = document.createElement('div');
+  div.className = 'warning-toast';
+  div.textContent = '⚠️ ' + msg;
+  document.getElementById('messages').appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth' });
+}
+
+function addSummary(data) {
+  const div = document.createElement('div');
+  div.className = 'msg-card system';
+  const p = data.pro_summary || {};
+  const c = data.con_summary || {};
+  const uf = data.user_feedback || {};
+
+  let html = `<div class="summary-card">
+    <h3>📋 주장 다지기</h3>
+    <p style="font-size:13px; margin-bottom:12px; color:#ccc">${data.overview || ''}</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+      <div class="summary-section">
+        <h4>✅ 찬성 핵심 주장</h4>
+        <ul>${(p.key_arguments||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+        ${(p.key_evidence||[]).length ? `<h4 style="margin-top:8px">📎 주요 근거</h4>
+        <ul>${p.key_evidence.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+        ${(p.key_rebuttals||[]).length ? `<h4 style="margin-top:8px">↩ 주요 반박</h4>
+        <ul>${p.key_rebuttals.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+      </div>
+      <div class="summary-section">
+        <h4>❌ 반대 핵심 주장</h4>
+        <ul>${(c.key_arguments||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+        ${(c.key_evidence||[]).length ? `<h4 style="margin-top:8px">📎 주요 근거</h4>
+        <ul>${c.key_evidence.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+        ${(c.key_rebuttals||[]).length ? `<h4 style="margin-top:8px">↩ 주요 반박</h4>
+        <ul>${c.key_rebuttals.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+      </div>
+    </div>`;
+
+  if (uf.strong_points?.length || uf.weak_points?.length) {
+    html += `<div class="summary-section" style="margin-top:12px; border-top:1px solid #333; padding-top:12px">
+      <h4>💪 잘한 부분</h4>
+      <ul>${(uf.strong_points||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+      <h4 style="margin-top:8px">🔧 보완할 부분</h4>
+      <ul>${(uf.weak_points||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+    </div>`;
+  }
+  html += `</div>`;
+
+  div.innerHTML = html;
+  document.getElementById('messages').appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── 컨트롤 ──────────────────────────────────────────────────────────────────
+function showControls(data) {
+  document.getElementById('controls').style.display = 'block';
+  const btns = document.getElementById('action-btns');
+  const inputArea = document.getElementById('user-input-area');
+  btns.innerHTML = '';
+  btns.style.display = 'flex';   // 질문 버튼 클릭 시 숨긴 것 복구
+  inputArea.style.display = 'none';
+  delete inputArea.dataset.questionTarget;
+
+  if (data.wait_type === 'user_turn') {
+    // 사용자 발언 입력
+    inputArea.style.display = 'flex';
+    document.getElementById('user-text').value = '';
+    document.getElementById('char-count').textContent = '0/500';
+    document.getElementById('user-text').focus();
+    return;
+  }
+
+  // user_choice: next / extra / question 버튼
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'action-btn primary';
+  nextBtn.textContent = '다음 단계 →';
+  nextBtn.onclick = () => sendAction('next');
+  btns.appendChild(nextBtn);
+
+  const extraBtn = document.createElement('button');
+  extraBtn.className = 'action-btn';
+  extraBtn.textContent = '추가 토론';
+  if (data.extra_available === false) {
+    extraBtn.disabled = true;
+    extraBtn.title = '추가 토론은 라운드당 최대 2회까지 가능합니다';
+    extraBtn.style.opacity = '0.4';
+    extraBtn.style.cursor = 'not-allowed';
+  } else {
+    extraBtn.onclick = () => sendAction('extra');
+  }
+  btns.appendChild(extraBtn);
+
+  if (currentMode === 'ai_vs_ai') {
+    // AI vs AI: 질문 대상 선택
+    const qProBtn = document.createElement('button');
+    qProBtn.className = 'action-btn';
+    qProBtn.textContent = '찬성 AI에 질문';
+    qProBtn.onclick = () => {
+      btns.style.display = 'none';
+      inputArea.style.display = 'flex';
+      inputArea.dataset.questionTarget = 'pro';
+      document.getElementById('user-text').placeholder = '찬성 AI에게 질문을 입력하세요';
+      document.getElementById('user-text').focus();
+    };
+    btns.appendChild(qProBtn);
+
+    const qConBtn = document.createElement('button');
+    qConBtn.className = 'action-btn';
+    qConBtn.textContent = '반대 AI에 질문';
+    qConBtn.onclick = () => {
+      btns.style.display = 'none';
+      inputArea.style.display = 'flex';
+      inputArea.dataset.questionTarget = 'con';
+      document.getElementById('user-text').placeholder = '반대 AI에게 질문을 입력하세요';
+      document.getElementById('user-text').focus();
+    };
+    btns.appendChild(qConBtn);
+  }
+}
+
+function hideControls() {
+  document.getElementById('controls').style.display = 'none';
+}
+
+// ── 사용자 액션 전송 ─────────────────────────────────────────────────────────
+async function sendAction(action, questionTarget = null) {
+  hideControls();
+  const body = { user_action: action };
+  if (questionTarget) body.question_target = questionTarget;
+
+  try {
+    await fetch(`/api/debates/${sessionId}/action/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    startStream();
+  } catch(e) {
+    addWarning('액션 전송 실패: ' + e.message);
+  }
+}
+
+async function submitUserInput() {
+  const text = document.getElementById('user-text').value.trim();
+  if (!text) return;
+
+  const inputArea = document.getElementById('user-input-area');
+  const questionTarget = inputArea.dataset.questionTarget;
+
+  // ── AI vs AI 질문 모드: /question 엔드포인트로 직접 처리 ──────────────────
+  if (waitType === 'user_choice' && questionTarget) {
+    hideControls();
+    delete inputArea.dataset.questionTarget;
+    setStatus(true, 'AI 답변 생성 중...');
+
+    try {
+      const resp = await fetch(`/api/debates/${sessionId}/question/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_input: text, question_target: questionTarget }),
+      });
+      const result = await resp.json();
+      setStatus(false);
+
+      if (result.error) { addWarning(result.error); }
+      else {
+        // 사용자 질문 메시지 표시
+        addMessage({ participant: 'user', msg_type: 'position', content: text, sources: [] });
+        // AI 답변 메시지 표시
+        addMessage(result);
+      }
+    } catch(e) {
+      setStatus(false);
+      addWarning('질문 전송 실패: ' + e.message);
+    }
+    // 질문 후 다시 user_choice 버튼 표시
+    showControls({ wait_type: 'user_choice' });
+    return;
+  }
+
+  // ── AI vs User 발언 입력 모드 ─────────────────────────────────────────────
+  try {
+    const resp = await fetch(`/api/debates/${sessionId}/input/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_input: text }),
+    });
+    const result = await resp.json();
+
+    if (!result.valid) {
+      addWarning(result.warning || '유효하지 않은 입력입니다.');
+      document.getElementById('user-input-area').style.display = 'flex';
+      return;
+    }
+
+    // 유효한 입력 → 스트림 재개
+    hideControls();
+    startStream();
+  } catch(e) {
+    addWarning('입력 전송 실패: ' + e.message);
+  }
+}
+
+// ── 유틸 ────────────────────────────────────────────────────────────────────
+function setStatus(show, text = '') {
+  const bar = document.getElementById('status-bar');
+  bar.style.display = show ? 'flex' : 'none';
+  document.getElementById('status-text').textContent = text;
+}
+</script>
+</body>
+</html>

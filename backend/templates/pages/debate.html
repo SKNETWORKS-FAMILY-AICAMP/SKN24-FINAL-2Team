@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}토론 광장 — PoliCity{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="{% static 'css/debate.css' %}?v=182">
+{% endblock %}
+
+{% block content %}
+<div class="debate-page-wrap" id="debateApp">
+
+  <!-- ============================================================
+       MAIN STAGE
+  ============================================================ -->
+  <main class="debate-main">
+    <div class="debate-stage" id="debateStage">
+
+      <!-- Background -->
+      <img src="{% static 'assets/images/debate_bg.png' %}" class="stage-bg" alt="">
+
+      <!-- topicLabel: JS 참조용 숨김 -->
+      <span id="topicLabel" style="display:none;"></span>
+      <span id="topicCardSub" style="display:none;"></span>
+      <span id="topicCardTitle" style="display:none;"></span>
+
+      <!-- 주제 + 배지 wrapper -->
+      <div class="stage-topic-wrap">
+        <!-- 찬성/반대 주제 한 줄 -->
+        <div class="stage-topic-row">
+          <div class="stage-topic-pro" id="stageTopicPro"></div>
+          <div class="stage-topic-vs">vs.</div>
+          <div class="stage-topic-con" id="stageTopicCon"></div>
+        </div>
+        <!-- 배지 모음 (자동으로 아래 붙음) -->
+        <div class="stage-topic-meta">
+          <div class="stage-topic-meta-row1">
+            <div class="stage-mode-badge jua" id="modeBadge" style="display:none;">AI vs AI</div>
+            <div class="stage-user-badges" id="userBadges" style="display:none;">
+              <span class="stage-user-badge" id="stanceBadgeBox">👍 내 입장: <span id="stanceBadge">찬성</span></span>
+              <span class="stage-user-badge">⭐ 난이도: <span id="diffBadge">easy</span></span>
+            </div>
+          </div>
+          <div class="stage-topic-meta-row2">
+          </div>
+          <div class="stage-round-nav" id="roundNav">
+            <button class="round-btn active" type="button" onclick="_jumpToRound('position')">입장</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('pro_round',1)">찬성 세부주장 1</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('pro_round',2)">찬성 세부주장 2</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('pro_round',3)">찬성 세부주장 3</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('con_round',1)">반대 세부주장 1</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('con_round',2)">반대 세부주장 2</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="_jumpToRound('con_round',3)">반대 세부주장 3</button>
+            <span class="rdiv">|</span>
+            <button class="round-btn" type="button" onclick="reopenFinal()">주장 다지기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- City Hall -->
+      <img src="{% static 'assets/images/city_hall.png' %}" class="stage-city-hall" alt="">
+
+      <!-- Polly 질문 알림 말풍선 (stage 직접 자식 → 확실한 중앙 정렬) -->
+      <div id="pollyQBubble" class="polly-q-bubble" style="display:none;">
+        <div class="polly-q-header">아주 좋은 질문이 들어왔어요!</div>
+        <div class="polly-q-text" id="pollyQText"></div>
+      </div>
+
+      <!-- Polly 라운드 시작 안내 말풍선 -->
+      <div id="pollyIntroBubble" class="polly-intro-bubble" style="display:none;">
+        <div class="polly-intro-header" id="pollyIntroHeader"></div>
+        <div class="polly-intro-text"   id="pollyIntroText"></div>
+        <button class="polly-intro-ok"  onclick="_hidePollyIntro()">확인 ✓</button>
+      </div>
+
+      <!-- ======== DEBATE VIEW ======== -->
+      <div id="debateView">
+
+        <!-- 피드 뒤 블러 패널 (캐릭터는 안 가리게 — 피드 영역에 맞춤) -->
+        <div class="blur-backdrop"></div>
+
+        <!-- 카카오톡 스타일 스크롤 피드 (renderFeed가 _messages로 채움) -->
+        <div id="debateFeed" class="debate-feed"></div>
+
+        <!-- 빨리감기 버튼 (폴리 머리 위 중앙) -->
+        
+
+        <!-- 찬성/반대 레이블 + VS -->
+        <div class="stage-side-label stage-side-label--left">찬성측</div>
+        <div class="stage-side-label stage-side-label--right">반대측</div>
+        <div class="stage-vs-label">VS</div>
+
+        <!-- LEFT bubble (찬성) -->
+        <div class="stage-bubble stage-bubble-left pop" id="leftBubble">
+          <div class="bubble-content" id="leftContent">
+            <div class="bubble-loading">
+              <div class="bubble-spinner"></div> 찬성측 주제 제시 중...
+            </div>
+          </div>
+          <div class="bubble-footer">
+            <button type="button" class="btn-debate-source" id="leftSourceBtn"
+                    data-bs-toggle="modal" data-bs-target="#sourceModal"
+                    style="display:none;" onclick="openSource('pro')">참고 출처 ↗</button>
+          </div>
+        </div>
+
+        <!-- RIGHT bubble (반대) -->
+        <div class="stage-bubble stage-bubble-right pop" id="rightBubble">
+          <div class="bubble-content" id="rightContent">
+            <div class="bubble-loading">
+              <div class="bubble-spinner"></div> 반대측 주제 제시 중...
+            </div>
+          </div>
+          <div class="bubble-footer">
+            <button type="button" class="btn-debate-source-con" id="rightSourceBtn"
+                    data-bs-toggle="modal" data-bs-target="#sourceModal"
+                    style="display:none;" onclick="openSource('con')">참고 출처 ↗</button>
+          </div>
+        </div>
+
+        <!-- Poli -->
+        <img src="{% static 'assets/images/poli.png' %}" class="stage-poli" alt="폴리">
+
+        <!-- 스테이지 내 버튼 (폴리 아래) -->
+        <div class="stage-side-btns" id="stageSideBtns">
+          <button type="button" class="btn-stage-side" onclick="openMemo()">✏️ 메모</button>
+          <button type="button" id="skipAllBtn" class="btn-stage-side btn-skip" onclick="skipAll()">⏩ 빨리감기</button>
+        </div>
+
+        <!-- Poli summary card -->
+        <div class="stage-summary-card" id="summaryCard" style="display:none;">
+          <div class="stage-summary-header jua">🐻 폴리 · 진행 요약</div>
+          <div class="stage-summary-body" id="summaryBody"></div>
+        </div>
+
+        <!-- Side characters -->
+        <img src="{% static 'assets/images/chani.png' %}" class="stage-char stage-char-chani" id="leftChar" alt="찬이">
+        <img src="{% static 'assets/images/bani.png' %}"  class="stage-char stage-char-right" id="rightChar" alt="반이">
+
+        <!-- Action bar (shown when waiting for user input) -->
+        <div class="stage-action-bar" id="actionBar" style="display:none;">
+          <button type="button" class="btn-debate-primary" id="btnNext" onclick="sendAction('next')">▶ 다음 단계</button>
+          <button type="button" class="btn-debate-secondary" id="btnExtra" onclick="handleExtraClick()">💬 추가 토론</button>
+          <button type="button" class="btn-debate-ask" id="btnAskPro"
+                  onclick="openAskModal('pro')">🐾 찬이에게 질문</button>
+          <button type="button" class="btn-debate-ask" id="btnAskCon"
+                  onclick="openAskModal('con')">✕ 반이에게 질문</button>
+        </div>
+
+        <!-- User turn input bar (AI vs User) -->
+        <div class="stage-input-bar" id="userTurnBar" style="display:none; flex-direction:column; align-items:stretch; gap:0; background:transparent; border:0; box-shadow:none; padding:0;">
+          <div style="display:flex; align-items:flex-end; gap:12px; width:100%; background:#fff; border:1.5px solid #d6e2d8; border-radius:14px; padding:3px 10px 3px 16px; box-shadow:0 6px 16px rgba(0,0,0,.08);">
+          <textarea id="userInputField" class="stage-input" maxlength="500" rows="1"
+                    style="text-align:left; flex:1; min-width:0; resize:none; overflow-y:hidden;"
+                    placeholder="내 입장을 입력해보세요!"
+                    oninput="_updateUserInputCount(); _autoResizeInput(this)"
+                    onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitUserInput(); }"></textarea>
+          <span id="inputError" style="font-size:var(--font-size-xs); color:var(--color-danger, #d94f4f); display:none;">입력은 500자 이내로 작성해 주세요.</span>
+          <span id="charCounter" style="font-size:var(--font-size-xs); color:var(--text-placeholder); white-space:nowrap;">0 / 500</span>
+          <button type="button" class="btn-debate-send" onclick="submitUserInput()" style="border-radius:50%;">➤</button>
+          </div>
+          <div class="chat-foot" style="text-align:center; font-size:12px; color:#b0bcb5; padding:10px 0 0;">폴리는 AI로 생성된 답변을 제공하며, 중요한 결정은 공식 정보를 확인해 주세요.</div>
+        </div>
+
+      </div><!-- /#debateView -->
+
+      <!-- ======== FINAL SUMMARY VIEW ======== -->
+      <div id="finalView" style="display:none;">
+
+        <!-- 블러 배경 -->
+        <div class="final-blur-backdrop"></div>
+
+        <!-- 캐릭터 숨김 -->
+        <img src="{% static 'assets/images/chani.png' %}" class="stage-char-final stage-char-chani-final" id="leftCharFinal"  alt="" style="display:none;">
+        <img src="{% static 'assets/images/bani.png' %}"  class="stage-char-final stage-char-right-final" id="rightCharFinal" alt="" style="display:none;">
+        <img src="{% static 'assets/images/poli_debate.png' %}" class="stage-poli-debate" id="poliDebate" alt="폴리" style="display:none;">
+
+        <!-- 중앙 컬럼: 보드 + 버튼 -->
+        <div class="final-center-col">
+
+          <!-- 주장 다지기 보드 이미지 + 내용 오버레이 -->
+          <div class="final-board-wrap">
+            <img src="{% static 'assets/images/debate_final.png' %}" class="final-board-img" alt="">
+            <div class="fb-content">
+
+              <!-- 찬이의 핵심 주장 (좌상) -->
+              <div class="fb-sec fb-tl">
+                <span id="finalLeftTitle" style="display:none;">찬이의 핵심 주장</span>
+                <ul class="f4-list" id="finalProKey"></ul>
+              </div>
+
+              <!-- 반이의 핵심 주장 (우상) -->
+              <div class="fb-sec fb-tr">
+                <span id="finalRightTitle" style="display:none;">반이의 핵심 주장</span>
+                <ul class="f4-list" id="finalConKey"></ul>
+              </div>
+
+              <!-- 주요 반박 (좌하) -->
+              <div class="fb-sec fb-bl">
+                <div id="finalRebuttalArea">
+                  <div class="f4-rebuttal">
+                    <span class="f4-rb-tag f4-rb-pro">찬이 → 반이</span>
+                    <p id="finalGoodRebuttal">재정 부담은 단계적·선별적 지원으로 관리 가능하며, 소비·지역경제 활성화 효과가 더 큽니다.</p>
+                  </div>
+                  <div class="f4-rebuttal">
+                    <span class="f4-rb-tag f4-rb-con">반이 → 찬이</span>
+                    <p id="finalNeedImprove">단기 효과에 그칠 수 있으며, 구조적 해결 없이는 근본적인 주거 문제 완화가 어렵습니다.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 핵심 쟁점 정리 (우하) -->
+              <div class="fb-sec fb-br">
+                <div id="finalIssuesArea">
+                  <div class="f4-issue"><span class="f4-issue-tag">재정 지속성</span><span>확대 시 재정 부담 vs 단계적 설계 가능성</span></div>
+                  <div class="f4-issue"><span class="f4-issue-tag">효과 범위</span><span>단기 지원 vs 장기적 지역·경제 효과</span></div>
+                  <div class="f4-issue"><span class="f4-issue-tag">우선순위</span><span>임시 지원 vs 구조적 주거 문제 해결</span></div>
+                  <div class="f4-issue"><span class="f4-issue-tag">형평성</span><span>정책 간 형평성 및 지원 대상의 공정성</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="final-action-bar">
+            <button type="button" class="btn-debate-primary" onclick="restartDebate()">↻ 같은 주제로 다시 토론하기</button>
+            <button type="button" class="btn-debate-organize" onclick="closeFinal()">← 뒤로 가기</button>
+          </div>
+
+        </div><!-- /.final-center-col -->
+
+      </div><!-- /#finalView -->
+
+      <!-- ======== INTRO OVERLAY ======== -->
+      <div class="intro-overlay" id="introOverlay">
+        <div class="intro-card">
+          <img src="{% static 'assets/images/poli.png' %}" class="intro-poli" alt="">
+          <div class="intro-title jua">토론을 시작해 볼까요?</div>
+          <div class="intro-topic" id="introTopicLabel">청년 월세 지원 확대 정책</div>
+          <!-- Step 1: 모드 선택 -->
+          <div id="introStep1" class="intro-options">
+            <button type="button" class="intro-btn intro-btn-aiai" onclick="startDebate('aiai')">
+              <span class="intro-avatars"><img src="{% static 'assets/images/chani.png' %}" class="intro-avatar intro-avatar-chani" alt="찬이"><span class="intro-vs">VS</span><img src="{% static 'assets/images/bani.png' %}" class="intro-avatar intro-avatar-bani" alt="반이"></span>
+              <span class="intro-btn-label">
+                <b class="pro jua">찬이와 반이 관전하기</b>
+                <small>찬이와 반이의 토론을 지켜봐요</small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn intro-btn-pro" onclick="showDifficulty('pro')">
+              <span class="intro-btn-circle intro-btn-circle-pro">O</span>
+              <span class="intro-btn-label">
+                <b class="pro jua">찬성으로 참여하기</b>
+                <small>내가 찬성, 반이가 반대로 토론해요</small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn intro-btn-con" onclick="showDifficulty('con')">
+              <span class="intro-btn-circle intro-btn-circle-con">✕</span>
+              <span class="intro-btn-label">
+                <b class="con jua">반대로 참여하기</b>
+                <small>내가 반대, 찬이가 찬성으로 토론해요</small>
+              </span>
+            </button>
+          </div>
+          <!-- Step 2: 난이도 선택 -->
+          <div id="introStep2" class="intro-options" style="display:none;">
+            <div class="jua" id="diffTitle" style="font-size:17px;color:#2b3a36;text-align:center;margin-bottom:2px;">찬성으로 참여하기</div>
+            <div style="font-size:13px;color:#8a948c;text-align:center;margin-bottom:12px;">난이도를 선택해주세요</div>
+            <button type="button" class="intro-btn" style="background:#f2f8f3;border-color:#bfe3cf;" onclick="startWithDifficulty('easy')">
+              <span class="intro-btn-icon">⭐</span>
+              <span class="intro-btn-label">
+                <b class="pro jua">Easy</b>
+                <small>핵심 개념을 쉽게 배워요</small>
+                <small id="easyDiffHint" style="color:#5a9a6e;font-weight:600;margin-top:2px;"></small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn" style="background:#fff8f0;border-color:#f0d2a0;" onclick="startWithDifficulty('hard')">
+              <span class="intro-btn-icon">🔥</span>
+              <span class="intro-btn-label">
+                <b style="font-size:18px;color:#c0730a;" class="jua">Hard</b>
+                <small>심화 논점으로 깊이 토론해요</small>
+              </span>
+            </button>
+            <button type="button" onclick="backToIntroStep1()"
+                    style="margin-top:4px;background:none;border:none;color:#8a948c;font-size:14px;cursor:pointer;padding:8px;">← 돌아가기</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.debate-stage -->
+  </main>
+
+  <!-- ============================================================
+       MEMO PANEL (slide-in drawer)
+  ============================================================ -->
+  <div class="memo-panel" id="memoPanel">
+    <div class="memo-header">
+      <span class="memo-title jua">메모장</span>
+      <button type="button" class="memo-close-btn" onclick="closeMemo()" aria-label="닫기">×</button>
+    </div>
+    <div class="memo-body">
+      <div class="memo-section">
+        <div class="memo-label memo-label-pro">● 찬성 : (찬이)</div>
+        <textarea id="memoProText" class="memo-textarea" maxlength="500"
+                  placeholder="찬성 입장 메모를 입력해보세요..."
+                  oninput="updateMemoCount('memoProText','memoProCount')"></textarea>
+        <div class="memo-char-count" id="memoProCount">0 / 500</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-label memo-label-con">● 반대 : (반이)</div>
+        <textarea id="memoConText" class="memo-textarea" maxlength="500"
+                  placeholder="반대 입장 메모를 입력해보세요..."
+                  oninput="updateMemoCount('memoConText','memoConCount')"></textarea>
+        <div class="memo-char-count" id="memoConCount">0 / 500</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-label memo-label-check">● 확인해볼 점</div>
+        <textarea id="memoCheckText" class="memo-textarea" maxlength="500"
+                  placeholder="확인해볼 점을 메모해보세요..."
+                  oninput="updateMemoCount('memoCheckText','memoCheckCount')"></textarea>
+        <div class="memo-char-count" id="memoCheckCount">0 / 500</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#debateApp -->
+
+<!-- ============================================================
+     BOOTSTRAP MODALS
+============================================================ -->
+
+<!-- 출처 Modal -->
+<div class="modal fade debate-modal" id="sourceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header modal-header-pro">
+        <h5 class="modal-title jua" style="font-size:20px;">📄 참고 출처 ↗</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="sourceModalBody" style="padding:24px 26px; color:#3a463f; line-height:1.75;">
+        <p style="color:#8a948c; font-size:13px;">출처 정보를 불러오는 중입니다...</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal"
+                style="background:#2f8f6b;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 토론 기록 Modal -->
+<div class="modal fade debate-modal" id="recordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:560px;">
+    <div class="modal-content">
+      <div class="modal-header modal-header-record">
+        <div>
+          <h5 class="modal-title jua" style="font-size:20px;margin-bottom:2px;">📄 토론 기록</h5>
+          <div id="recordModalSub" style="font-size:12px;color:rgba(255,255,255,.75);"></div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:18px 20px;max-height:62vh;overflow-y:auto;" id="recordModalBody">
+        <div class="record-empty">아직 토론 기록이 없습니다.</div>
+      </div>
+      <div style="padding:10px 20px 16px;border-top:1px solid #eef3ee;text-align:right;">
+        <button class="btn" data-bs-dismiss="modal" style="background:#3b6bd6;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI 질문 Modal -->
+<div class="modal fade debate-modal" id="askModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header modal-header-ask">
+        <h5 class="modal-title jua" style="font-size:20px;" id="askModalTitle">🤖 AI에게 질문</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:#6b756e;font-size:14px;margin-bottom:12px;">궁금한 점을 자유롭게 물어보세요. 토론 내용을 바탕으로 답변을 도와드려요.</p>
+        <textarea id="askTextarea" class="debate-textarea"
+                  oninput="updateAskCharCount()" maxlength="600"></textarea>
+        <div class="ask-char-count" id="askCharCount">0 / 500</div>
+        <div id="askWarnMsg" style="display:none;color:#c0392b;font-size:12px;margin-top:4px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal"
+                style="background:#eef3ee;color:#3a463f;font-weight:600;border-radius:12px;padding:9px 18px;">취소</button>
+        <button type="button" class="btn" id="askSubmitBtn"
+                onclick="submitQuestion()"
+                style="background:#c45a4e;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">질문 보내기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<!-- ============================================================
+     DEBATE PAGE LOGIC
+============================================================ -->
+<script>
+  /* ── Static image paths (Django static 태그 → JS 변수로 주입) ── */
+  window._DEBATE_IMG = {
+    chani:      '{% static "assets/images/chani.png" %}',
+    bani:       '{% static "assets/images/bani.png" %}',
+    poli:       '{% static "assets/images/poli.png" %}',
+    meo:        '{% static "assets/images/me_o.png" %}',
+    mex:        '{% static "assets/images/me_x.png" %}',
+    meoF:       '{% static "assets/girl_debate_o.png" %}',
+    mexF:       '{% static "assets/girl_debate_x.png" %}',
+    avChani:    '{% static "assets/images/av_chani.png" %}',
+    avBani:     '{% static "assets/images/av_bani.png" %}',
+    avMeo:      '{% static "assets/boy.png" %}',
+    avMex:      '{% static "assets/boy.png" %}',
+    avMeoF:     '{% static "assets/girl.png" %}',
+    avMexF:     '{% static "assets/girl.png" %}',
+  };
+  window._DEBATE_CONFIG = {
+    userName: '{{ request.user.username }}',
+  };
+</script>
+{% include "components/profanity_modal.html" %}
+<script src="{% static 'js/chatbot/profanity_modal.js' %}"></script>
+<script src="{% static 'js/debate.js' %}?v=136"></script>
+<script>
+  document.getElementById('recordModal').addEventListener('shown.bs.modal', function () {
+    _scrollRecordToCurrent();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,1306 @@
+/* ===================================================
+   Debate Page — debate.css
+   Bootstrap 5.3 + custom stage layout
+   =================================================== */
+
+.jua { font-family: 'Pretendard'}
+
+/* ── 네비 헤더/드롭다운이 토론 오버레이(z:200) 위에 나오도록 ─── */
+.site-header { z-index: 300 !important; }
+.nav-dropdown .nav-menu { z-index: 1000 !important; }
+
+/* ── Bootstrap modal 열릴 때 body padding-right 추가로 배경 밀림 방지 ─── */
+body.modal-open { padding-right: 0 !important; overflow: hidden; }
+
+/* ── 전체 폰트 Pretendard 통일 ───────────────────── */
+.debate-page-wrap, .debate-page-wrap * {
+  font-family: 'Pretendard';
+}
+
+/* ── Wrapper ─────────────────────────────────────── */
+.debate-page-wrap {
+  min-height: 100vh;
+  background: #87ceeb;   /* 이미지가 화면보다 작을 때만 보이는 하늘색 폴백 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Main / Stage ────────────────────────────────── */
+.debate-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;      /* 위 기준 정렬 — 주제가 헤더 바로 아래에 */
+  padding: var(--header-height, 82px) 0 0;  /* 헤더만큼 아래로, 좌우/아래 여백 제거 */
+}
+
+/* ── Stage (주제·배경·캐릭터의 기준 컨테이너) ──────── */
+.debate-stage {
+  --stage-wash: 0.4;            /* ← 흰 오버레이 투명도 (0 = 없음, 1 = 완전 흰색) */
+  position: relative;            /* ← 내부 absolute 요소들의 기준. 없으면 헤더 밑으로 깔림 */
+  height: calc(100vh - var(--header-height, 82px));  /* 헤더 아래 화면에 전체가 다 보이게 */
+  width: 100%;
+  max-width: 100%;               /* 가로가 화면을 넘으면 줄여 잘리지 않게 */
+  border-radius: 0;              /* 프레임 제거 (풀블리드) */
+  overflow: hidden;
+  background: #87ceeb;           /* 배경 이미지 뒤 하늘색 (이미지에 가려 안 보임) */
+}
+
+/* ── 배경 위 반투명 오버레이 (배경 이미지는 건드리지 않음) ── */
+.debate-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(255, 255, 255, var(--stage-wash, 0.25));  /* 흰 오버레이 — 투명도는 .debate-stage의 --stage-wash로 조절 */
+  pointer-events: none;
+}
+
+/* ── Background image ────────────────────────────── */
+.stage-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+/* ── Skyline / Clouds (레거시, 숨김) ─────────────── */
+.stage-skyline,
+.stage-cloud { display: none; }
+
+/* ── Title ───────────────────────────────────────── */
+.stage-title {
+  position: absolute;
+  top: 3%; left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 6;
+  width: 90%;
+  font-size: clamp(22px, 3.4vw, 40px);
+  color: #ffffff;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
+.stage-title-star {
+  display: inline-block;
+  width: 1em; height: 1em;
+  background: url('../assets/star.png') center / contain no-repeat;
+  vertical-align: middle;
+  color: transparent;
+  text-shadow: none;
+}
+
+/* ── Topic Area (wrapper) ────────────────────────── */
+.topic-area {
+  position: absolute;
+  top: 4%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 620px;
+  width: max-content;
+}
+
+/* ── Topic Card (주제 텍스트만) ──────────────────── */
+.topic-card {
+  background: rgba(211, 255, 233, 0.96);
+  border: 1.5px solid #1a3a28;
+  border-radius: 18px;
+  padding: 14px 28px 16px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(30, 92, 50, .15);
+  min-width: 300px;
+  max-width: 620px;
+  width: max-content;
+}
+.topic-card-chip { display: none; }
+.topic-card-title {
+  font-size: clamp(17px, 1.8vw, 24px);
+  font-weight: 800;
+  color: #1a3a28;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.topic-card-sub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.topic-sub-pro, .topic-sub-con {
+  line-height: 1.6;
+  text-align: center;
+  font-size: clamp(14px, 1.55vw, 18px);
+  font-weight: 700;
+  color: #1a3a28;
+}
+.topic-sub-vs {
+  font-weight: 800;
+  color: #1e5c32;
+  font-size: clamp(12px, 1.1vw, 14px);
+  letter-spacing: 0.08em;
+}
+
+/* ── Topic Badges (카드 밖 하단) ─────────────────── */
+.topic-badges {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.topic-card-divider { display: none; }
+.topic-card-top { display: none; }
+.topic-card-meta { display: none; }
+.topic-card-btn { display: none; }
+
+/* ── Mode / Round badges ─────────────────────────── */
+.stage-badges { display: none; }
+.stage-mode-badge {
+  background: #fff;
+  border: 2px solid #bfe3cf;
+  color: #1f7a52;
+  font-weight: 700;
+  padding: 6px 22px;
+  border-radius: 30px;
+  font-size: clamp(14px, 1.5vw, 18px);
+  box-shadow: 0 4px 10px rgba(40, 90, 60, .12);
+}
+.stage-round-badges { display: flex; gap: 9px; }
+.stage-round-badge {
+  background: #e9f5fc;
+  border: 1.5px solid #bfe0ef;
+  color: #2b6f93;
+  font-weight: 600;
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-size: clamp(12px, 1.25vw, 15px);
+  white-space: nowrap;
+}
+
+/* ── 라운드 이동 바 (프로토타입) — 기존 "입장 제시 / —" 배지 줄 제거 ── */
+/* ── 라운드 이동 바 (프로토타입) — 기존 "입장 제시 / —" 배지 줄 제거 ── */
+.stage-topic-meta-row2 { display: none !important; }
+.stage-round-nav {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+  margin-top: 6px; background: rgba(233,245,252,.78); padding: 6px 10px; border-radius: 30px;
+  box-shadow: 0 4px 14px rgba(30,80,120,.15); border: 1px solid #bfe0ef; max-width: 96vw;
+}
+.stage-round-nav .round-btn {
+  border: 0; cursor: pointer; font-weight: 600; font-size: 12px; padding: 5px 11px;
+  border-radius: 20px; background: transparent; color: #2b6f93; white-space: nowrap; font-family: 'Pretendard';
+  transition: background .15s, color .15s;
+}
+.stage-round-nav .round-btn:hover { background: #d4edf8; }
+.stage-round-nav .round-btn.active  { background: #2b6f93; color: #fff; }
+.stage-round-nav .round-btn.visited { background: transparent; color: #2b6f93; font-weight: 700; }
+.stage-round-nav .round-btn.future  { background: transparent; color: #aaa; cursor: default; }
+.stage-round-nav .rdiv { color: #9acce0; font-size: 13px; user-select: none; }
+
+/* 난이도/내 입장 배지 — 더 이상 사용 안 함 (AI vs AI, User 모두 숨김) */
+.stage-user-badges { display: none !important; }
+
+/* 난이도/내 입장 배지 — 더 이상 사용 안 함 (AI vs AI, User 모두 숨김) */
+.stage-user-badges { display: none !important; }
+
+/* ── 카카오톡 스타일 스크롤 피드 (프로토타입) ── */
+/* 기존 좌우 고정 말풍선·레이블은 피드로 대체 → 숨김 */
+#leftBubble, #rightBubble, .stage-side-label, .stage-vs-label { display: none !important; }
+/* 피드 뒤 블러 패널 — 라운드 바 포함, 폴리 머리 위까지만, 끝이 둥근 사각형 */
+.blur-backdrop {
+  position: absolute; top: 14%; bottom: 40%; left: 13%; right: 13%; border-radius: 24px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  z-index: 7; pointer-events: none;
+}
+
+.debate-feed {
+  position: absolute; top: 23%; bottom: 40%; left: 15%; right: 15%;
+  overflow-y: auto; padding: 6px 1.2%; z-index: 8;
+  display: flex; flex-direction: column; gap: 4px; scroll-behavior: smooth;
+}
+.skip-all-btn {
+  position: absolute; left: 50%; top: 52%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(100,100,100,.75); color: #fff;
+  border: none; border-radius: 20px;
+  padding: 5px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Pretendard';
+  white-space: nowrap;
+}
+.skip-all-btn:hover { background: rgba(80,80,80,.9); }
+.debate-feed::-webkit-scrollbar { width: 8px; }
+.debate-feed::-webkit-scrollbar-thumb { background: rgba(120,150,140,.5); border-radius: 4px; }
+.feed-turn { display: flex; flex-direction: column; gap: 5px; scroll-margin-top: 6px; }
+.feed-sep {
+  align-self: center; font-size: 11px; font-weight: 700; color: #2b6f93;
+  background: rgba(255,255,255,.9); padding: 2px 12px; border-radius: 20px;
+}
+.feed-msg { display: flex; }
+.feed-msg.left  { justify-content: flex-start; }
+.feed-msg.right { justify-content: flex-end; margin-top: 6px; }
+.feed-bubble {
+  max-width: min(62%, 680px); padding: 12px 16px; border-radius: 14px;
+  font-size: 15px; line-height: 1.65; color: #2a3a32; background: #fff; word-break: keep-all;
+  box-shadow: 0 6px 16px rgba(40,80,60,.12); font-family: 'Pretendard';
+}
+.feed-msg.left  .feed-bubble { background: rgba(231, 255, 242, 0.78); border: 2px solid #bbf6cf; border-bottom-left-radius: 5px; }
+.feed-msg.right .feed-bubble { background: rgba(255, 231, 230, 0.78); border: 2px solid #fcbcb6; border-bottom-right-radius: 5px; }
+.feed-who { display: none; }   /* 나 / 찬이 / 반이 이름 줄 숨김 (말풍선 색으로 구분) */
+
+.feed-src-btn {
+  display: inline-block; margin-top: 7px; border: none; cursor: pointer;
+  background: #e8e8e8; color: #111; font-weight: 600; font-size: 11px;
+  padding: 3px 10px; border-radius: 6px; font-family: 'Pretendard';
+}
+.feed-msg.left .feed-src-btn {
+  /* 찬성 스타일 */
+  background: #278052; color: #ffffff;
+}
+.feed-msg.right .feed-src-btn {
+  /* 반대 스타일 */
+  background: #ff0000; color: #ffffff;
+}
+
+.feed-src-btn:hover { background: #d4d4d4; }
+.feed-loading {
+  align-self: center; font-size: 12px; font-weight: 600; color: #2b6f93;
+  background: rgba(255,255,255,.9); padding: 6px 16px; border-radius: 16px;
+  font-family: 'Pretendard'; animation: feedPulse 1.1s ease-in-out infinite;
+}
+@keyframes feedPulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+/* 메모 옆 '다음 단계' 강조 */
+.btn-stage-next { background: #2f8f6b; color: #fff; }
+.btn-stage-next:hover { background: #277a5b; }
+.feed-msg.left  .feed-who { color: #1f7a52; }
+.feed-msg.right .feed-who { color: #c0392b; }
+/* Bootstrap 모달이 body에 padding-right 추가해 배경 밀리는 현상 방지 */
+body.modal-open { padding-right: 0 !important; }
+
+.feed-q {
+  align-self: center; max-width: 80%; background: #eef0fb; border: 1px solid #c8d0f0;
+  border-radius: 12px; padding: 8px 14px; font-size: 13px; color: #4a5bbf;
+}
+
+/* 질문 답변 말풍선 — 일반 발언과 다른 색으로 구분 */
+.feed-msg.left  .feed-bubble.feed-bubble-answer {
+  background: #fff9ec; border-color: #f0d87a; border-bottom-left-radius: 5px;
+}
+.feed-msg.right .feed-bubble.feed-bubble-answer {
+  background: #fff9ec; border-color: #f0d87a; border-bottom-right-radius: 5px;
+}
+.feed-ans-label {
+  display: inline-block; margin-bottom: 5px;
+  font-size: 10px; font-weight: 700; color: #a07a00;
+  background: #fef3c7; border: 1px solid #f0d87a;
+  padding: 1px 8px; border-radius: 10px; letter-spacing: 0.02em;
+}
+.stage-round-badge--lg {
+  padding: 5px 14px;
+  font-size: clamp(12px, 1.2vw, 14px);
+  font-weight: 700;
+  border-width: 2px;
+}
+
+/* ── topic-card-meta: 한 줄 배지 모음 ────────────────────── */
+.topic-card-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.stage-user-badges {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.stage-user-badge {
+  background: #fff;
+  border: 1.5px solid #cfe4d5;
+  border-radius: 14px;
+  padding: 5px 12px;
+  font-size: clamp(12px, 1.1vw, 14px);
+  font-weight: 700;
+  color: #33614a;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .06);
+}
+
+/* ── City Hall (배경 이미지에 포함됨, 숨김) ─────── */
+.stage-city-hall { display: none; }
+
+/* ── Speech Bubbles ──────────────────────────────── */
+.stage-bubble {
+  position: absolute;
+  bottom: 48%;          /* 캐릭터 top:53% 바로 위에서 시작해 위로 자람 */
+  width: 27.5%;
+  z-index: 8;
+  background: #fff;
+  border-radius: 20px;
+  padding: 13px 15px;
+  /* 말풍선이 위로 너무 자라서 제목(top:3%)을 덮지 않도록 제한 */
+  max-height: 37%;      /* 52%(bottom) - 37%(max) = top:15% — 배지/제목 위 공간 확보 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* ── 주제 + 배지 wrapper ─────────────────────────── */
+.stage-topic-wrap {
+  position: absolute;
+  top: 3%;
+  left: 1.6%;
+  right: 1.6%;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.stage-topic-row {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;              /* 박스를 내용 높이로 (vs 원 높이에 늘어나지 않게) */
+  justify-content: space-between;   /* 찬성=왼쪽 말풍선 위, 반대=오른쪽 말풍선 위 */
+  gap: 10px;
+}
+.stage-topic-pro,
+.stage-topic-con {
+  flex: 0 0 44%;
+  max-width: 44%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 1.25vw, 16px);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(40, 80, 60, .18);
+}
+.stage-topic-pro {
+  color: #0f3320;
+  background: rgba(227, 252, 239, 0.75);
+  border: 1.5px solid #c2f6d4;
+}
+.stage-topic-con {
+  color: #4a1008;
+  background: rgba(255, 231, 227, 0.75);
+  border: 1.5px solid #fccac5;
+}
+.stage-topic-vs {
+  flex-shrink: 0;
+  align-self: center;     /* 박스가 늘어나도 vs는 가운데 원형 유지 */
+  width: clamp(40px, 4vw, 60px);
+  height: clamp(40px, 4vw, 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(233, 245, 252, 0.78);     /* 연한 하늘색 */
+  border: 2.5px solid #bfe0ef;
+  color: #2b6f93;
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 900;
+  letter-spacing: 0;
+  box-shadow: 0 5px 14px rgba(40, 80, 60, .18);
+  pointer-events: none;
+}
+.stage-topic-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.stage-topic-meta-row1,
+.stage-topic-meta-row2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+#userBadges {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.stage-bubble-left {
+  left: 1.6%;
+  border: 2.5px solid #bfe3cf;
+  box-shadow: 0 8px 20px rgba(30, 90, 60, .14);
+}
+.stage-bubble-right {
+  right: 1.6%;
+  border: 2.5px solid #f1cdc9;
+  box-shadow: 0 8px 20px rgba(120, 40, 40, .12);
+}
+
+.bubble-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.bubble-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.stage-bubble-left  .bubble-avatar { border: 2.5px solid #cfe9d8; background: #eef6f0; }
+.stage-bubble-right .bubble-avatar { border: 2.5px solid #f3d4d0; background: #fbeeed; }
+
+.bubble-name-row { display: flex; align-items: center; gap: 7px; }
+.bubble-name { font-size: 17px; }
+.stage-bubble-left  .bubble-name { color: #1f7a52; }
+.stage-bubble-right .bubble-name { color: #c0392b; }
+
+.bubble-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px; height: 19px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.bubble-badge-pro { border: 2.5px solid #2f9f6b; color: #2f9f6b; }
+.bubble-badge-con { border: 2.5px solid #d6493d; color: #d6493d; }
+
+.bubble-role { font-size: 11.5px; font-weight: 600; }
+.stage-bubble-left  .bubble-role { color: #6f9a82; }
+.stage-bubble-right .bubble-role { color: #b58982; }
+
+.bubble-content {
+  font-size: clamp(12px, 1.2vw, 14px);
+  line-height: 1.62;
+  color: #3a463f;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0; /* flex overflow 필수 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.bubble-content::-webkit-scrollbar { width: 3px; }
+.bubble-content::-webkit-scrollbar-thumb { background: #d6e2d8; border-radius: 3px; }
+.bubble-content p { margin: 0 0 7px; }
+.bubble-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8a948c;
+  font-size: 13px;
+}
+.bubble-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid #ddd;
+  border-top-color: #2f8f6b;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  flex-shrink: 0;
+}
+
+.bubble-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+/* ── Poli ────────────────────────────────────────── */
+.stage-poli {
+  position: absolute;
+  top: 56%; left: 50%;   /* 피드(끝 53%) 아래로 내려 글 안 가리게 */
+  width: 12%;
+  z-index: 9;            /* 블러(7)·피드(8)보다 앞 — 폴리 완전 전면 */
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .16));
+  animation: floaty-poli 5.5s ease-in-out infinite;
+}
+.stage-poli-final {
+  position: absolute;
+  top: 21%; left: 50%;
+  width: 15%;
+  z-index: 4;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .16));
+  animation: floaty-poli 5.5s ease-in-out infinite;
+}
+
+/* ── Side Characters ─────────────────────────────── */
+.stage-char {
+  position: absolute;
+  top: 59%;            /* 피드(한 턴) 공간 확보 위해 보도 쪽으로 더 내림 */
+  width: 23%;
+  z-index: 5;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .14));
+}
+/*
+  픽셀 분석: chani canvas fill=64.7%(하단 30.1% 여백) / me_o=99.9%w·82.7%h / bani=90.9% / me_x=84.0%w·85.8%h
+  발 위치 공식: char_bottom = top% + bottom_fraction × css_width × (canvas_ratio / stage_ratio)
+  기준(me_o@19%): 발 90.6% stage_h / chani@25%: 발 90.7% / me_x@22%: 발 90.7% (매칭)
+  Final(bani@18%): 발 57.0% / me_o@15%: 56.4% / chani@20%: 56.6%
+*/
+.stage-char-left    { left: 11%;  width: 14%; }   /* me_o — 보도 쪽 안으로 */
+.stage-char-chani   { left: 11%;  width: 14%; }   /* chani */
+.stage-char-right   { right: 8%; width: 14%; }   /* bani */
+.stage-char-right-mex { right: 11%; width: 14%; top: 56%; }
+
+.stage-char-final {
+  position: absolute;
+  top: 50%;   /* fixed 뷰포트 기준 세로 중앙 부근 */
+  width: 18%;
+  z-index: 54;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .14));
+}
+.stage-char-left-final      { left: 2%;  width: 16%; }  /* me_o final */
+.stage-char-chani-final     { left: 2%;  width: 20%; }  /* chani final */
+.stage-char-right-final     { right: 2%; }               /* bani final */
+.stage-char-right-mex-final { right: 2%; width: 18%; top: 44%; }
+
+/* ── Poli Summary Card (mid-debate) ──────────────── */
+.stage-summary-card {
+  position: absolute;
+  top: 60%; left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  z-index: 6;
+  background: rgba(255, 255, 255, .96);
+  border: 2px solid #cfe6d6;
+  border-radius: 20px;
+  box-shadow: 0 10px 26px rgba(30, 80, 55, .18);
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+.stage-summary-header {
+  text-align: center;
+  background: #2f8f6b;
+  color: #fff;
+  padding: 7px;
+  border-radius: 18px 18px 0 0;
+  font-size: clamp(13px, 1.4vw, 17px);
+}
+.stage-summary-body {
+  padding: 11px 16px 0;
+  font-size: clamp(11px, 1.12vw, 13px);
+  line-height: 1.55;
+  color: #3a463f;
+}
+
+/* ── Action Bar ──────────────────────────────────── */
+.stage-action-bar {
+  position: absolute;
+  bottom: 3%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  display: flex;
+  gap: 11px;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+/* ── Input Bar ───────────────────────────────────── */
+.stage-input-bar {
+  position: absolute;
+  bottom: 2.5%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  width: 50%;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #d6e2d8;
+  border-radius: 16px;
+  padding: 7px 7px 7px 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+}
+.stage-input {
+  flex: 1;
+  border: none;
+  font-size: 15px;
+  color: #3a463f;
+  background: transparent;
+  font-family: 'Pretendard', sans-serif;
+  outline: none;
+  padding: 11px 0;
+}
+.stage-input::placeholder { color: #b0bcb5; }
+
+/* ── Final Card ──────────────────────────────────── */
+.final-card {
+  position: absolute;
+  top: 37%; left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  z-index: 7;
+  background: rgba(255, 255, 255, .97);
+  border: 2px solid #cfe6d6;
+  border-radius: 24px;
+  box-shadow: 0 14px 34px rgba(30, 80, 55, .22);
+  overflow: hidden;
+  animation: popc .38s ease both;
+}
+.final-card-header {
+  text-align: center;
+  background: #2f8f6b;
+  color: #fff;
+  padding: 9px;
+  font-size: clamp(15px, 1.7vw, 20px);
+}
+.final-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 26px;
+  padding: 16px 24px 20px;
+  font-size: clamp(11px, 1.1vw, 13.5px);
+  line-height: 1.5;
+}
+.final-col-title {
+  font-size: clamp(13px, 1.4vw, 15px);
+  margin-bottom: 7px;
+}
+.final-col-subtitle {
+  font-size: clamp(12px, 1.3vw, 14px);
+  margin: 8px 0 7px;
+}
+.final-list {
+  margin: 0 0 10px;
+  padding-left: 17px;
+  color: #3a463f;
+}
+.final-list li { margin-bottom: 4px; }
+
+.final-action-bar {
+  position: relative;
+  z-index: 55;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Final view 캐릭터 요약 버블 ─────────────────── */
+.final-sum-bubble {
+  position: absolute; top: 23%; width: 22%; z-index: 9;
+  background: #fff; border-radius: 16px; padding: 9px 12px;
+  animation: pop .35s ease both;
+}
+.final-sum-bubble-left  { left: 1.6%;  border: 2px solid #bfe3cf; box-shadow: 0 5px 14px rgba(30,90,60,.13); }
+.final-sum-bubble-right { right: 1.6%; border: 2px solid #f1cdc9; box-shadow: 0 5px 14px rgba(120,40,40,.10); }
+.final-sum-header {
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #eef3ee;
+}
+.final-sum-av   { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.final-sum-name { font-size: 14px; }
+.final-sum-role { font-size: 10.5px; color: #8a948c; margin-left: auto; white-space: nowrap; }
+.final-sum-text { font-size: clamp(10px, 1vw, 12px); color: #3a463f; line-height: 1.5; }
+
+/* ── Final card 4섹션 그리드 ─────────────────────── */
+.final-card-body-4 { display: grid; grid-template-columns: 1fr 1fr; padding: 0; }
+.f4-sec {
+  padding: 10px 13px;
+  font-size: clamp(12px, 1.2vw, 14px); line-height: 1.5; color: #3a463f;
+}
+.f4-sec-pro      { border-right: 1px solid #e6ece8; border-bottom: 1px solid #e6ece8; }
+.f4-sec-con      { border-bottom: 1px solid #e6ece8; }
+.f4-sec-rebuttal { border-right: 1px solid #e6ece8; }
+.f4-title { font-size: clamp(13px, 1.4vw, 15px); margin-bottom: 6px; font-weight: 700; }
+.f4-sec-pro      .f4-title { color: #1f7a52; }
+.f4-sec-con      .f4-title { color: #c0392b; }
+.f4-sec-rebuttal .f4-title { color: #2e6e52; }
+.f4-sec-issues   .f4-title { color: #2e6e52; }
+.f4-list { margin: 0; padding-left: 14px; }
+.f4-list li { margin-bottom: 3px; }
+.f4-rebuttal { margin-bottom: 7px; }
+.f4-rb-tag {
+  display: inline-block; border-radius: 8px;
+  padding: 2px 7px; font-size: 11px; font-weight: 700; margin-bottom: 3px;
+}
+.f4-rb-pro { background: #eef8f0; color: #1f7a52; border: 1px solid #bfe3cf; }
+.f4-rb-con { background: #fef2f0; color: #c0392b; border: 1px solid #f3cbc7; }
+.f4-rebuttal p { margin: 0; font-size: clamp(11px, 1.1vw, 13px); }
+.f4-issue { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 5px; }
+.f4-issue-tag {
+  flex-shrink: 0; background: #f3f8f2; border: 1px solid #d2e4d6;
+  color: #3a6b50; border-radius: 7px; padding: 2px 6px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.f4-issue span:last-child { font-size: clamp(11px, 1.1vw, 13px); }
+
+/* ── 주장 다지기: 뷰포트 전체를 덮는 오버레이 ───────── */
+#finalView {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* backdrop-filter가 안 먹히는 환경을 위한 폴백 배경 */
+  background: rgba(20, 38, 25, 0.82);
+}
+#finalView > * { pointer-events: auto; }
+
+.final-blur-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* backdrop-filter 지원 시 배경을 약간 투명하게 — 지원 안 하면 부모 배경이 폴백 */
+  background: transparent;
+  pointer-events: none;
+}
+
+/* ── 중앙 컬럼: 폴리 + 보드 + 버튼을 세로로 ──────── */
+.final-center-col {
+  position: relative;
+  z-index: 52;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(880px, 80vw);
+  max-height: 96vh;
+  /* flex 부모(#finalView)가 center align 처리하므로 여백 불필요 */
+}
+
+/* ── 폴리 (보드 위에 겹쳐서 살짝 올라탐) ────────── */
+.stage-poli-debate {
+  position: relative;
+  width: 26%;
+  margin-bottom: -6%;   /* 보드 상단에 겹침 */
+  z-index: 3;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.13));
+  flex-shrink: 0;
+}
+
+/* ── 보드 이미지 ──────────────────────────────────── */
+.final-board-wrap {
+  position: relative;
+  width: 100%;
+  z-index: 2;
+  flex-shrink: 1;
+  min-height: 0;
+  max-height: calc(96vh - 90px);
+  overflow: hidden;
+}
+.final-board-img { width: 100%; display: block; }
+.fb-content { position: absolute; inset: 0; }
+.fb-sec {
+  position: absolute; overflow: hidden;
+  font-size: clamp(15px, 1.5vw, 18px);
+  padding: 6px 10px;
+  line-height: 1.4; color: #3a463f;
+  padding: 2px 4px;
+}
+.fb-tl { left: 5.5%;  top: 25%; width: 42%; height: 26%; overflow-y: auto; }
+.fb-tr { left: 51%;   top: 25%; width: 42%; height: 26%; overflow-y: auto; }
+.fb-bl { left: 5.5%;  top: 63%; width: 42%; height: 26%; overflow-y: auto; }
+.fb-br { left: 51%;   top: 63%; width: 42%; height: 26%; overflow-y: auto; }
+.fb-sec .f4-list     { margin: 0; padding-left: 10px; }
+.fb-sec .f4-list li  { margin-bottom: 5px; font-size: 19px; }
+.fb-sec .f4-rebuttal { margin-bottom: 4px; }
+.fb-sec .f4-rebuttal p { margin: 1px 0 2px; font-size: 17px; line-height: 1.6; padding-left: 14px; }
+.fb-sec .f4-rb-tag   { font-size: 14px; padding: 2px 7px; margin-bottom: 3px; }
+.fb-sec .f4-issue    { display: flex; flex-direction: column; margin-bottom: 7px; gap: 2px; }
+.fb-sec .f4-issue-tag { font-size: 13px; padding: 2px 6px; }
+.fb-sec .f4-issue span:last-child { font-size: 16px; padding-left: 4px; line-height: 1.4; }
+.fb-sec .f4-title    { display: none; }
+
+/* ── Intro Overlay ───────────────────────────────── */
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(28, 48, 40, .20);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.intro-card {
+  width: min(560px, 86%);
+  background: #fff;
+  border-radius: 26px;
+  padding: 30px 30px 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .3);
+  text-align: center;
+  animation: pop .35s ease both;
+}
+.intro-poli {
+  width: 96px;
+  margin: -78px auto 4px;
+  display: block;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .15));
+}
+.intro-title { font-size: 26px; color: #2b3a36; }
+.intro-topic { color: #6b756e; font-size: 14px; margin: 6px 0 20px; }
+.intro-options { display: flex; flex-direction: column; gap: 12px; }
+
+.intro-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  text-align: left !important;
+  border-radius: 18px !important;
+  padding: 15px 18px !important;
+  width: 100% !important;
+  cursor: pointer !important;
+  border: 2px solid !important;
+  background: none !important;
+  transition: filter .15s;
+}
+.intro-btn:hover { filter: brightness(.96); }
+.intro-btn-aiai { border-color: #cfe6d6 !important; background: #f3f8f2 !important; }
+.intro-btn-pro  { border-color: #bfe3cf !important; background: #f2f8f3 !important; }
+.intro-btn-con  { border-color: #f1cdc9 !important; background: #fbf3f2 !important; }
+
+.intro-btn-icon { font-size: 30px; flex-shrink: 0; }
+.intro-avatars { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.intro-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; object-position: top; }
+.intro-avatar-chani { border: 2px solid #bfe3cf; background: #eef6f0; }
+.intro-avatar-bani  { border: 2px solid #f3d4d0; background: #fbeeed; }
+.intro-vs { font-size: 11px; font-weight: 800; color: #6b9e80; letter-spacing: -0.5px; }
+.intro-btn-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.intro-btn-circle-pro { border: 3px solid #2f9f6b; color: #2f9f6b; }
+.intro-btn-circle-con { border: 3px solid #d6493d; color: #d6493d; }
+
+.intro-btn-label b.pro  { font-size: 18px; color: #1f7a52; }
+.intro-btn-label b.con  { font-size: 18px; color: #c0392b; }
+.intro-btn-label small  { font-size: 13px; color: #6b756e; display: block; margin-top: 2px; }
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn-debate-primary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #2f8f6b;
+  color: #fff !important;
+  border: none;
+  border-radius: 14px;
+  padding: 11px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(47, 143, 107, .35);
+  white-space: nowrap;
+}
+.btn-debate-primary:hover { background: #267a5c; }
+
+.btn-debate-secondary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  color: #3a463f !important;
+  border: 1.5px solid #cdddd2;
+  border-radius: 14px;
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-debate-secondary:hover { background: #f3f8f4; }
+
+/* 추가토론 소진 상태 — 클릭 가능하지만 회색으로 표시 */
+.btn-debate-secondary.btn-extra-exhausted {
+  color: #aaa;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+.btn-debate-secondary.btn-extra-exhausted:hover { background: #fff; }
+
+.btn-debate-organize {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #f6ecd0;
+  color: #8a6d28 !important;
+  border: 1.5px solid #ecd9a4;
+  border-radius: 14px;
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-debate-organize:hover { background: #f0e0b0; }
+
+.btn-debate-ask {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #f9dedb;
+  color: #b4564b !important;
+  border: 1.5px solid #f0c8c3;
+  border-radius: 14px;
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-debate-ask:hover { background: #f5ccc7; }
+
+.btn-debate-send {
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 12px;
+  background: #2f8f6b;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn-debate-send:hover { background: #267a5c; }
+
+/* ── 빨리감기 버튼 ────────────────────────────────── */
+.btn-debate-skip {
+  display: flex;
+  align-items: center;
+  background: #e8f4ec;
+  border: 1.5px solid #b8d9c5;
+  color: #3a6b50;
+  border-radius: 10px;
+  padding: 4px 9px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: auto;   /* 왼쪽 정렬 (출처 버튼은 오른쪽) */
+  transition: background 0.15s;
+}
+.btn-debate-skip:hover { background: #d0ecda; }
+.btn-debate-skip-con {
+  background: #fbeeec;
+  border-color: #f0c8c3;
+  color: #b4564b;
+}
+.btn-debate-skip-con:hover { background: #f5deda; }
+
+.btn-debate-source {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f2f8f3;
+  border: 1.5px solid #cfe2d4;
+  color: #3a6b50;
+  border-radius: 10px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-debate-source-con {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #fbf2f1;
+  border: 1.5px solid #f0d2ce;
+  color: #b4564b;
+  border-radius: 10px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── Stage Side Buttons (below Poli) ────────────── */
+.stage-side-btns {
+  position: absolute;
+  top: 76%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+.btn-stage-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: #3a463f;
+  border: 1.5px solid #d0ddd5;
+  border-radius: 14px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .13);
+  white-space: nowrap;
+  font-family: 'Pretendard', sans-serif;
+  transition: background .15s, box-shadow .15s;
+}
+.btn-stage-side.btn-skip {
+  background: #e0e0e0; color: #444; border-color: #bbb;
+}
+.btn-stage-side.btn-skip:hover { background: #d0d0d0; }
+.btn-stage-side:hover {
+  background: #f3f8f4;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .16);
+}
+
+/* ── Memo Panel ──────────────────────────────────── */
+.memo-panel {
+  position: fixed;
+  top: var(--header-height, 82px); right: 0;
+  height: calc(100vh - var(--header-height, 82px));
+  width: 360px;
+  max-width: 88vw;
+  background: #fff;
+  box-shadow: -12px 0 36px rgba(0, 0, 0, .18);
+  z-index: 250; /* above site-header(200), below modals(300) */
+  display: flex;
+  flex-direction: column;
+  transform: translateX(105%);
+  transition: transform .32s cubic-bezier(.4, 0, .2, 1);
+}
+.memo-panel.open { transform: translateX(0); }
+/* 메모장이 열리면 스테이지를 패널(360px)만큼 줄여 왼쪽으로 — 반대(오른쪽)가 안 가리도록 */
+.debate-main { transition: padding-right .32s cubic-bezier(.4, 0, .2, 1); }
+.debate-page-wrap.memo-open .debate-main { padding-right: 360px; }
+
+.memo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #eef3ee;
+}
+.memo-title { font-size: 22px; color: #2b3a36; }
+.memo-close-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #8a948c;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.memo-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.memo-body::-webkit-scrollbar { width: 4px; }
+.memo-body::-webkit-scrollbar-thumb { background: #d6e2d8; border-radius: 4px; }
+
+.memo-section { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.memo-label {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.memo-label-pro   { color: #1e5c32; }
+.memo-label-con   { color: #c0392b; }
+.memo-label-check { color: #555; }
+
+.memo-textarea {
+  width: 100%;
+  min-height: 60px;
+  flex: 1;
+  border: 1.5px solid #d6e2d8;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #3a463f;
+  resize: vertical;
+  font-family: 'Pretendard', sans-serif;
+  outline: none;
+  transition: border-color .2s;
+}
+.memo-textarea:focus { border-color: #2f8f6b; }
+.memo-textarea::placeholder { color: #b0bcb5; }
+
+/* ── Modal overrides ─────────────────────────────── */
+.debate-modal .modal-content {
+  border: none;
+  border-radius: 22px;
+  overflow: hidden;
+  font-family: 'Pretendard', sans-serif;
+}
+.debate-modal .modal-header { border: none; padding: 16px 22px; }
+.debate-modal .modal-footer { border: none; padding: 6px 22px 18px; }
+.debate-modal .modal-body   { padding: 22px; }
+
+.modal-header-pro    { background: #2f8f6b; color: #fff; }
+.modal-header-record { background: #3b6bd6; color: #fff; }
+.modal-header-ask    { background: #c45a4e; color: #fff; }
+
+.debate-textarea {
+  width: 100%;
+  min-height: 110px;
+  border: 1.5px solid #d6e2d8;
+  border-radius: 14px;
+  padding: 13px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: 'Pretendard', sans-serif;
+  outline: none;
+}
+.debate-textarea:focus { border-color: #2f8f6b; }
+
+.record-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1.5px solid #e6ece8;
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+.record-empty { text-align: center; color: #8a948c; padding: 30px 20px; font-size: 14px; }
+
+/* ── Animations ──────────────────────────────────── */
+@keyframes floaty-center {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-7px); }
+}
+@keyframes floaty-poli {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-6px); }
+}
+@keyframes pop {
+  0%   { transform: scale(.96); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes popc {
+  0%   { transform: translateX(-50%) scale(.97); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1);   opacity: 1; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pop  { animation: pop  .35s ease both; }
+.popc { animation: popc .38s ease both; }
+
+/* ── 폴리 질문 알림 말풍선 ──────────────────────── */
+.polly-q-bubble {
+  position: absolute; top: 4%; left: 50%; transform: translateX(-50%);
+  width: 34%; z-index: 11;
+  background: #f0f9f4; border: 2px solid #a8dbbe;
+  border-radius: 16px; padding: 10px 14px 12px;
+  box-shadow: 0 6px 18px rgba(30,90,60,.13);
+  animation: pop-centered .35s ease both;
+}
+.polly-q-bubble::before {
+  content: ''; position: absolute;
+  bottom: -15px; left: 50%; transform: translateX(-50%);
+  border: 13px solid transparent; border-top-color: #a8dbbe;
+}
+.polly-q-bubble::after {
+  content: ''; position: absolute;
+  bottom: -12px; left: 50%; transform: translateX(-50%);
+  border: 11px solid transparent; border-top-color: #f0f9f4;
+}
+.polly-q-text {
+  font-size: clamp(11px, 1.05vw, 13px); line-height: 1.6; color: #3a463f;
+}
+
+/* ── 폴리 라운드 시작 안내 말풍선 ─────────────────── */
+.polly-intro-bubble {
+  position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
+  width: 30%; z-index: 10;
+  background: #fffdf0; border: 2px solid #e8d084;
+  border-radius: 16px; padding: 12px 16px 10px;
+  box-shadow: 0 8px 24px rgba(80,60,0,.14);
+  animation: pop-centered .38s ease both;
+  text-align: left;
+}
+.polly-intro-bubble::before {
+  content: ''; position: absolute;
+  bottom: -15px; left: 50%; transform: translateX(-50%);
+  border: 13px solid transparent; border-top-color: #e8d084;
+}
+.polly-intro-bubble::after {
+  content: ''; position: absolute;
+  bottom: -12px; left: 50%; transform: translateX(-50%);
+  border: 11px solid transparent; border-top-color: #fffdf0;
+}
+.polly-intro-header {
+  font-size: clamp(11px, 1vw, 13px); font-weight: 700;
+  color: #7a6010; margin-bottom: 6px;
+}
+.polly-intro-text {
+  font-size: clamp(10px, 0.95vw, 12px); line-height: 1.65; color: #4a4020;
+  white-space: pre-line;
+}
+.polly-intro-ok {
+  display: block; margin: 8px auto 0;
+  background: #e8d084; border: none; border-radius: 20px;
+  padding: 4px 18px; font-size: 11px; font-weight: 700;
+  color: #5a4a00; cursor: pointer;
+}
+.polly-intro-ok:hover { background: #d8c060; }
+
+/* ── 토론 기록 질문 카드 ─────────────────────────── */
+.record-q-item { text-align: center; margin: 4px 0 10px; }
+.record-q-badge {
+  display: inline-block;
+  background: #fff8e8; border: 1.5px solid #e8d4a0; color: #8a6d28;
+  border-radius: 20px; padding: 3px 14px; font-size: 11px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.record-q-text {
+  display: block; width: 85%; margin: 0 auto;
+  background: #fffdf5; border: 1px solid #e8d4a0;
+  border-radius: 12px; padding: 9px 14px;
+  font-size: 13px; line-height: 1.6; color: #3a463f; text-align: left;
+}
+
+/* ── 글자수 카운터 ───────────────────────────────── */
+.ask-char-count { font-size: 12px; color: #a0aaa4; text-align: right; margin-top: 5px; }
+.ask-char-count.over { color: #c0392b; font-weight: 700; }
+.polly-q-header {
+  font-size: 11px; font-weight: 700; color: #1f7a52;
+  margin-bottom: 6px;
+}
+
+@keyframes pop-centered {
+  0%   { transform: translateX(-50%) scale(.96); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1);   opacity: 1; }
+}
+
+/* ── 메모 글자수 카운터 ──────────────────────────── */
+.memo-char-count {
+  font-size: 11px; color: #a0aaa4; text-align: right; margin-top: 2px;
+}
+.memo-char-count.over { color: #c0392b; font-weight: 700}

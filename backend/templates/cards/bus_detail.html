@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category_name }} 버스 탑승 중 · PoliCity{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards/bus_detail.css' %}">
+<style>
+  :root { --bus-color: {{ bus_color }}; }
+
+  /* card.html 필수 CSS */
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .tabs { display:flex; gap:4px; border-bottom:1.5px solid var(--border-color); margin-bottom:18px; }
+  .tab { flex:1 1 0; text-align:center; cursor:pointer; font-size:var(--font-size-md); font-weight:600; color:var(--text-muted); padding:10px 4px 12px; position:relative; transition:color .15s; white-space:nowrap; }
+  .tab::after { content:""; position:absolute; left:8px; right:8px; bottom:-1.5px; height:3px; border-radius:2px; background:var(--color-primary); transform:scaleX(0); transition:transform .2s; }
+  .tab:hover { color:var(--text-primary); }
+  .tab.active { color:var(--color-primary); font-weight:700; }
+  .tab.active::after { transform:scaleX(1); }
+  .sum-category { display:inline-flex; align-items:center; gap:5px; background:var(--color-primary); color:var(--text-white); font-size:var(--font-size-xs); font-weight:700; padding:5px 12px; border-radius:var(--border-radius-full); margin-bottom:0; }
+  .sum-points { display:flex; flex-direction:column; gap:7px; margin-bottom:16px; }
+  .sum-point { display:flex; align-items:flex-start; gap:8px; font-size:var(--font-size-sm); color:var(--text-primary); line-height:1.55; }
+  .sum-point-dot { flex:0 0 auto; width:20px; height:20px; background:var(--color-primary); color:#fff; border-radius:50%; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .sum-youth { background:linear-gradient(135deg,#eaf6ef,#d4eedf); border:1px solid var(--color-secondary); border-radius:var(--border-radius-md); padding:12px 14px; margin-bottom:16px; }
+  .sum-youth-label { font-size:var(--font-size-xs); font-weight:800; color:var(--color-primary); margin-bottom:5px; }
+  .sum-youth-text { font-size:var(--font-size-sm); line-height:1.65; color:var(--text-secondary); }
+  .sum-detail-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .sum-detail-row { display:flex; gap:10px; align-items:flex-start; }
+  .sum-detail-icon { flex:0 0 32px; height:32px; background:var(--bg-tag); border-radius:var(--border-radius-sm); display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .sum-detail-body { flex:1 1 auto; min-width:0; }
+  .sum-detail-label { font-size:var(--font-size-xs); font-weight:700; color:var(--text-muted); margin-bottom:2px; }
+  .sum-detail-value { font-size:var(--font-size-sm); color:var(--text-primary); line-height:1.55; }
+  .sum-contact-toggle { display:flex; align-items:center; gap:6px; font-size:var(--font-size-xs); font-weight:700; color:var(--color-primary); cursor:pointer; background:none; border:none; padding:0; font-family:inherit; margin-top:4px; }
+  .sum-contact-list { display:none; flex-direction:column; gap:5px; margin-top:8px; padding:10px 12px; background:var(--bg-sidebar); border-radius:var(--border-radius-sm); border:1px solid var(--border-color); }
+  .sum-contact-list.open { display:flex; }
+  .sum-contact-item { font-size:var(--font-size-xs); color:var(--text-secondary); line-height:1.6; }
+  .info-list { display:flex; flex-direction:column; gap:20px; margin-bottom:24px; }
+  .info { display:flex; gap:14px; }
+  .info .ii { flex:0 0 auto; width:38px; height:38px; font-size:16px; display:flex; align-items:center; justify-content:center; color:var(--color-primary); background:var(--bg-tag); border-radius:var(--border-radius-md); }
+  .info .il { font-size:var(--font-size-md); font-weight:700; color:var(--text-secondary); margin-bottom:5px; }
+  .info .iv { font-size: var(--font-size-base); line-height: 1.75;color: var(--text-secondary); word-break: keep-all; overflow-wrap: break-word;}
+  .debate-list { display:flex; flex-direction:column; gap:16px; margin-bottom:24px; }
+  .debate-card { border-radius:var(--border-radius-md); overflow:hidden; border:1.5px solid var(--border-color); }
+  .debate-card-head { display:flex; align-items:center; gap:10px; padding:10px 14px; }
+  .debate-card.for .debate-card-head { background:linear-gradient(135deg,#eaf6ef,#d4eedf); border-bottom:1.5px solid var(--color-secondary); }
+  .debate-card.against .debate-card-head { background:linear-gradient(135deg,#fff5f5,#ffe8e8); border-bottom:1.5px solid #f5a0a0; }
+  .debate-badge { display:inline-flex; align-items:center; font-size:var(--font-size-xs); font-weight:800; padding:4px 10px; border-radius:var(--border-radius-full); }
+  .debate-card.for .debate-badge { background:var(--color-primary); color:#fff; }
+  .debate-card.against .debate-badge { background:#d94f4f; color:#fff; }
+  .debate-card-body { padding:12px 14px 14px; font-size:var(--font-size-sm); line-height:1.7; color:var(--text-primary); background:#fff; }
+  .detail-panel { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+  .detail-head { position:relative; flex:0 0 auto; }
+  .detail-close { position:absolute; top:16px; right:18px; cursor:pointer; color:var(--text-muted); font-size:18px; width:30px; height:30px; border-radius:var(--border-radius-sm); display:flex; align-items:center; justify-content:center; }
+  .detail-close:hover { background:var(--color-danger-light); color:var(--color-danger); }
+  .detail-hero { width:calc(100% - 32px); height:200px; margin:4px 16px 0; border-radius:var(--border-radius-lg); border:1px solid var(--border-color); overflow:hidden; flex:0 0 auto; }
+  .detail-pad { padding: 24px 40px 40px; flex: 1 1 0; overflow-y: auto; min-height: 0; }
+  .detail-title { display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-weight:900; font-size:var(--font-size-3xl); color:var(--text-primary); letter-spacing:-.5px; margin-bottom:10px; }
+  .detail-bookmark { margin-left:auto; flex:0 0 auto; width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; border-radius:var(--border-radius-sm); border:1.5px solid var(--border-color); background:#fff; color:var(--color-primary); font-size:18px; cursor:pointer; }
+  .panel-title { font-size:var(--font-size-2xl); font-weight:800; color:var(--text-primary); padding:20px 16px 14px; letter-spacing:-.3px; text-align:center; }
+
+  /* detailCol fixed 패널 */
+  #detailOverlay { display:none; position:fixed; inset:0; z-index:1049; background:rgba(0,0,0,.35); }
+  #detailOverlay.open { display:block; }
+  #detailCol { display:block !important; position:fixed; top:0; right:0; bottom:0; width:420px; max-width:100vw; z-index:1050; transform:translateX(100%); transition:transform 0.32s cubic-bezier(.4,0,.2,1); background:var(--bg-card,#fff); box-shadow:-4px 0 24px rgba(0,0,0,.18); overflow-y:auto; }
+  #detailCol.panel-open { transform:translateX(0); }
+  /* bus_detail.css의 .detail-panel { position:fixed; transform:translateX(100%) } 충돌 리셋 */
+  #detailCol .detail-panel {
+    position: static !important;
+    transform: none !important;
+    transition: none !important;
+    width: auto !important;
+    top: auto !important; right: auto !important; bottom: auto !important;
+    box-shadow: none !important;
+    border-left: none !important;
+    z-index: auto !important;
+    padding: 0 !important;
+    min-height: 100%;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="bus-detail-page">
+
+  <section class="bus-detail-title">
+    <h1>
+      <span class="spark" aria-hidden="true"></span>
+      <span class="bus-num-badge">{{ bus_num }}호차</span>
+      <span><span class="hl">{{ category_name }}</span> 버스 탑승 중</span>
+      <span class="spark" aria-hidden="true"></span>
+    </h1>
+    <p class="sub">{{ bus_num }}호차 {{ category_name }} 버스에 탑승했어요! 다양한 정책을 함께 살펴볼까요?</p>
+  </section>
+
+  <nav class="bus-route-nav" aria-label="버스 노선">
+    {% for stop in bus_stops %}
+    <a
+      class="route-stop {% if stop.num == bus_num %}active{% endif %}"
+      href="{% url 'page-bus-detail' %}?category={{ stop.category }}"
+      style="--stop-color: {{ stop.color }};"
+    >
+      <span class="stop-num">{{ stop.num }}호차</span>
+      <span class="stop-name">{{ stop.name }}</span>
+    </a>
+    {% if not forloop.last %}
+    <span class="route-arrow" aria-hidden="true">→</span>
+    {% endif %}
+    {% endfor %}
+  </nav>
+
+  <section class="bus-scene-wrap">
+    <div class="bus-interior">
+      <img
+        class="bus-interior-img"
+        src="{% static 'assets/' %}{{ bus_img }}"
+        alt="{{ bus_num }}호차 {{ category_name }} 버스 내부"
+        draggable="false"
+        style="pointer-events:none;"
+      >
+      <div class="poli-on-bus" aria-hidden="true">
+        <div class="poli-speech">
+          <strong>폴리</strong>
+          <span>오늘은 어떤 정책을<br>만나볼까요?</span>
+        </div>
+        <img src="{% static 'assets/poli_in_bus.png' %}" alt="" draggable="false">
+      </div>
+
+      <!-- DB에서 가져온 카드 3개 -->
+      <div class="policy-cards">
+        {% for card in cards %}
+        <article class="policy-card" data-card-id="{{ card.card_id }}">
+          <div class="card-num">0{{ forloop.counter }}</div>
+          <h3 class="card-title">{{ card.card_title }}</h3>
+          <p class="card-desc">{{ card.intro }}</p>
+          <button class="card-detail-btn">자세히 보기</button>
+        </article>
+        {% empty %}
+        <p style="color:#fff;text-align:center;width:100%;">등록된 카드가 없습니다.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- 오버레이 — main 밖으로 (stacking context 탈출) -->
+<div id="detailOverlay"></div>
+
+<!-- 카드 상세 패널 — main 밖으로 (stacking context 탈출) -->
+{% include 'components/card.html' %}
+
+<div class="ground" aria-hidden="true">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="" draggable="false">
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/card_panel.js' %}"></script>
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+
+  /* ── 카드 클릭 → 상세 패널 ── */
+  document.querySelectorAll('.card-detail-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var cardId = this.closest('.policy-card').dataset.cardId;
+      if (cardId) CardPanel.open(cardId);
+    });
+  });
+
+  /* ── 탭 클릭 ── */
+  document.querySelectorAll('#tabs .tab').forEach(function (tab, i) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('#tabs .tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      var panel = document.getElementById('tabPanel' + i);
+      if (panel) { panel.style.display = ''; panel.classList.add('active'); }
+    });
+  });
+
+  var chatAboutLink = document.getElementById('chatAboutLink');
+  if (chatAboutLink) chatAboutLink.style.display = '';
+
+  /* ── 닫기 ── */
+  document.getElementById('detailClose').addEventListener('click', CardPanel.close);
+  document.getElementById('detailOverlay').addEventListener('click', CardPanel.close);
+
+  /* ── 연락처 토글 ── */
+  var contactToggle = document.getElementById('contactToggle');
+  if (contactToggle) {
+    contactToggle.addEventListener('click', function () {
+      this.classList.toggle('open');
+      document.getElementById('contactList').classList.toggle('open');
+    });
+  }
+
+  /* ── 북마크 — card_panel.js의 initBookmarkBtn이 처리 ── */
+</script>
+{% endblock %}

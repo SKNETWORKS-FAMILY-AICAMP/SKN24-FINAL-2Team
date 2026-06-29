@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% if request.GET.modal %}
+<style>
+  .site-header, .site-footer, .ground, .scenery { display: none !important; }
+  .page-wrap { padding-top: 24px !important; }
+  body { background: #fff !important; }
+</style>
+{% endif %}
+<!-- ===== scenery ===== -->
+<div class="scenery"><div class="sky-clouds"></div></div>
+
+<!-- ===== page ===== -->
+<main class="page-wrap" data-screen-label="이용약관" style="padding-top: 90px;">
+  <div style="height: 40px;"></div>
+  <h1 class="page-title" style="justify-content: center; gap: 14px; letter-spacing: 1px"><span class="spark">✦</span>이용약관<span class="spark">✦</span></h1>
+  <p class="page-sub" style="justify-content:center;text-align:center;">PoliCity 서비스 이용에 관한 약관입니다. 각 조항을 눌러 세부 내용을 확인하세요.</p>
+  <div class="law-meta"><span class="law-effective"><i class="bi bi-calendar-check"></i> 시행일 · 2026년 6월 14일</span></div>
+
+  <div class="law-intro-bar">
+    <i class="bi bi-file-earmark-text-fill"></i>
+    <div>PoliCity는 「약관의 규제에 관한 법률」 등 관련 법령에 따라 서비스 이용에 관한 기준을 다음과 같이 약관으로 정하여 공개합니다.</div>
+    <button class="law-expandall" type="button" data-expanded="false"><i class="bi bi-arrows-expand"></i><span>전체 펼치기</span></button>
+  </div>
+
+  <!-- ========== 제1장 ========== -->
+  <section class="law-chapter">
+    <div class="law-chapter-head">
+      <span class="law-chapter-num">제1장</span>
+      <h2 class="law-chapter-title">총칙</h2>
+      <span class="law-chapter-rule"></span>
+    </div>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제1조</span>목적</span><span class="law-brief">약관의 목적과 적용 범위</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이 약관은 PoliCity(이하 “기관”)가 제공하는 서비스의 이용과 관련하여 기관 og 이용자 간의 권리·의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제2조</span>용어의 정의</span><span class="law-brief">서비스·이용자·계정 등 주요 용어 정의</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이 약관에서 사용하는 용어의 정의는 다음과 같습니다. <b>서비스</b>란 기관이 제공하는 PoliCity 웹 및 앱 기반 청년정책 정보 제공·AI 토론 플랫폼을, <b>이용자</b>란 이 약관에 동의하고 서비스에 가입하여 이용하는 자를, <b>계정</b>이란 이용자가 서비스를 이용하기 위해 이메일과 비밀번호로 생성한 식별 정보를, <b>정보 카드</b>란 정책 카드와 뉴스 카드로 구성되며, 서비스가 수집·가공하여 제공하는 정책과 뉴스 기사 기반의 콘텐츠 단위를, <b>AI 챗봇</b>이란 서비스 내에서 이용자의 질문에 응답하고 정보를 제공하며 정보 카드를 추천하는 인공지능 대화 기능을, <b>AI 토론</b>이란 서비스 내에서 정책 또는 법안에 대해 AI 간 또는 AI와 이용자 간 토론을 진행하는 기능을 말합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제3조</span>약관의 효력 및 변경</span><span class="law-brief">약관의 게시와 변경 시 공지 기준</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이 약관은 서비스 화면에 게시하거나 이용자에게 통지함으로써 효력이 발생하며, 기관은 관련 법령을 위배하지 않는 범위 내에서 이 약관을 변경할 수 있습니다. 약관이 변경될 경우 기관은 변경 사유 및 적용일자를 명시하여 적용일자 <b>7일 전</b>부터 서비스 내에 공지하며, 이용자에게 불리한 변경인 경우에는 적용일자 <b>30일 전</b>부터 공지합니다. 이용자가 변경된 약관에 동의하지 않는 경우 서비스 이용을 중단하고 탈퇴할 수 있으며, 변경된 약관의 적용일 이후에도 서비스를 계속 이용하는 경우 변경 약관에 동의한 것으로 봅니다.</p>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ========== 제2장 ========== -->
+  <section class="law-chapter">
+    <div class="law-chapter-head">
+      <span class="law-chapter-num">제2장</span>
+      <h2 class="law-chapter-title">서비스 이용</h2>
+      <span class="law-chapter-rule"></span>
+    </div>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제4조</span>서비스 대상 및 접근 제한</span><span class="law-brief">이용 대상과 비회원 접근 범위</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">본 서비스는 대한민국 청년(만 19세 이상 34세 이하)을 주요 대상으로 하는 공익 목적의 정보 제공 서비스이며, 비회원은 서비스 소개, 이용약관, 개인정보처리방침 외의 기능을 이용할 수 없습니다. 기관은 서비스의 원활한 운영을 위해 필요한 경우 사전 공지 후 일부 기능을 제한하거나 서비스를 일시 중단할 수 있습니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제5조</span>회원가입</span><span class="law-brief">가입 절차와 입력 항목, 이메일 인증</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 이 약관 및 개인정보처리방침에 동의한 후 회원가입을 진행할 수 있으며, 필수 항목에 동의하지 않는 경우 가입이 불가합니다. 이용자는 닉네임, 이메일, 비밀번호, 성별, 나이, 관심사 키워드를 필수로 입력하고 이메일 인증을 완료해야 가입이 완료되며, 거주지(시/구)는 선택 항목입니다. 닉네임은 한글, 영문 대소문자, 숫자로 구성된 <b>2~12자</b>이며 특수문자·공백·서비스 금칙어는 사용할 수 없습니다. 동일 이메일로 하루 최대 5회까지 인증 코드를 발송할 수 있으며 초과 시 24시간 동안 발송이 제한되고, 이미 가입된 이메일로는 중복 가입이 불가합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제6조</span>계정 관리</span><span class="law-brief">계정 보안 og 정보 수정·잠금</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 자신의 계정 정보를 안전하게 관리할 책임이 있습니다. 동일 이메일로 로그인 <b>5회 연속 실패</b> 시 계정이 잠금 처리되며, 비밀번호 재설정을 통해 해제할 수 있습니다. 이용자는 닉네임, 비밀번호, 거주지, 관심사 키워드를 마이페이지에서 수정할 수 있습니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제7조</span>회원 탈퇴</span><span class="law-brief">탈퇴 절차와 정보 삭제</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 언제든지 서비스 내 탈퇴 기능을 통해 탈퇴를 신청할 수 있으며, 탈퇴 시 비밀번호 확인을 통한 본인 확인 절차가 진행됩니다. 탈퇴 완료 시 이용자의 모든 정보는 즉시 삭제되며, 탈퇴 후 동일 이메일 및 닉네임으로 재가입이 가능합니다.</p>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ========== 제3장 ========== -->
+  <section class="law-chapter">
+    <div class="law-chapter-head">
+      <span class="law-chapter-num">제3장</span>
+      <h2 class="law-chapter-title">콘텐츠 및 AI 기능</h2>
+      <span class="law-chapter-rule"></span>
+    </div>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제8조</span>정보 카드 및 AI 생성 콘텐츠</span><span class="law-brief">AI 생성 카드의 기준과 한계</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">서비스가 제공하는 정보 카드는 공개된 청년정책, 국회 법안, 뉴스 기사를 기반으로 AI가 자동 생성한 콘텐츠이며, 모든 AI 생성 콘텐츠는 공개 전 편향 검토를 거치고 특정 정당·후보·정책을 지지하거나 비방하는 표현이 포함된 경우 중립적으로 수정하거나 재생성됩니다. 기관은 정보 카드 내용의 정확성을 위해 노력하나 AI 생성 특성상 오류가 포함될 수 있으며 법적 효력을 보장하지 않으므로, 중요한 사항은 반드시 원문 출처를 직접 확인하시기 바랍니다. 서비스 내 AI 챗봇 및 토론 기능은 서비스가 수집한 뉴스·정책 데이터를 기반으로 응답을 생성하며, 특정 정치적 입장을 지지하거나 특정 정당·후보를 지지·비방하는 답변을 생성하지 않고, 출처가 불충분한 내용에 대해 단정적으로 표현하지 않으며 추가 확인이 필요함을 명시합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제9조</span>이용자의 콘텐츠 이용 제한</span><span class="law-brief">콘텐츠의 개인적·비상업적 이용</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 서비스를 통해 제공받은 정보를 개인적·비상업적 목적에 한하여 이용할 수 있으며, 서비스 내 콘텐츠를 무단으로 복제, 배포, 상업적으로 이용하는 행위를 금지합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제10조</span>이용자의 금지 행위</span><span class="law-brief">도용·운영 방해·혐오 표현 금지</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 타인의 계정을 도용하거나 허위 정보로 가입하는 행위, 서비스의 정상적인 운영을 방해하는 행위, 서비스 내에서 욕설·비하·혐오 표현을 입력하는 행위(성적 비하 및 비속어, 특정 정치인·정당에 대한 비하 표현, 특정 인종·성별·종교에 대한 혐오 표현 포함), 서비스 제공 목적과 무관한 용도로 AI 챗봇·토론 기능을 반복 사용하는 행위, 관련 법령에 위반되는 행위를 하여서는 안 됩니다.</p>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ========== 제4장 ========== -->
+  <section class="law-chapter">
+    <div class="law-chapter-head">
+      <span class="law-chapter-num">제4장</span>
+      <h2 class="law-chapter-title">책임 및 면책</h2>
+      <span class="law-chapter-rule"></span>
+    </div>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제11조</span>기관의 의무</span><span class="law-brief">안정적 운영과 개인정보 보호 의무</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 관련 법령 및 이 약관이 금지하거나 미풍양속에 반하는 행위를 하지 않으며, 안정적인 서비스 제공을 위해 최선을 다하고, 이용자의 개인정보를 개인정보처리방침에 따라 안전하게 관리합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제12조</span>면책 조항</span><span class="law-brief">불가항력·AI 답변에 대한 면책</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 천재지변, 전쟁, 서비스 기반 시설의 장애 등 불가항력적 사유로 서비스를 제공하지 못한 경우 책임이 면제되며, AI가 생성한 정보 카드 및 챗봇·토론 답변의 내용에 대해 법적 정확성을 보증하지 않습니다. 이용자가 서비스를 이용하여 기대하는 수익이나 결과를 얻지 못하였거나 서비스를 통해 얻은 정보로 인해 손해가 발생한 경우 기관은 책임을 지지 않습니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제13조</span>분쟁 해결</span><span class="law-brief">분쟁 시 협의 및 관할 법원</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">서비스 이용과 관련하여 기관과 이용자 사이에 분쟁이 발생한 경우 쌍방이 성실히 협의하여 해결하도록 하며, 협의가 이루어지지 않을 경우 관련 법령에 따른 관할 법원에 소를 제기할 수 있습니다.</p>
+      </div></div></div>
+    </article>
+  </section>
+</main>
+
+<!-- ===== ground scene ===== -->
+<div class="ground">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/scenery.js' %}"></script>
+<script>
+  // 페이지 로드 시 헤더의 상위 드롭다운 '정보 카드' 메뉴 활성화
+  document.querySelector('.main-nav .nav-policy')?.classList.add('active');
+
+  // accordion toggle
+  document.querySelectorAll('.law-head').forEach(function (head) {
+    head.addEventListener('click', function () {
+      head.closest('.law-card').classList.toggle('open');
+      syncExpandAll();
+    });
+  });
+
+  // expand / collapse all
+  var btn = document.querySelector('.law-expandall');
+  function syncExpandAll() {
+    var cards = document.querySelectorAll('.law-card');
+    var allOpen = [].every.call(cards, function (c) { return c.classList.contains('open'); });
+    btn.dataset.expanded = allOpen ? 'true' : 'false';
+    btn.querySelector('span').textContent = allOpen ? '전체 접기' : '전체 펼치기';
+    btn.querySelector('i').className = allOpen ? 'bi bi-arrows-collapse' : 'bi bi-arrows-expand';
+  }
+  btn.addEventListener('click', function () {
+    var open = btn.dataset.expanded !== 'true';
+    document.querySelectorAll('.law-card').forEach(function (c) { c.classList.toggle('open', open); });
+    syncExpandAll();
+  });
+</script>
+{% endblock %}

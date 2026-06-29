@@ -1,0 +1,116 @@
+:root {
+  /* === Brand Colors === */
+  --color-primary: #1e5c32;
+  --color-primary-hover: #154424;
+  --color-primary-light: #2e7d52;
+  --color-secondary: #52b788;
+  --color-accent: #8fc441;
+  --color-accent-dark: #6d9c2e;
+
+  /* === Semantic Colors === */
+  --color-danger: #e63946;
+  --color-danger-light: #fdecea;
+  --color-warning: #f4a261;
+  --color-info: #4895ef;
+  --color-success: #2d9e5f;
+
+  /* === Backgrounds === */
+  --bg-page: linear-gradient(155deg, #c4e4f5 0%, #d8eee6 45%, #e6f4ec 100%);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f7fcf9;
+  --bg-sidebar: #f2faf5;
+  --bg-sidebar-active: #daf2e6;
+  --bg-header: rgba(255, 255, 255, 0.97);
+  --bg-overlay: rgba(0, 0, 0, 0.45);
+  --bg-input: #f8fdfb;
+  --bg-tag: #e8f5ee;
+
+  /* === Text === */
+  --text-primary: #1a2e1e;
+  --text-secondary: #3d5c48;
+  --text-muted: #7a9585;
+  --text-placeholder: #aabfb2;
+  --text-white: #ffffff;
+  --text-link: #1e5c32;
+  --text-link-hover: #154424;
+
+  /* === Borders === */
+  --border-color: #c8dfd1;
+  --border-color-focus: #52b788;
+  --border-radius-xs: 4px;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 18px;
+  --border-radius-xl: 24px;
+  --border-radius-2xl: 32px;
+  --border-radius-full: 9999px;
+
+  /* === Shadows === */
+  --shadow-xs: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.09);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.11);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.14);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.18);
+  --shadow-card: 0 2px 12px rgba(30, 92, 50, 0.08);
+  --shadow-card-hover: 0 6px 24px rgba(30, 92, 50, 0.16);
+
+  /* === Spacing === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* === Typography === */
+  --font-family: 'Pretendard', 'Pretendard Variable', 'Apple SD Gothic Neo', sans-serif;
+  --font-mono: 'Courier New', monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 13px;
+  --font-size-md: 14px;
+  --font-size-lg: 15px;
+  --font-size-xl: 17px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-size-5xl: 38px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* === Layout === */
+  --header-height: 82px;
+  --sidebar-width: 220px;
+  --content-max-width: 1200px;
+  --page-padding-x: 40px;
+
+  /* === Transitions === */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.22s ease;
+  --transition-slow: 0.38s ease;
+
+  /* === Z-index === */
+  --z-dropdown: 100;
+  --z-header: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* === Nav Category Colors === */
+  --nav-tour-color: #1e5c32;
+  --nav-policy-color: #1565c0;
+  --nav-news-color: #c0392b;
+  --nav-debate-color: #7b2d8b;
+  --nav-mypage-color: #00695c;
+  --nav-history-color: #4a4a6a;
+}

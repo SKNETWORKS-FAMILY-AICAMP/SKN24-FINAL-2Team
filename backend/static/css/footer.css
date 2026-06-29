@@ -1,0 +1,25 @@
+.site-footer {
+    text-align: center;
+    z-index: 10;
+    padding: 16px 16px 28px;
+    font-size: 13px;
+    color: #7a6a55;
+}
+
+.site-footer__nav {
+    margin-bottom: 6px;
+}
+
+.site-footer__link {
+    color: #5a4a35;
+    text-decoration: none;
+    margin: 0 16px;
+}
+
+.site-footer__divider {
+    color: #c0a880;
+}
+
+.site-footer__copy {
+    margin: 0;
+}

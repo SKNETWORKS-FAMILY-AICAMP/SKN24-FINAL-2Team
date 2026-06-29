@@ -1,0 +1,155 @@
+{% load static %}
+
+<!-- ===== 비로그인 헤더 ===== -->
+<header class="site-header" id="header-guest">
+  <div class="nav-inner">
+
+    <a class="brand-logo" href="{% url 'landing' %}">
+      <img src="{% static 'assets/logo.png' %}" alt="PoliCity">
+    </a>
+
+    <button class="nav-toggle" type="button" aria-label="메뉴">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <nav class="main-nav">
+      <a class="nav-link nav-recommend" href="{% url 'page-chatbot' %}">
+        <i class="bi bi-chat-dots-fill"></i>폴리와 대화하기
+      </a>
+      <a class="nav-link nav-tour" href="{% url 'page-bus-stop' %}">
+        <i class="bi bi-house-door-fill"></i>정책 투어
+      </a>
+      <div class="nav-dropdown">
+        <a class="nav-link nav-policy" href="#">
+          <i class="bi bi-collection-fill"></i>정보 카드
+          <i class="bi bi-chevron-down caret"></i>
+        </a>
+        <div class="nav-menu">
+          <a href="/cards/?type=policy"><i class="bi bi-journal-bookmark-fill"></i>정책 카드</a>
+          <a href="/cards/?type=news"><i class="bi bi-newspaper"></i>뉴스 카드</a>
+        </div>
+      </div>
+      <a class="nav-link nav-history" href="{% url 'page-history' %}">
+        <i class="bi bi-clock-history"></i>히스토리
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="header-btn header-login-btn" href="{% url 'page-login' %}">로그인</a>
+      <a class="header-btn header-signup-btn" href="{% url 'page-signup' %}">회원가입</a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ===== 로그인 헤더 ===== -->
+<header class="site-header" id="header-user" style="display:none;">
+  <div class="nav-inner">
+
+    <a class="brand-logo" href="{% url 'landing' %}">
+      <img src="{% static 'assets/logo.png' %}" alt="PoliCity">
+    </a>
+
+    <button class="nav-toggle" type="button" aria-label="메뉴">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <nav class="main-nav">
+      <a class="nav-link nav-recommend" href="{% url 'page-chatbot' %}">
+        <i class="bi bi-chat-dots-fill"></i>폴리와 대화하기
+      </a>
+      <a class="nav-link nav-tour" href="{% url 'page-bus-stop' %}">
+        <i class="bi bi-house-door-fill"></i>정책 투어
+      </a>
+      <div class="nav-dropdown">
+        <a class="nav-link nav-policy" href="#">
+          <i class="bi bi-collection-fill"></i>정보 카드
+          <i class="bi bi-chevron-down caret"></i>
+        </a>
+        <div class="nav-menu">
+          <a href="/cards/?type=policy"><i class="bi bi-journal-bookmark-fill"></i>정책 카드</a>
+          <a href="/cards/?type=news"><i class="bi bi-newspaper"></i>뉴스 카드</a>
+        </div>
+      </div>
+      <a class="nav-link nav-history" href="{% url 'page-history' %}">
+        <i class="bi bi-clock-history"></i>히스토리
+      </a>
+    </nav>
+
+    <div class="header-actions header-actions-login">
+      <div class="nav-dropdown user-dropdown">
+        <a class="header-user-link nav-link" href="#">
+          <span id="header-nickname"></span>
+          <i class="bi bi-chevron-down caret"></i>
+        </a>
+        <div class="nav-menu user-menu">
+          <a href="{% url 'page-mypage-profile' %}">
+            <i class="bi bi-person"></i>프로필 수정
+          </a>
+          <a href="{% url 'page-mypage-bookmark' %}">
+            <i class="bi bi-bookmark-fill"></i>북마크
+          </a>
+          <!-- <a href="{% url 'page-mypage-withdraw' %}" class="user-menu-danger">
+            <i class="bi bi-person-x"></i>회원 탈퇴
+          </a> -->
+          <div class="user-menu-divider"></div>
+          <button type="button" id="logout-btn" class="user-menu-logout">
+            <i class="bi bi-box-arrow-right"></i>로그아웃
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<script>
+  (function () {
+    const token = localStorage.getItem('access_token');
+    const nickname = localStorage.getItem('nickname') || '사용자';
+    const path = window.location.pathname;
+
+    // 로그인/회원가입 페이지는 무조건 비로그인 헤더
+    const authPages = ['/login/', '/signup/'];
+    const isAuthPage = authPages.some(p => path.startsWith(p));
+
+    if (token && !isAuthPage) {
+      document.getElementById('header-guest').style.display = 'none';
+      document.getElementById('header-user').style.display = '';
+      document.getElementById('header-nickname').textContent = nickname + '님';
+
+      // 헤더가 바뀌었으니 드롭다운 위치 기준(헤더 높이/좌표)도 다시 측정
+      function syncDropdownPosition() {
+        window.PoliCitySyncHeaderHeight && window.PoliCitySyncHeaderHeight();
+      }
+      if (document.readyState !== 'loading') syncDropdownPosition();
+      else document.addEventListener('DOMContentLoaded', syncDropdownPosition);
+    }
+
+    // active 메뉴 설정
+    function setActive(headerId) {
+      const header = document.getElementById(headerId);
+      if (!header) return;
+      header.querySelectorAll('.main-nav .nav-link').forEach(l => l.classList.remove('active'));
+
+      if (path.startsWith('/chat')) header.querySelector('.nav-recommend')?.classList.add('active');
+      else if (path.startsWith('/cards/bus') || path.startsWith('/bus')) header.querySelector('.nav-tour')?.classList.add('active');
+      else if (path.startsWith('/history')) header.querySelector('.nav-history')?.classList.add('active');
+      else if (path.startsWith('/cards')) header.querySelector('.nav-policy')?.classList.add('active');
+    }
+
+    setActive('header-guest');
+    setActive('header-user');
+
+    // 로그아웃
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('nickname');
+        window.location.href = '/';
+      });
+    }
+  })();
+</script>

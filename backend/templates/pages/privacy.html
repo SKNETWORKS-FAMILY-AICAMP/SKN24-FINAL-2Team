@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% if request.GET.modal %}
+<style>
+  .site-header, .site-footer, .ground, .scenery { display: none !important; }
+  .page-wrap { padding-top: 24px !important; }
+  body { background: #fff !important; }
+</style>
+{% endif %}
+
+<!-- ===== scenery ===== -->
+<div class="scenery"><div class="sky-clouds"></div></div>
+
+<!-- ===== page ===== -->
+<main class="page-wrap" data-screen-label="개인정보처리방침" style="padding-top: 90px;">
+  <div style="height: 40px;"></div>
+  <h1 class="page-title" style="justify-content: center; gap: 14px; letter-spacing: 1.5px"><span class="spark">✦</span>개인정보 처리방침<span class="spark">✦</span></h1>
+  <p class="page-sub" style="justify-content:center;text-align:center;">PoliCity 서비스의 개인정보 처리 기준입니다. 각 조항을 눌러 세부 내용을 확인하세요.</p>
+  <div class="law-meta"><span class="law-effective">시행일 · 2026년 6월 14일</span></div>
+
+  <div class="law-intro-bar">
+    <i class="bi bi-shield-lock-fill"></i>
+    <div>PoliCity는 「개인정보 보호법」 제30조에 따라 이용자의 개인정보를 보호하고 관련 고충을 신속하고 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.</div>
+    <button class="law-expandall" type="button" data-expanded="false"><i class="bi bi-arrows-expand"></i><span>전체 펼치기</span></button>
+  </div>
+
+  <section class="law-chapter">
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제1조</span>수집하는 개인정보 항목 및 수집 방법</span><span class="law-brief">필수·선택·자동 수집 항목과 방법</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-subhead">1. 수집 항목</p>
+        <div class="law-table-wrap">
+          <table class="law-table">
+            <thead><tr><th>구분</th><th>수집 항목</th></tr></thead>
+            <tbody>
+              <tr><td>필수 항목</td><td>닉네임, 이메일 주소, 비밀번호(해시 처리), 성별, 나이, 관심사 키워드(일자리·교육·주거·금융·생활복지·문화)</td></tr>
+              <tr><td>선택 항목</td><td>거주지(시/구)</td></tr>
+              <tr><td>자동 수집 항목</td><td>서비스 이용 기록(채팅 세션·메시지, 토론 참여 기록, 북마크 정보), 로그인 실패 횟수·마지막 로그인 실패 일시·계정 잠금 상태, 이메일 인증 코드 발송 요청 IP 주소, 온보딩 완료 여부, AI 분석 기반 관심도 점수(뉴스·토론 카테고리별)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="law-subhead">2. 수집 방법</p>
+        <p class="law-lead">개인정보는 서비스 가입 및 이용 과정에서 이용자가 직접 입력하거나, 서비스 이용 과정에서 자동으로 생성·수집됩니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제2조</span>개인정보의 처리 목적</span><span class="law-brief">가입·서비스 제공·추천·보안·운영</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 다음의 목적을 위하여 개인정보를 처리합니다. 처리한 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경될 경우에는 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
+        <div class="law-table-wrap">
+          <table class="law-table">
+            <thead><tr><th>처리 목적</th><th>처리하는 개인정보 항목</th></tr></thead>
+            <tbody>
+              <tr><td>회원 가입 및 본인 확인</td><td>닉네임, 이메일, 비밀번호, 이메일 인증 코드</td></tr>
+              <tr><td>서비스 제공 (정보 카드·챗봇·토론)</td><td>관심사 키워드, 거주지, 채팅·토론 이용 기록</td></tr>
+              <tr><td>맞춤형 콘텐츠 추천</td><td>관심사 키워드, AI 분석 관심도 점수</td></tr>
+              <tr><td>계정 보안 및 부정 이용 방지</td><td>로그인 실패 기록, 이메일 인증 요청 IP</td></tr>
+              <tr><td>서비스 운영 및 개선</td><td>이용 기록 (통계 처리 후 활용)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제3조</span>개인정보의 처리 및 보유 기간</span><span class="law-brief">탈퇴 시 삭제, 법령상 보존 기간</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 법령에 따른 개인정보 보유·이용 기간 또는 이용자로부터 개인정보를 수집 시에 동의받은 기간 내에서 개인정보를 처리·보유합니다. 각 개인정보의 처리 및 보유 기간은 다음과 같습니다.</p>
+        <div class="law-table-wrap">
+          <table class="law-table">
+            <thead><tr><th>항목</th><th>보유 기간</th></tr></thead>
+            <tbody>
+              <tr><td>회원 기본 정보 (이름, 이메일 등)</td><td>회원 탈퇴 시 즉시 삭제</td></tr>
+              <tr><td>채팅·토론 이용 기록</td><td>회원 탈퇴 시 즉시 삭제 / 이용자가 직접 삭제한 경우 즉시 삭제</td></tr>
+              <tr><td>이메일 인증 로그</td><td>발송일로부터 30일</td></tr>
+              <tr><td>로그인 실패 기록</td><td>실패 후 24시간 경과 시 초기화</td></tr>
+              <tr><td>편향 감지 처리 기록 (카드 관련)</td><td>서비스 운영 종료 시</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="law-note">단, 관련 법령에 의하여 보존할 필요가 있는 경우에는 해당 법령에 따릅니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제4조</span>개인정보의 제3자 제공</span><span class="law-brief">원칙적 미제공, 법령상 예외만 허용</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 이용자의 개인정보를 원칙적으로 제3자에게 제공하지 않습니다. 다만, 이용자가 사전에 동의한 경우, 법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우에는 예외로 합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제5조</span>개인정보 처리 위탁</span><span class="law-brief">이메일·클라우드·AI 처리 위탁</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 서비스 제공을 위해 다음과 같이 개인정보 처리 업무를 위탁할 수 있습니다.</p>
+        <div class="law-table-wrap">
+          <table class="law-table">
+            <thead><tr><th>수탁업체</th><th>위탁 업무 내용</th><th>보유 및 이용 기간</th></tr></thead>
+            <tbody>
+              <tr><td>이메일 발송 서비스 업체</td><td>이메일 인증 코드 발송</td><td>위탁 계약 종료 시</td></tr>
+              <tr><td>클라우드 인프라 제공업체</td><td>서버 운영 및 데이터 저장</td><td>위탁 계약 종료 시</td></tr>
+              <tr><td>AI 서비스 제공업체</td><td>콘텐츠 생성 및 챗봇·토론 AI 기능 제공</td><td>처리 완료 즉시 (제6조 참조)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제6조</span>AI 서비스 및 데이터 처리 원칙</span><span class="law-brief">AI 모델 학습 배제와 데이터 처리</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-subhead">1. AI 모델 학습 배제 정책</p>
+        <p class="law-lead">본 서비스에서 이용자가 입력한 채팅·토론 내용은 외부 AI 모델(OpenAI 등)의 모델 학습에 사용되지 않습니다. 기관은 API 사용 계약 상 모델 학습에 이용자 데이터를 제공하지 않는 조건을 확인하고 있으며, 이용자의 대화 내용은 서비스 응답 생성 목적으로만 활용됩니다.</p>
+        <p class="law-subhead">2. 데이터 처리 원칙</p>
+        <p class="law-lead">이용자의 채팅·토론 입력값은 AI 응답 생성 요청 시에만 처리되며, 처리 완료 후 외부 AI 서비스 제공업체의 서버에는 데이터가 보존되지 않습니다(제공업체의 정책에 따릅니다). 서비스 서버에 저장되는 채팅·토론 기록은 이용자 본인만 조회할 수 있으며, 이용자가 직접 삭제할 수 있습니다.</p>
+        <p class="law-subhead">3. 자동화된 결정</p>
+        <p class="law-lead">본 서비스는 AI를 활용하여 이용자의 관심사 키워드 및 이용 패턴을 분석하고 콘텐츠를 추천합니다. 이는 서비스 편의를 위한 것이며, 이용자에게 법적 효과를 발생시키는 자동화된 결정이 아닙니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제7조</span>이용자의 권리·의무 및 행사 방법</span><span class="law-brief">열람·정정·삭제·처리 정지 요구</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이용자는 기관에 대해 언제든지 개인정보 열람, 정정, 삭제, 처리 정지를 요구하는 등 개인정보 보호 관련 권리를 행사할 수 있습니다. 이러한 권리 행사는 서비스 마이페이지 또는 개인정보 보호책임자에게 서면, 이메일로 요청할 수 있으며, 법정대리인이나 위임을 받은 자를 통해서도 행사할 수 있습니다. 이용자는 자신의 개인정보를 최신 상태로 유지할 의무가 있으며, 부정확한 정보 입력으로 인한 문제의 책임은 이용자에게 있습니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제8조</span>개인정보의 파기</span><span class="law-brief">불필요한 정보의 지체 없는 파기</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 개인정보 보유 기간의 경과, 처리 목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체 없이 해당 개인정보를 파기합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제9조</span>개인정보의 안전성 확보 조치</span><span class="law-brief">관리적·기술적·물리적 보호 조치</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다. 관리적 조치로 개인정보 취급 직원을 최소화하고 교육을 실시하며, 기술적 조치로 개인정보 접근 권한의 관리, 비밀번호 해시 처리, 이메일 인증을 통한 본인 확인, IP 기반 인증 요청 횟수 제한을 적용하고, 물리적 조치로 전산실 및 자료 보관실의 접근을 통제합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_bear.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제10조</span>인공지능 윤리 및 신뢰성 정책</span><span class="law-brief">AI 기본법 준수와 투명한 고지</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-subhead">1. 개요</p>
+        <p class="law-lead">기관은 「인공지능산업 육성 및 신뢰 기반 조성 등에 관한 법률」(이하 “AI 기본법”)을 준수하며, 본 서비스에서 활용되는 AI 기능이 투명하고 신뢰할 수 있는 방식으로 운영되도록 노력합니다.</p>
+        <p class="law-subhead">2. 준수 서약</p>
+        <p class="law-lead">기관은 AI 기본법의 취지에 따라 이용자에게 AI가 생성한 콘텐츠임을 명확히 고지하고, AI 생성 콘텐츠가 특정 정치적 입장을 편향되게 대변하지 않도록 편향 검토 절차를 운영하며, AI 기능의 한계와 오류 가능성을 이용자에게 안내합니다.</p>
+        <p class="law-subhead">3. 투명한 고지</p>
+        <p class="law-lead">본 서비스의 정보 카드, AI 챗봇, AI 토론 기능은 인공지능 기술로 생성·운영되며, AI 챗봇 및 토론 상대방은 사람이 아닌 AI입니다. AI가 생성한 모든 답변은 실제 정책·법안·뉴스 원문과 다를 수 있으며 법적 효력이 없으므로, 중요한 내용은 원문 출처를 직접 확인하시기 바랍니다. 또한 AI 챗봇 및 토론 기능은 서비스에서 제공하는 뉴스·정책·법안과 관련된 질문에만 답변하며, 범위를 벗어나는 질문에는 안내 메시지를 표시합니다.</p>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_dog.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제11조</span>개인정보 보호책임자</span><span class="law-brief">보호책임자 문의와 침해 신고처</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">기관은 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 이용자의 불만 처리 및 피해 구제를 위하여 개인정보 보호책임자를 지정하고 있습니다. 이용자는 서비스를 이용하면서 발생한 모든 개인정보 보호 관련 문의, 불만 처리, 피해 구제 등에 관한 사항을 개인정보 보호책임자에게 문의하실 수 있으며, 기관은 이용자의 문의에 대해 지체 없이 답변 및 처리해 드릴 것입니다.</p>
+        <p class="law-subhead">개인정보 침해 신고·상담</p>
+        <p class="law-lead">개인정보 침해에 관한 신고나 상담이 필요한 경우에는 아래 기관에 문의하시기 바랍니다.</p>
+        <div class="law-callout" style="flex-direction:column;gap:8px;">
+          <div><b>개인정보 침해신고센터</b>: <a href="https://privacy.kisa.or.kr" target="_blank" rel="noopener">privacy.kisa.or.kr</a> / 국번 없이 118</div>
+          <div><b>대검찰청 사이버범죄수사단</b>: 02-3480-3573</div>
+          <div><b>경찰청 사이버안전국</b>: <a href="https://cyberbureau.police.go.kr" target="_blank" rel="noopener">cyberbureau.police.go.kr</a> / 국번 없이 182</div>
+        </div>
+      </div></div></div>
+    </article>
+
+    <article class="law-card">
+      <button class="law-head" type="button"><span class="law-avatar"><img src="{% static 'assets/char_rabbit.png' %}" alt=""></span><span class="law-headtext"><span class="law-title"><span class="lt-no">제12조</span>개인정보처리방침의 변경</span><span class="law-brief">변경 시 사전 공지 기준</span></span><i class="bi bi-chevron-down law-caret"></i></button>
+      <div class="law-body"><div class="law-body-inner"><div class="law-panel">
+        <p class="law-lead">이 개인정보처리방침은 시행일로부터 적용되며, 법령 및 방침에 따른 변경 내용의 추가·삭제 및 정정이 있는 경우에는 변경 사항의 시행 <b>7일 전</b>부터 서비스 내 공지사항을 통하여 고지합니다. 다만, 이용자의 권리에 중요한 변경이 있을 경우에는 <b>30일 전</b>부터 고지합니다.</p>
+      </div></div></div>
+    </article>
+
+  </section>
+</main>
+
+<!-- ===== ground scene ===== -->
+<div class="ground">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  // 페이지 로드 시 헤더의 상위 드롭다운 '정보 카드' 메뉴 활성화
+  document.querySelector('.main-nav .nav-policy')?.classList.add('active');
+
+  // accordion toggle
+  document.querySelectorAll('.law-head').forEach(function (head) {
+    head.addEventListener('click', function () {
+      head.closest('.law-card').classList.toggle('open');
+      syncExpandAll();
+    });
+  });
+
+  // expand / collapse all
+  var btn = document.querySelector('.law-expandall');
+  function syncExpandAll() {
+    var cards = document.querySelectorAll('.law-card');
+    var allOpen = [].every.call(cards, function (c) { return c.classList.contains('open'); });
+    btn.dataset.expanded = allOpen ? 'true' : 'false';
+    btn.querySelector('span').textContent = allOpen ? '전체 접기' : '전체 펼치기';
+    btn.querySelector('i').className = allOpen ? 'bi bi-arrows-collapse' : 'bi bi-arrows-expand';
+  }
+  btn.addEventListener('click', function () {
+    var open = btn.dataset.expanded !== 'true';
+    document.querySelectorAll('.law-card').forEach(function (c) { c.classList.toggle('open', open); });
+    syncExpandAll();
+  });
+</script>
+{% endblock %}

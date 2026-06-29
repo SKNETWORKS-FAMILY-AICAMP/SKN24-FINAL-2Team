@@ -1,0 +1,144 @@
+# ==============================================================================
+# 1. Core Web Framework & ASGI Server (FastAPI & Uvicorn)
+# ==============================================================================
+fastapi==0.128.8
+uvicorn==0.39.0
+starlette==0.49.3
+uvloop==0.22.1
+watchfiles==1.1.1
+python-multipart==0.0.29
+jinja2==3.1.6
+markupsafe==3.0.3
+
+# ==============================================================================
+# 2. AI / LLM Orchestration & Agent (LangChain & LangGraph)
+# ==============================================================================
+langgraph==1.2.4
+langgraph-checkpoint==4.1.1
+langgraph-checkpoint-sqlite==3.1.0
+langgraph-prebuilt==1.1.0
+langgraph-sdk==0.4.2
+langchain==1.3.4
+langchain-classic==1.0.7
+langchain-community==0.4.2
+langchain-core==1.4.2
+langchain-openai==1.2.2
+langchain-protocol==0.0.16
+langchain-text-splitters==1.1.2
+langsmith==0.8.11
+openai==2.29.0
+tiktoken==0.13.0
+
+# ==============================================================================
+# 3. Machine Learning, Deep Learning & Embeddings (Torch, Transformers)
+# ==============================================================================
+torch==2.2.2
+torchvision==0.17.2
+transformers==4.57.6
+sentence-transformers==2.7.0
+tokenizers==0.22.2
+safetensors==0.8.0
+huggingface_hub==0.36.2
+hf-xet==1.5.1
+numpy==1.26.4
+scipy==1.15.3
+scikit-learn==1.7.2
+sympy==1.14.0
+mpmath==1.3.0
+networkx==3.4.2
+pillow==12.2.0
+
+# ==============================================================================
+# 4. Databases, Vector Search & ORM
+# ==============================================================================
+qdrant-client==1.9.2
+sqlalchemy==2.0.50
+aiosqlite==0.22.1
+sqlite-vec==0.1.9
+pymysql==1.2.0
+
+# ==============================================================================
+# 5. Data Validation & Serialization (Pydantic)
+# ==============================================================================
+pydantic==2.12.5
+pydantic_core==2.41.5
+pydantic-settings==2.14.1
+annotated-types==0.7.0
+annotated-doc==0.0.4
+jsonpatch==1.33
+jsonpointer==3.1.1
+orjson==3.11.5
+ormsgpack==1.12.2
+jiter==0.15.0
+protobuf==6.33.6
+
+# ==============================================================================
+# 6. HTTP Clients & Networking
+# ==============================================================================
+aiohttp==3.13.5
+aiohappyeyeballs==2.6.2
+aiosignal==1.4.0
+async-timeout==4.0.3
+frozenlist==1.8.0
+multidict==6.7.1
+propcache==0.5.2
+yarl==1.24.2
+httpx==0.28.1
+httpcore==1.0.9
+httptools==0.7.1
+httpx-sse==0.4.3
+requests==2.32.5
+requests-toolbelt==1.0.0
+urllib3==2.7.0
+h11==0.16.0
+h2==4.3.0
+hpack==4.1.0
+hyperframe==6.1.0
+websockets==15.0.1
+grpcio==1.81.0
+grpcio-tools==1.81.0
+anyio==4.12.1
+sniffio==1.3.1
+socksio==1.0.0
+certifi==2026.5.20
+charset-normalizer==3.4.7
+idna==3.18
+
+# ==============================================================================
+# 7. Utilities & Environment Config (NLP Filters, Logging, etc.)
+# ==============================================================================
+python-dotenv==1.2.1
+better-profanity==0.7.0
+korcen==1.0.3
+click==8.1.8
+colorama==0.4.6
+tqdm==4.67.3
+tenacity==9.1.4
+attrs==26.1.0
+regex==2026.5.9
+filelock==3.29.1
+fsspec==2026.4.0
+portalocker==2.10.1
+joblib==1.5.3
+threadpoolctl==3.6.0
+distro==1.9.0
+packaging==26.0
+exceptiongroup==1.3.1
+typing_extensions==4.15.0
+typing-inspection==0.4.2
+uuid_utils==0.16.0
+fake-useragent==2.2.0
+ddgs==9.14.4
+brotli==1.2.0
+zstandard==0.25.0
+xxhash==3.7.0
+lxml==6.1.1
+primp==1.3.1
+graphviz==0.21
+
+# ==============================================================================
+# 8. Python Build Tools (기본 패키지 - 통상 배포 시 생략 가능하나 기록 유지)
+# ==============================================================================
+pip==26.1.1
+setuptools==82.0.1
+wheel==0.46.3

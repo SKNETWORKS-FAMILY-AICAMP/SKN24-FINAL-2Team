@@ -1,0 +1,1164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}토론 광장 — PoliCity{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="{% static 'css/debate.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="debate-page-wrap" id="debateApp">
+
+  <!-- ============================================================
+       MAIN STAGE
+  ============================================================ -->
+  <main class="debate-main">
+    <div class="debate-stage" id="debateStage">
+
+      <!-- Background -->
+      <img src="{% static 'assets/images/debate_bg.png' %}" class="stage-bg" alt="">
+
+      <!-- Title -->
+      <div class="stage-title jua" id="stageTitleText">
+        <span class="stage-title-star">✦</span>
+        <span id="topicLabel">청년 월세 지원 확대 정책</span>
+        <span class="stage-title-star">✦</span>
+      </div>
+
+      <!-- Mode + Round badges -->
+      <div class="stage-badges">
+        <div class="stage-mode-badge jua" id="modeBadge">AI vs AI</div>
+        <div class="stage-round-badges">
+          <span class="stage-round-badge" id="stageBadge">입장 제시</span>
+          <span class="stage-round-badge" id="countBadge">1 / 3 턴</span>
+        </div>
+      </div>
+
+      <!-- User stance badges (AI vs User only) -->
+      <div class="stage-user-badges" id="userBadges" style="display:none;">
+        <span class="stage-user-badge">👍 내 입장: <span id="stanceBadge">찬성</span></span>
+        <span class="stage-user-badge">⭐ 난이도: <span id="diffBadge">이지</span></span>
+      </div>
+
+      <!-- City Hall -->
+      <img src="{% static 'assets/images/city_hall.png' %}" class="stage-city-hall" alt="">
+
+      <!-- Polly 질문 알림 말풍선 (stage 직접 자식 → 확실한 중앙 정렬) -->
+      <div id="pollyQBubble" class="polly-q-bubble" style="display:none;">
+        <div class="polly-q-header">아주 좋은 질문이 들어왔어요!</div>
+        <div class="polly-q-text" id="pollyQText"></div>
+      </div>
+
+      <!-- ======== DEBATE VIEW ======== -->
+      <div id="debateView">
+
+        <!-- LEFT bubble (찬성) -->
+        <div class="stage-bubble stage-bubble-left pop" id="leftBubble">
+          <div class="bubble-content" id="leftContent">
+            <div class="bubble-loading">
+              <div class="bubble-spinner"></div> 찬성측 주제 제시 중...
+            </div>
+          </div>
+          <div class="bubble-footer">
+            <button type="button" class="btn-debate-source" id="leftSourceBtn"
+                    data-bs-toggle="modal" data-bs-target="#sourceModal"
+                    style="display:none;" onclick="openSource('pro')">참고 출처 ↗</button>
+          </div>
+        </div>
+
+        <!-- RIGHT bubble (반대) -->
+        <div class="stage-bubble stage-bubble-right pop" id="rightBubble">
+          <div class="bubble-content" id="rightContent">
+            <div class="bubble-loading">
+              <div class="bubble-spinner"></div> 반대측 주제 제시 중...
+            </div>
+          </div>
+          <div class="bubble-footer">
+            <button type="button" class="btn-debate-source-con" id="rightSourceBtn"
+                    data-bs-toggle="modal" data-bs-target="#sourceModal"
+                    style="display:none;" onclick="openSource('con')">참고 출처 ↗</button>
+          </div>
+        </div>
+
+        <!-- Poli -->
+        <img src="{% static 'assets/images/poli.png' %}" class="stage-poli" alt="폴리">
+
+        <!-- 스테이지 내 버튼 (폴리 아래) -->
+        <div class="stage-side-btns" id="stageSideBtns">
+          <button type="button" class="btn-stage-side" data-bs-toggle="modal" data-bs-target="#recordModal">📄 토론 기록</button>
+          <button type="button" class="btn-stage-side" onclick="openMemo()">✏️ 메모</button>
+        </div>
+
+        <!-- Poli summary card -->
+        <div class="stage-summary-card" id="summaryCard" style="display:none;">
+          <div class="stage-summary-header jua">🐻 폴리 · 진행 요약</div>
+          <div class="stage-summary-body" id="summaryBody"></div>
+        </div>
+
+        <!-- Side characters -->
+        <img src="{% static 'assets/images/chani.png' %}" class="stage-char stage-char-chani" id="leftChar" alt="찬이">
+        <img src="{% static 'assets/images/bani.png' %}"  class="stage-char stage-char-right" id="rightChar" alt="반이">
+
+        <!-- Action bar (shown when waiting for user input) -->
+        <div class="stage-action-bar" id="actionBar" style="display:none;">
+          <button type="button" class="btn-debate-primary" id="btnNext" onclick="sendAction('next')">▶ 다음 단계</button>
+          <button type="button" class="btn-debate-secondary" id="btnExtra" onclick="sendAction('extra')">💬 추가 토론</button>
+          <button type="button" class="btn-debate-ask" id="btnAskPro"
+                  onclick="openAskModal('pro')">🐾 찬이에게 질문</button>
+          <button type="button" class="btn-debate-ask" id="btnAskCon"
+                  onclick="openAskModal('con')">✕ 반이에게 질문</button>
+        </div>
+
+        <!-- User turn input bar (AI vs User) -->
+        <div class="stage-input-bar" id="userTurnBar" style="display:none;">
+          <input type="text" id="userInputField" class="stage-input"
+                 placeholder="내 입장을 입력해보세요!"
+                 onkeydown="if(event.key==='Enter') submitUserInput()">
+          <button type="button" class="btn-debate-send" onclick="submitUserInput()">➤</button>
+        </div>
+
+      </div><!-- /#debateView -->
+
+      <!-- ======== FINAL SUMMARY VIEW ======== -->
+      <div id="finalView" style="display:none;">
+
+        <!-- 캐릭터 (보드 양옆, 비겹침) -->
+        <img src="{% static 'assets/images/chani.png' %}" class="stage-char-final stage-char-chani-final" id="leftCharFinal"  alt="">
+        <img src="{% static 'assets/images/bani.png' %}"  class="stage-char-final stage-char-right-final" id="rightCharFinal" alt="">
+
+        <!-- 폴리 새 자세 -->
+        <img src="{% static 'assets/images/poli_debate.png' %}" class="stage-poli-debate" id="poliDebate" alt="폴리">
+
+        <!-- 주장 다지기 보드 이미지 + 내용 오버레이 -->
+        <div class="final-board-wrap">
+          <img src="{% static 'assets/images/debate_final.png' %}" class="final-board-img" alt="">
+          <div class="fb-content">
+
+            <!-- 찬이의 핵심 주장 (좌상) -->
+            <div class="fb-sec fb-tl">
+              <span id="finalLeftTitle" style="display:none;">찬이의 핵심 주장</span>
+              <ul class="f4-list" id="finalProKey"></ul>
+            </div>
+
+            <!-- 반이의 핵심 주장 (우상) -->
+            <div class="fb-sec fb-tr">
+              <span id="finalRightTitle" style="display:none;">반이의 핵심 주장</span>
+              <ul class="f4-list" id="finalConKey"></ul>
+            </div>
+
+            <!-- 주요 반박 (좌하) -->
+            <div class="fb-sec fb-bl">
+              <div id="finalRebuttalArea">
+                <div class="f4-rebuttal">
+                  <span class="f4-rb-tag f4-rb-pro">찬이 → 반이</span>
+                  <p id="finalGoodRebuttal">재정 부담은 단계적·선별적 지원으로 관리 가능하며, 소비·지역경제 활성화 효과가 더 큽니다.</p>
+                </div>
+                <div class="f4-rebuttal">
+                  <span class="f4-rb-tag f4-rb-con">반이 → 찬이</span>
+                  <p id="finalNeedImprove">단기 효과에 그칠 수 있으며, 구조적 해결 없이는 근본적인 주거 문제 완화가 어렵습니다.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 핵심 쟁점 정리 (우하) -->
+            <div class="fb-sec fb-br">
+              <div id="finalIssuesArea">
+                <div class="f4-issue"><span class="f4-issue-tag">재정 지속성</span><span>확대 시 재정 부담 vs 단계적 설계 가능성</span></div>
+                <div class="f4-issue"><span class="f4-issue-tag">효과 범위</span><span>단기 지원 vs 장기적 지역·경제 효과</span></div>
+                <div class="f4-issue"><span class="f4-issue-tag">우선순위</span><span>임시 지원 vs 구조적 주거 문제 해결</span></div>
+                <div class="f4-issue"><span class="f4-issue-tag">형평성</span><span>정책 간 형평성 및 지원 대상의 공정성</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="final-action-bar">
+          <button type="button" class="btn-debate-primary" onclick="restartDebate()">↻ 같은 주제로 다시 토론하기</button>
+          <button type="button" class="btn-debate-secondary"
+                  data-bs-toggle="modal" data-bs-target="#recordModal">📄 토론 기록 보기</button>
+          <button type="button" class="btn-debate-organize" onclick="openMemo()">✏️ 메모</button>
+        </div>
+
+      </div><!-- /#finalView -->
+
+      <!-- ======== INTRO OVERLAY ======== -->
+      <div class="intro-overlay" id="introOverlay">
+        <div class="intro-card">
+          <img src="{% static 'assets/images/poli.png' %}" class="intro-poli" alt="">
+          <div class="intro-title jua">토론을 시작해 볼까요?</div>
+          <div class="intro-topic" id="introTopicLabel">청년 월세 지원 확대 정책</div>
+          <!-- Step 1: 모드 선택 -->
+          <div id="introStep1" class="intro-options">
+            <button type="button" class="intro-btn intro-btn-aiai" onclick="startDebate('aiai')">
+              <span class="intro-avatars"><img src="{% static 'assets/images/chani.png' %}" class="intro-avatar intro-avatar-chani" alt="찬이"><span class="intro-vs">VS</span><img src="{% static 'assets/images/bani.png' %}" class="intro-avatar intro-avatar-bani" alt="반이"></span>
+              <span class="intro-btn-label">
+                <b class="pro jua">찬이와 반이 관전하기</b>
+                <small>찬이와 반이의 토론을 지켜봐요</small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn intro-btn-pro" onclick="showDifficulty('pro')">
+              <span class="intro-btn-circle intro-btn-circle-pro">O</span>
+              <span class="intro-btn-label">
+                <b class="pro jua">찬성으로 참여하기</b>
+                <small>내가 찬성, 반이가 반대로 토론해요</small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn intro-btn-con" onclick="showDifficulty('con')">
+              <span class="intro-btn-circle intro-btn-circle-con">✕</span>
+              <span class="intro-btn-label">
+                <b class="con jua">반대로 참여하기</b>
+                <small>내가 반대, 찬이가 찬성으로 토론해요</small>
+              </span>
+            </button>
+          </div>
+          <!-- Step 2: 난이도 선택 -->
+          <div id="introStep2" class="intro-options" style="display:none;">
+            <div class="jua" id="diffTitle" style="font-size:17px;color:#2b3a36;text-align:center;margin-bottom:2px;">찬성으로 참여하기</div>
+            <div style="font-size:13px;color:#8a948c;text-align:center;margin-bottom:12px;">난이도를 선택해주세요</div>
+            <button type="button" class="intro-btn" style="background:#f2f8f3;border-color:#bfe3cf;" onclick="startWithDifficulty('easy')">
+              <span class="intro-btn-icon">⭐</span>
+              <span class="intro-btn-label">
+                <b class="pro jua">Easy</b>
+                <small>핵심 개념을 쉽게 배워요</small>
+              </span>
+            </button>
+            <button type="button" class="intro-btn" style="background:#fff8f0;border-color:#f0d2a0;" onclick="startWithDifficulty('hard')">
+              <span class="intro-btn-icon">🔥</span>
+              <span class="intro-btn-label">
+                <b style="font-size:18px;color:#c0730a;" class="jua">Hard</b>
+                <small>심화 논점으로 깊이 토론해요</small>
+              </span>
+            </button>
+            <button type="button" onclick="backToIntroStep1()"
+                    style="margin-top:4px;background:none;border:none;color:#8a948c;font-size:14px;cursor:pointer;padding:8px;">← 돌아가기</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.debate-stage -->
+  </main>
+
+  <!-- ============================================================
+       MEMO PANEL (slide-in drawer)
+  ============================================================ -->
+  <div class="memo-panel" id="memoPanel">
+    <div class="memo-header">
+      <span class="memo-title jua">메모장</span>
+      <button type="button" class="memo-close-btn" onclick="closeMemo()" aria-label="닫기">×</button>
+    </div>
+    <div class="memo-body">
+      <div class="memo-section">
+        <div class="memo-label memo-label-pro">● 찬성 : (찬이)</div>
+        <textarea id="memoProText" class="memo-textarea" maxlength="500"
+                  placeholder="찬성 입장 메모를 입력해보세요..."
+                  oninput="updateMemoCount('memoProText','memoProCount')"></textarea>
+        <div class="memo-char-count" id="memoProCount">0 / 500</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-label memo-label-con">● 반대 : (반이)</div>
+        <textarea id="memoConText" class="memo-textarea" maxlength="500"
+                  placeholder="반대 입장 메모를 입력해보세요..."
+                  oninput="updateMemoCount('memoConText','memoConCount')"></textarea>
+        <div class="memo-char-count" id="memoConCount">0 / 500</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-label memo-label-check">● 확인해볼 점</div>
+        <textarea id="memoCheckText" class="memo-textarea" maxlength="500"
+                  placeholder="확인해볼 점을 메모해보세요..."
+                  oninput="updateMemoCount('memoCheckText','memoCheckCount')"></textarea>
+        <div class="memo-char-count" id="memoCheckCount">0 / 500</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#debateApp -->
+
+<!-- ============================================================
+     BOOTSTRAP MODALS
+============================================================ -->
+
+<!-- 출처 Modal -->
+<div class="modal fade debate-modal" id="sourceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header modal-header-pro">
+        <h5 class="modal-title jua" style="font-size:20px;">📄 참고 출처  ↗</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="sourceModalBody" style="padding:24px 26px; color:#3a463f; line-height:1.75;">
+        <p style="color:#8a948c; font-size:13px;">출처 정보를 불러오는 중입니다...</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal"
+                style="background:#2f8f6b;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 토론 기록 Modal -->
+<div class="modal fade debate-modal" id="recordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:560px;">
+    <div class="modal-content">
+      <div class="modal-header modal-header-record">
+        <div>
+          <h5 class="modal-title jua" style="font-size:20px;margin-bottom:2px;">📄 토론 기록</h5>
+          <div id="recordModalSub" style="font-size:12px;color:rgba(255,255,255,.75);"></div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:18px 20px;max-height:62vh;overflow-y:auto;" id="recordModalBody">
+        <div class="record-empty">아직 토론 기록이 없습니다.</div>
+      </div>
+      <div style="padding:10px 20px 16px;border-top:1px solid #eef3ee;text-align:right;">
+        <button class="btn" data-bs-dismiss="modal" style="background:#3b6bd6;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI 질문 Modal -->
+<div class="modal fade debate-modal" id="askModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header modal-header-ask">
+        <h5 class="modal-title jua" style="font-size:20px;" id="askModalTitle">🤖 AI에게 질문</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:#6b756e;font-size:14px;margin-bottom:12px;">궁금한 점을 자유롭게 물어보세요. 토론 내용을 바탕으로 답변을 도와드려요.</p>
+        <textarea id="askTextarea" class="debate-textarea"
+                  oninput="updateAskCharCount()" maxlength="600"></textarea>
+        <div class="ask-char-count" id="askCharCount">0 / 500</div>
+        <div id="askWarnMsg" style="display:none;color:#c0392b;font-size:12px;margin-top:4px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal"
+                style="background:#eef3ee;color:#3a463f;font-weight:600;border-radius:12px;padding:9px 18px;">취소</button>
+        <button type="button" class="btn" id="askSubmitBtn"
+                onclick="submitQuestion()"
+                style="background:#c45a4e;color:#fff;font-weight:600;border-radius:12px;padding:9px 22px;">질문 보내기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<!-- ============================================================
+     DEBATE PAGE LOGIC
+============================================================ -->
+<script>
+/* ── Mock Mode ─────────────────────────────────────────────── */
+const MOCK_MODE = true;   // ai_agent 서버 없이 UI 확인용. 연동 시 false로 변경
+
+const MOCK_DATA = {
+  rounds: [
+    {
+      roundNum: '1',
+      pro: '청년 주거 안정을 위해 월세 지원 확대는 반드시 필요합니다.\n\n통계청 자료에 따르면 2024년 기준 청년 1인 가구의 소득 대비 임대료 비율(RIR)은 평균 31.4%로, 가처분 소득의 3분의 1이 주거비로 사라지고 있습니다. 이는 OECD 권고 기준인 25%를 크게 웃도는 수준으로, 청년들의 저축·자기계발·출산 결정 모두에 직접적인 영향을 미칩니다.\n\n월세 지원이 확대되면 청년들은 남은 소득을 소비와 자산 형성에 활용할 수 있고, 이는 지역 소비 증가와 내수 경제 활성화로 이어집니다. 단기 재정 투입이지만 장기적으로는 청년 고용률·출산율 상승이라는 사회적 편익이 훨씬 큽니다. 월세 지원은 현재 가장 즉효성 있는 청년 주거 정책입니다.',
+      con: '월세 지원 확대는 표면적으로는 매력적이지만, 구조적 문제를 오히려 심화시킬 위험이 있습니다.\n\n경제학적으로 수요 보조금이 공급 확대 없이 투입되면 임대료가 상승하는 경향이 있습니다. 실제로 미국·영국의 임대 바우처 연구(HUD, 2022)에서도 지원금만큼 임대료가 오른 지역이 다수 확인됐습니다. 즉, 지원금의 상당 부분이 집주인 수익으로 귀결될 수 있습니다.\n\n또한 연간 수조 원의 예산이 필요한 사업을 지속하려면 다른 복지 항목의 예산을 줄여야 하고, 이는 저소득층·장애인·노인 지원 약화로 이어질 수 있습니다. 근본 해결책은 공공임대 공급 확대와 임대차 보호 강화입니다.',
+      summary: '폴리 요약: 찬이는 청년 RIR 문제와 소비 여력 개선을, 반이는 임대료 상승과 재정 지속성 문제를 핵심으로 제시했어요.',
+    },
+    {
+      roundNum: '2',
+      pro: '반이가 제기한 임대료 상승 효과는 공급 병행 없이 수요 보조만 했을 때의 일부 사례에 해당합니다.\n\n핀란드와 덴마크는 바우처 방식의 월세 지원을 공공임대 공급 확대와 함께 추진해 임대료 안정과 청년 자립률 향상을 동시에 달성했습니다(OECD Housing Policy Brief, 2023). 정책 설계가 핵심이지, 지원 자체가 문제가 아닙니다.\n\n또한 높은 월세 부담은 청년의 자기계발 기회를 직접 제한합니다. 주거비에 소득 30% 이상을 쓰는 청년은 교육·자격증·창업에 투자할 여력이 없습니다. 이는 장기적으로 노동 생산성 저하와 세수 감소로 이어져 복지 재원 자체를 위협합니다. 월세 지원은 사회 전체의 투자입니다.',
+      con: '찬이의 북유럽 사례는 공공임대 비율이 전체 주택의 20~30%에 달하는 나라에서의 결과입니다.\n\n우리나라 공공임대 비율은 약 8%로, 공급 기반 자체가 다릅니다. 이 상황에서 수요 보조만 늘리면 민간 임대 시장의 가격 압력이 강해질 수밖에 없습니다. 재정 측면에서도 연간 3~5조 원이 소요될 것으로 추산되는 사업을 지속하려면 명확한 세입 확충 방안이 있어야 합니다.\n\n보다 효과적인 대안은 청년 전용 공공임대 물량을 현재의 두 배로 늘리고, 임대차 3법을 개선해 전월세 가격 상한을 강화하는 것입니다. 실질적인 구조 개선 없이 현금 지원만 늘리는 방식은 지속 불가능합니다.',
+      summary: '폴리 요약: 찬이는 북유럽의 병행 정책 사례를, 반이는 국내 공급 기반 차이와 재정 한계를 반박 근거로 내세웠어요.',
+    },
+    {
+      roundNum: '3',
+      pro: '지금까지의 논의를 정리하면, 월세 지원 확대 여부가 아니라 어떻게 설계하느냐가 핵심입니다.\n\n저는 다음 세 가지 원칙으로 지속 가능한 지원 모델을 제안합니다. 첫째, 소득 하위 40% 청년에 집중한 선별 지원으로 재정 효율을 높입니다. 둘째, 공공임대 공급 확대와 병행해 임대료 상승 압력을 구조적으로 억제합니다. 셋째, 지원금에 전입 신고·임대차 계약서 제출을 의무화해 집주인 전가를 차단합니다.\n\n이 방식이면 연간 약 1조 5천억 원 규모로도 실질적인 주거 안정 효과를 낼 수 있으며, 청년 고용 유지·출산율 개선이라는 사회 환원 가치가 지출을 상쇄합니다. 지금 당장 시행 가능한 가장 현실적인 정책입니다.',
+      con: '찬이의 마지막 제안은 이전보다 진전된 내용이지만, 핵심 문제는 여전히 남습니다.\n\n선별 지원이라도 수요 보조 방식인 이상 민간 임대 시장 전체에 가격 상승 신호를 줄 수 있으며, 행정 비용과 부정 수급 관리 비용도 상당합니다. 또한 지원 대상에서 제외된 소득 하위 41~60% 청년은 오히려 임대료 상승 피해를 고스란히 입을 수 있습니다.\n\n저는 같은 재원을 청년 전용 공공임대 건설(10만 호 증설)과 임대료 상한제 강화에 투입하는 방안이 더 많은 청년을 구조적으로 보호한다고 주장합니다. 단기 현금 지원보다 인프라 투자가 장기적으로 더 큰 주거 안정을 만들어낼 수 있습니다.',
+      summary: '폴리 요약: 두 입장 모두 선별성과 공급 병행의 중요성에는 공감했어요. 정책 수단의 선택이 핵심 쟁점으로 남았습니다!',
+    },
+  ],
+  final: {
+    pro_summary: {
+      key_arguments: ['월세 부담 완화는 청년 주거 안정의 핵심입니다.', '소비 여력 개선과 경제 활성화로 이어집니다.', '지원 확대는 장기적 사회 투자로 효과적입니다.'],
+      key_rebuttals: ['재정 부담 우려에 대한 경제적 파급 효과 제시', '지속 가능성 확보 방안 구체적 제안'],
+    },
+    con_summary: {
+      key_arguments: ['재정 부담과 지속 가능성 문제가 있습니다.', '수요 증가로 구조적 해결이 우선입니다.', '선택적·맞춤형 지원이 더 효과적입니다.'],
+      key_rebuttals: ['재원 마련 방안의 구체성 강화 필요', '다른 주거 정책과의 연계성 설명 보완 필요'],
+    },
+  },
+};
+
+/* ── State ─────────────────────────────────────────────────── */
+const S = {
+  sessionId:      null,
+  mode:           null,   // 'aiai' | 'aiuser'
+  stance:         null,   // 'pro' | 'con'
+  difficulty:     'easy', // 'easy' | 'hard'
+  round:          '1',    // '1'–'4' from backend
+  memoOpen:       false,
+  currentAskTarget: 'pro',
+  proSources:     [],
+  conSources:     [],
+};
+
+let _selectedStance = null;
+
+function showDifficulty(stance) {
+  _selectedStance = stance;
+  document.getElementById('diffTitle').textContent = stance === 'pro' ? '찬성으로 참여하기' : '반대로 참여하기';
+  document.getElementById('introStep1').style.display = 'none';
+  document.getElementById('introStep2').style.display = 'flex';
+}
+
+function backToIntroStep1() {
+  document.getElementById('introStep2').style.display = 'none';
+  document.getElementById('introStep1').style.display = 'flex';
+}
+
+function startWithDifficulty(diff) {
+  S.difficulty = diff;
+  const badge = document.getElementById('diffBadge');
+  if (badge) badge.textContent = diff === 'easy' ? 'Easy' : 'Hard';
+  startDebate('aiuser', _selectedStance, diff);
+}
+
+let _sse = null;
+const _messages = [];   // 대화 기록 { side, name, label, av, text }
+
+/* ── Typewriter 설정 ─────────────────────────────────────────── */
+const TW_CHUNK = 2;   // 한 번에 찍는 글자 수
+const TW_MS    = 80;  // 찍는 간격(ms)
+const _twTimer = { left: null, right: null };
+const _skipFn  = { left: null, right: null };
+
+/* ── Round label map ───────────────────────────────────────── */
+const ROUND_MAP = {
+  '1': { count: '1 / 3 턴', stage: '입장 제시' },
+  '2': { count: '2 / 3 턴', stage: '핵심 반박' },
+  '3': { count: '3 / 3 턴', stage: '마무리 정리' },
+  '4': { count: '정리',      stage: '주장 다지기' },
+};
+
+/* ── Static image paths ────────────────────────────────────── */
+const IMG = {
+  chani:    '{% static "assets/images/chani.png" %}',
+  bani:     '{% static "assets/images/bani.png" %}',
+  poli:     '{% static "assets/images/poli.png" %}',
+  meo:      '{% static "assets/girl_debate_o.png" %}',
+  mex:      '{% static "assets/girl_debate_x.png" %}',
+  avChani:  '{% static "assets/images/av_chani.png" %}',
+  avBani:   '{% static "assets/images/av_bani.png" %}',
+  avMeo:    '{% static "assets/images/av_meo.png" %}',
+  avMex:    '{% static "assets/images/av_mex.png" %}',
+};
+
+/* ══════════════════════════════════════════════════════════════
+   START DEBATE
+══════════════════════════════════════════════════════════════ */
+async function startDebate(mode, stance, difficulty) {
+  S.mode      = mode;
+  S.stance    = stance || null;
+  S.difficulty = difficulty || 'easy';
+
+  // Hide intro, update badges
+  document.getElementById('introOverlay').style.display = 'none';
+  document.getElementById('introStep1').style.display = 'flex';
+  document.getElementById('introStep2').style.display = 'none';
+  document.getElementById('modeBadge').textContent = mode === 'aiai' ? 'AI vs AI' : 'AI vs USER';
+
+  // AI vs User: show stance badge, swap character for user side
+  if (mode === 'aiuser') {
+    document.getElementById('userBadges').style.display = 'flex';
+    document.getElementById('stanceBadge').textContent = stance === 'pro' ? '찬성' : '반대';
+    if (stance === 'pro') {
+      // me_o: canvas fill 82.7% → stage-char-left(19%)로 발 위치 정확히 맞음
+      const _lc  = document.getElementById('leftChar');
+      const _lcf = document.getElementById('leftCharFinal');
+      _lc.src  = IMG.meo;  _lc.className  = 'stage-char stage-char-left';
+      _lcf.src = IMG.meo;  _lcf.className  = 'stage-char-final stage-char-left-final';
+    } else {
+      // me_x.png(1122×1402) = bani와 동일 비율 → CSS 기본값(23%/18%) 그대로
+      _setEl('rightChar',      'src', IMG.mex);
+      _setEl('rightCharFinal', 'src', IMG.mex);
+    }
+    // Hide both ask buttons in AI vs User mode
+    document.getElementById('btnAskPro').style.display = 'none';
+    document.getElementById('btnAskCon').style.display = 'none';
+  }
+
+  // Show loading
+  _loadingBubble('left');
+  _loadingBubble('right');
+
+  // Get card_id from URL param (e.g. /debate/?card_id=3)
+  const params  = new URLSearchParams(window.location.search);
+  const cardId  = parseInt(params.get('card_id') || '1');
+
+  if (MOCK_MODE) {
+    S.sessionId  = 'mock';
+    S.mockRound  = 0;
+    _mockRound(0);
+    return;
+  }
+
+  try {
+    const body = {
+      card_id:    cardId,
+      mode:       mode === 'aiai' ? 'ai_vs_ai' : 'ai_vs_user',
+      difficulty: S.difficulty,
+    };
+    if (mode === 'aiuser') body.user_stance = stance;
+
+    const res  = await fetch('/api/debates/', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json',
+                 'X-CSRFToken': _getCsrf() },
+      body:    JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(JSON.stringify(data));
+
+    S.sessionId = data.debate_session_id;
+    _startSSE();
+  } catch (err) {
+    alert('토론 시작에 실패했습니다: ' + err.message);
+    document.getElementById('introOverlay').style.display = 'flex';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SSE STREAM
+══════════════════════════════════════════════════════════════ */
+function _startSSE() {
+  if (_sse) _sse.close();
+  _hideActionBar();
+  _sse = new EventSource(`/api/debates/${S.sessionId}/stream/`);
+
+  _sse.onmessage = (e) => {
+    try { _handleEvent(JSON.parse(e.data)); }
+    catch (_) { /* skip malformed */ }
+  };
+  _sse.onerror = () => { _sse.close(); };
+}
+
+function _handleEvent(ev) {
+  switch (ev.type) {
+    case 'message':
+      _onMessage(ev);
+      break;
+    case 'round_update':
+      _updateRound(String(ev.round));
+      break;
+    case 'waiting':
+      _sse.close();
+      _showActionBar(ev);
+      break;
+    case 'summary':
+      _sse.close();
+      _showFinal(ev.data || ev);
+      break;
+    case 'error':
+      console.error('debate error:', ev.message);
+      break;
+  }
+}
+
+/* ── Message → bubble ──────────────────────────────────────── */
+function _onMessage(ev) {
+  const { participant, content, sources = [] } = ev;
+
+  if (participant === 'pro') {
+    _fillBubble('left',  content, sources);
+    S.proSources = sources;
+    if (sources.length) document.getElementById('leftSourceBtn').style.display = 'flex';
+  } else if (participant === 'con') {
+    _fillBubble('right', content, sources);
+    S.conSources = sources;
+    if (sources.length) document.getElementById('rightSourceBtn').style.display = 'flex';
+  } else if (participant === 'user') {
+    const side = S.stance === 'pro' ? 'left' : 'right';
+    _fillBubble(side, content, []);
+  }
+}
+
+function _charInfo(side) {
+  const isUser = S.mode === 'aiuser';
+  if (side === 'left') {
+    if (isUser && S.stance === 'pro') return { name: '나', emoji: '', label: '찬성', av: IMG.avMeo };
+    return { name: '찬이', emoji: '🐶', label: '찬성', av: IMG.avChani };
+  } else {
+    if (isUser && S.stance === 'con') return { name: '나', emoji: '', label: '반대', av: IMG.avMex };
+    return { name: '반이', emoji: '🐰', label: '반대', av: IMG.avBani };
+  }
+}
+
+function _fillBubble(side, text, _sources, onDone) {
+  // 이전 타이핑 취소
+  if (_twTimer[side]) { clearTimeout(_twTimer[side]); _twTimer[side] = null; }
+
+  // 대화 기록 즉시 저장 (애니메이션 완료 전)
+  const info = _charInfo(side);
+  _messages.push({ side, name: info.name, emoji: info.emoji, label: info.label, av: info.av, text, round: S.round });
+  _renderRecords();
+
+  const el  = document.getElementById(side === 'left' ? 'leftContent' : 'rightContent');
+  const ps  = text.split('\n').filter(l => l.trim());
+  el.innerHTML = '';
+  const pEls = ps.map(() => {
+    const p = document.createElement('p');
+    el.appendChild(p);
+    return p;
+  });
+
+  let pIdx = 0, cIdx = 0;
+
+  function tick() {
+    if (pIdx >= ps.length) {
+      _twTimer[side] = null;
+      _skipFn[side]  = null;
+      const skipBtn = document.getElementById(side === 'left' ? 'leftSkipBtn' : 'rightSkipBtn');
+      if (skipBtn) skipBtn.style.display = 'none';
+      if (typeof onDone === 'function') onDone();
+      return;
+    }
+    const para = ps[pIdx];
+    const end  = Math.min(cIdx + TW_CHUNK, para.length);
+    pEls[pIdx].textContent = para.substring(0, end);
+    if (end >= para.length) { pIdx++; cIdx = 0; }
+    else                    { cIdx = end; }
+    el.scrollTop = el.scrollHeight;
+    _twTimer[side] = setTimeout(tick, TW_MS);
+  }
+
+  // 빨리감기 버튼 표시
+  const skipBtnEl = document.getElementById(side === 'left' ? 'leftSkipBtn' : 'rightSkipBtn');
+  if (skipBtnEl) skipBtnEl.style.display = 'flex';
+  _skipFn[side] = () => {
+    if (_twTimer[side]) { clearTimeout(_twTimer[side]); _twTimer[side] = null; }
+    pEls.forEach((p, i) => { p.textContent = ps[i]; });
+    el.scrollTop = el.scrollHeight;
+    pIdx = ps.length;
+    _skipFn[side] = null;
+    if (skipBtnEl) skipBtnEl.style.display = 'none';
+    if (typeof onDone === 'function') onDone();
+  };
+
+  tick();
+}
+
+function _loadingBubble(side) {
+  const el = document.getElementById(side === 'left' ? 'leftContent' : 'rightContent');
+  el.innerHTML = side === 'left'
+    ? '<div class="bubble-loading"><div class="bubble-spinner"></div> 찬성측 주제 제시 중...</div>'
+    : '<div class="bubble-loading"><div class="bubble-spinner"></div> 반대측 주제 제시 중...</div>';
+  const srcBtn = document.getElementById(side === 'left' ? 'leftSourceBtn' : 'rightSourceBtn');
+  if (srcBtn) srcBtn.style.display = 'none';
+}
+
+/* ── Round update ──────────────────────────────────────────── */
+function _updateRound(r) {
+  S.round = r;
+  const lbl = ROUND_MAP[r] || ROUND_MAP['1'];
+  document.getElementById('countBadge').textContent = lbl.count;
+  document.getElementById('stageBadge').textContent = lbl.stage;
+}
+
+/* ── Action bar ────────────────────────────────────────────── */
+function _showActionBar(ev) {
+  if (ev.wait_type === 'user_turn') {
+    // AI vs User: show user input
+    document.getElementById('userTurnBar').style.display = 'flex';
+    return;
+  }
+  // user_choice: show action buttons
+  const bar = document.getElementById('actionBar');
+  bar.style.display = 'flex';
+  document.getElementById('btnExtra').disabled = ev.extra_available === false;
+
+  // In AI vs User mode hide both ask buttons (user speaks directly, no Q&A)
+  if (S.mode === 'aiuser') {
+    document.getElementById('btnAskPro').style.display = 'none';
+    document.getElementById('btnAskCon').style.display = 'none';
+  }
+}
+
+function _hideActionBar() {
+  document.getElementById('actionBar').style.display   = 'none';
+  document.getElementById('userTurnBar').style.display = 'none';
+  // 다음 턴 시작 시 폴리 버블 숨기고 말풍선 visibility 복구
+  const b = document.getElementById('pollyQBubble');
+  if (b) b.style.display = 'none';
+  document.getElementById('leftBubble').style.visibility  = 'visible';
+  document.getElementById('rightBubble').style.visibility = 'visible';
+}
+
+/* ── Summary card (mid-debate) ─────────────────────────────── */
+function _showSummaryCard(text) {
+  const card = document.getElementById('summaryCard');
+  const body = document.getElementById('summaryBody');
+  const lines = text.split('\n').filter(l => l.trim());
+  body.innerHTML = lines.map(l => `<p style="margin:0 0 7px;">${_esc(l)}</p>`).join('');
+  card.style.display = 'block';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ACTIONS
+══════════════════════════════════════════════════════════════ */
+async function sendAction(action) {
+  _hideActionBar();
+  _loadingBubble('left');
+  _loadingBubble('right');
+  document.getElementById('summaryCard').style.display = 'none';
+
+  if (MOCK_MODE) {
+    S.mockRound = (S.mockRound || 0) + 1;
+    setTimeout(() => _mockRound(S.mockRound), 400);
+    return;
+  }
+
+  try {
+    await fetch(`/api/debates/${S.sessionId}/action/`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _getCsrf() },
+      body:    JSON.stringify({ user_action: action }),
+    });
+    _startSSE();
+  } catch (e) { console.error(e); }
+}
+
+async function submitUserInput() {
+  const text = document.getElementById('userInputField').value.trim();
+  if (!text) return;
+  document.getElementById('userInputField').value = '';
+  document.getElementById('userTurnBar').style.display = 'none';
+
+  if (MOCK_MODE) {
+    const userSide = S.stance === 'pro' ? 'left' : 'right';
+    const aiSide   = S.stance === 'pro' ? 'right' : 'left';
+    _fillBubble(userSide, text, []);
+    _loadingBubble(aiSide);
+    const rd = MOCK_DATA.rounds[Math.min(S.mockRound, MOCK_DATA.rounds.length - 1)];
+    setTimeout(() => {
+      _fillBubble(aiSide, S.stance === 'pro' ? rd.con : rd.pro, []);
+      setTimeout(() => {
+        S.mockRound = (S.mockRound || 0) + 1;
+        if (S.mockRound >= MOCK_DATA.rounds.length) {
+          _showFinal(MOCK_DATA.final);
+        } else {
+          _showActionBar({ wait_type: 'user_choice', extra_available: true });
+        }
+      }, 500);
+    }, 900);
+    return;
+  }
+
+  _loadingBubble(S.stance === 'pro' ? 'left' : 'right');
+  try {
+    await fetch(`/api/debates/${S.sessionId}/input/`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _getCsrf() },
+      body:    JSON.stringify({ user_input: text }),
+    });
+    _startSSE();
+  } catch (e) { console.error(e); }
+}
+
+/* ── Ask modal open ─────────────────────────────────────────── */
+function openAskModal(target) {
+  S.currentAskTarget = target;
+  const name = target === 'pro' ? '찬이' : '반이';
+  document.getElementById('askModalTitle').textContent = `🤖 ${name}에게 질문`;
+  const ta = document.getElementById('askTextarea');
+  if (ta) { ta.value = ''; }
+  document.getElementById('askCharCount').textContent = '0 / 500';
+  document.getElementById('askCharCount').classList.remove('over');
+  const warn = document.getElementById('askWarnMsg');
+  if (warn) { warn.style.display = 'none'; warn.textContent = ''; }
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('askModal')).show();
+}
+
+/* ── Char counter ────────────────────────────────────────────── */
+function updateAskCharCount() {
+  const ta  = document.getElementById('askTextarea');
+  const cnt = document.getElementById('askCharCount');
+  const len = ta.value.length;
+  cnt.textContent = `${len} / 500`;
+  cnt.classList.toggle('over', len > 500);
+}
+
+/* ── Submit question ─────────────────────────────────────────── */
+async function submitQuestion() {
+  const ta   = document.getElementById('askTextarea');
+  const text = ta ? ta.value.trim() : '';
+  const warn = document.getElementById('askWarnMsg');
+
+  if (!text) {
+    if (warn) { warn.textContent = '질문을 입력해주세요.'; warn.style.display = 'block'; }
+    return;
+  }
+  if (text.length > 500) {
+    if (warn) { warn.textContent = '500자 이내로 입력해주세요.'; warn.style.display = 'block'; }
+    return;
+  }
+
+  // 모달 닫기
+  bootstrap.Modal.getInstance(document.getElementById('askModal'))?.hide();
+  if (ta) ta.value = '';
+
+  // 기존 말풍선 숨기기
+  document.getElementById('leftBubble').style.visibility  = 'hidden';
+  document.getElementById('rightBubble').style.visibility = 'hidden';
+
+  // 폴리 질문 말풍선 표시 (답변 후에도 유지)
+  const bubble = document.getElementById('pollyQBubble');
+  const qText  = document.getElementById('pollyQText');
+  if (bubble && qText) { qText.textContent = text; bubble.style.display = 'block'; }
+
+  // 기록에 질문 추가
+  addQuestionToRecord(text);
+
+  if (MOCK_MODE) {
+    await new Promise(r => setTimeout(r, 1200));
+    const side = S.currentAskTarget === 'pro' ? 'left' : 'right';
+    const name = S.currentAskTarget === 'pro' ? '찬이' : '반이';
+    // 답변 말풍선만 다시 보이게
+    document.getElementById(side === 'left' ? 'leftBubble' : 'rightBubble').style.visibility = 'visible';
+    const mockAnswer = S.currentAskTarget === 'pro'
+      ? `재정 부담은 분명 고려해야 할 사항이지만, 청년 주거 불안정으로 인한 사회적 비용이 더 큽니다. 연구에 따르면 주거 안정이 보장된 청년은 취업률과 출산율이 모두 높아지며, 이는 장기적으로 세수 증가로 이어져 지원 비용을 상쇄할 수 있습니다.`
+      : `재정 부담 문제는 정책의 지속 가능성과 직결됩니다. 월세 지원 확대에 필요한 연간 3~5조 원을 충당하려면 다른 복지 예산을 줄이거나 세금을 올려야 하는데, 이는 또 다른 계층의 부담으로 이어질 수 있어요. 공공임대 확충이 더 근본적인 해결책입니다.`;
+    _fillBubble(side, mockAnswer, []);
+    return;
+  }
+
+  try {
+    const res  = await fetch(`/api/debates/${S.sessionId}/question/`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _getCsrf() },
+      body:    JSON.stringify({ user_input: text, question_target: S.currentAskTarget }),
+    });
+    const data = await res.json();
+    if (data.content) {
+      const side = data.participant === 'pro' ? 'left' : 'right';
+      document.getElementById(side === 'left' ? 'leftBubble' : 'rightBubble').style.visibility = 'visible';
+      _fillBubble(side, data.content, data.sources || []);
+    }
+  } catch (e) {
+    console.error(e);
+    // 에러 시 원래대로 복구
+    document.getElementById('leftBubble').style.visibility  = 'visible';
+    document.getElementById('rightBubble').style.visibility = 'visible';
+  }
+}
+
+/* ── Add question card to record ─────────────────────────────── */
+function addQuestionToRecord(text) {
+  const body = document.getElementById('recordModalBody');
+  if (!body) return;
+  const empty = body.querySelector('.record-empty');
+  if (empty) empty.remove();
+  const card = document.createElement('div');
+  card.className = 'record-q-item';
+  card.innerHTML = `<span class="record-q-badge">질문</span><span class="record-q-text">${_esc(text)}</span>`;
+  body.appendChild(card);
+}
+
+/* ── setAskTarget (legacy — kept for compatibility) ──────────── */
+function setAskTarget(target) {
+  S.currentAskTarget = target;
+  const name = target === 'pro' ? '찬이' : '반이';
+  document.getElementById('askModalTitle').textContent = `🤖 ${name}에게 질문`;
+}
+
+
+/* ── Source modal ──────────────────────────────────────────── */
+function openSource(side) {
+  const sources = side === 'pro' ? S.proSources : S.conSources;
+  const body    = document.getElementById('sourceModalBody');
+  if (!sources || sources.length === 0) {
+    body.innerHTML = '<p style="color:#8a948c;">출처 정보가 없습니다.</p>';
+    return;
+  }
+  body.innerHTML = sources.map(s => {
+    const meta  = s.metadata || {};
+    const title = meta.title || meta.publisher || '원문';
+    const date  = meta.date  || '';
+    const url   = meta.source_url || meta.url || '';
+    return `
+      <div style="margin-bottom:16px;">
+        ${date ? `<div style="font-size:12px;color:#8a948c;margin-bottom:4px;">${_esc(date)}</div>` : ''}
+        <div style="font-weight:700;color:#2b3a36;margin-bottom:8px;">${_esc(title)}</div>
+        ${url ? `<a href="${_esc(url)}" target="_blank" rel="noopener"
+                    style="color:#2f8f6b;font-size:14px;">원문 보러가기 ↗</a>` : ''}
+      </div>`;
+  }).join('<hr style="border-color:#eee;">');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FINAL VIEW
+══════════════════════════════════════════════════════════════ */
+function _showFinal(data) {
+  document.getElementById('debateView').style.display = 'none';
+  document.getElementById('finalView').style.display  = 'block';
+
+  // Titles
+  if (S.mode === 'aiuser') {
+    document.getElementById('finalLeftTitle').textContent =
+      S.stance === 'pro' ? '내 핵심 주장' : '찬이의 핵심 주장';
+    document.getElementById('finalRightTitle').textContent =
+      S.stance === 'con' ? '내 핵심 주장' : '반이의 핵심 주장';
+  }
+
+  // Populate lists
+  const p = data.pro_summary || {};
+  const c = data.con_summary || {};
+  _fillList('finalProKey',      p.key_arguments);
+  _fillList('finalGoodRebuttal', p.key_rebuttals || data.good_rebuttal);
+  _fillList('finalConKey',      c.key_arguments);
+  _fillList('finalNeedImprove', c.key_rebuttals || data.need_improve);
+
+  // Record this debate session
+  _addRecord();
+}
+
+function _fillList(id, items) {
+  document.getElementById(id).innerHTML =
+    (items || []).map(t => `<li style="margin-bottom:4px;">${_esc(t)}</li>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESTART
+══════════════════════════════════════════════════════════════ */
+function restartDebate() {
+  if (_sse) _sse.close();
+
+  // Reset state
+  S.sessionId  = null;
+  S.round      = '1';
+  S.mockRound  = 0;
+  _messages.length = 0;
+  _renderRecords();
+
+  // Reset UI
+  document.getElementById('finalView').style.display  = 'none';
+  document.getElementById('debateView').style.display = 'block';
+  document.getElementById('userBadges').style.display = 'none';
+  document.getElementById('summaryCard').style.display = 'none';
+
+  // Reset characters (src + class 리셋 — chani는 별도 클래스로 발 위치 보정)
+  const _rlc  = document.getElementById('leftChar');
+  const _rlcf = document.getElementById('leftCharFinal');
+  _rlc.src  = IMG.chani;  _rlc.className  = 'stage-char stage-char-chani';
+  _rlcf.src = IMG.chani;  _rlcf.className = 'stage-char-final stage-char-chani-final';
+  _setEl('rightChar',      'src', IMG.bani);
+  _setEl('rightCharFinal', 'src', IMG.bani);
+
+  // Show both ask buttons
+  document.getElementById('btnAskPro').style.display = 'flex';
+  document.getElementById('btnAskCon').style.display = 'flex';
+
+  _loadingBubble('left');
+  _loadingBubble('right');
+  _hideActionBar();
+  _updateRound('1');
+
+  document.getElementById('introOverlay').style.display = 'flex';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MEMO PANEL
+══════════════════════════════════════════════════════════════ */
+function openMemo() {
+  S.memoOpen = true;
+  document.getElementById('memoPanel').classList.add('open');
+}
+function closeMemo() {
+  S.memoOpen = false;
+  document.getElementById('memoPanel').classList.remove('open');
+}
+
+/* ── 메모 글자수 카운터 ─────────────────────────── */
+function updateMemoCount(textareaId, counterId) {
+  const ta  = document.getElementById(textareaId);
+  const cnt = document.getElementById(counterId);
+  if (!ta || !cnt) return;
+  const len = ta.value.length;
+  cnt.textContent = `${len} / 500`;
+  cnt.classList.toggle('over', len >= 500);
+}
+window.updateMemoCount = updateMemoCount;
+
+// Persist memo to localStorage + 초기 글자수 표시
+const _memoMap = {
+  memoProText:   'memoProCount',
+  memoConText:   'memoConCount',
+  memoCheckText: 'memoCheckCount',
+};
+Object.entries(_memoMap).forEach(([id, countId]) => {
+  const el = document.getElementById(id);
+  try {
+    const saved = localStorage.getItem('policity_' + id);
+    if (saved) { el.value = saved; updateMemoCount(id, countId); }
+  } catch (_) {}
+  el.addEventListener('input', () => {
+    try { localStorage.setItem('policity_' + id, el.value); } catch (_) {}
+  });
+});
+
+/* ══════════════════════════════════════════════════════════════
+   DEBATE RECORDS (session-local)
+══════════════════════════════════════════════════════════════ */
+const _records = [];
+
+function _addRecord() {
+  const modeTag = S.mode === 'aiai' ? 'AI vs AI · 관전' : `AI vs USER · ${S.stance === 'pro' ? '찬성' : '반대'}`;
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+  _records.unshift({
+    icon:  S.mode === 'aiai' ? '🐶' : (S.stance === 'pro' ? '🙋' : '✋'),
+    title: document.getElementById('topicLabel').textContent,
+    meta:  `${modeTag} · ${dateStr}`,
+    tag:   S.mode === 'aiai' ? '관전' : '참여',
+    color: S.mode === 'aiai' ? '#1f7a52' : '#3b6bd6',
+    bg:    S.mode === 'aiai' ? '#eaf6ee' : '#e9f0fc',
+  });
+  _renderRecords();
+}
+
+function _renderRecords() {
+  const el  = document.getElementById('recordModalBody');
+  const sub = document.getElementById('recordModalSub');
+
+  if (_messages.length === 0) {
+    el.innerHTML = '<div class="record-empty">아직 토론 기록이 없습니다.</div>';
+    return;
+  }
+
+  // 헤더 서브타이틀 갱신
+  if (sub) {
+    const topic = document.getElementById('topicLabel')?.textContent || '';
+    const mode  = S.mode === 'aiai' ? 'AI vs AI' : 'AI vs USER';
+    sub.textContent = `${topic} · ${mode}`;
+  }
+
+  const STAGE_NAMES = { '1':'입장 제시', '2':'핵심 반박', '3':'마무리 정리', '4':'주장 다지기' };
+  let lastRound = null;
+  let rdIdx = 0;
+  let html = '';
+
+  _messages.forEach(m => {
+    // 라운드 구분선
+    if (m.round !== lastRound) {
+      lastRound = m.round;
+      rdIdx++;
+      const stageName = STAGE_NAMES[m.round] || `${m.round}라운드`;
+      html += `
+        <div style="text-align:center;margin:${rdIdx > 1 ? '14px' : '4px'} 0 14px;">
+          <span style="display:inline-block;background:#eef3ee;color:#6b756e;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;">📌 ${rdIdx}라운드 · ${_esc(stageName)}</span>
+        </div>`;
+    }
+
+    const isRight     = m.side === 'right';
+    const avBorder    = isRight ? '#f3d4d0' : '#cfe9d8';
+    const bubbleBg    = isRight ? '#fbf3f2' : '#f2f8f3';
+    const bubbleBdr   = isRight ? '#f0d6d3' : '#d6ead9';
+    const bubbleR     = isRight ? '14px 0 14px 14px' : '0 14px 14px 14px';
+    const nameColor   = isRight ? '#c0392b' : '#1f7a52';
+    const flexDir     = isRight ? 'flex-direction:row-reverse;' : '';
+    const nameAlign   = isRight ? 'text-align:right;' : '';
+
+    const nameHtml = isRight
+      ? `${_esc(m.name)} ${m.emoji || ''} <span style="color:#a0aaa4;font-weight:400;">${_esc(m.label)} ·</span>`
+      : `${m.emoji || ''} ${_esc(m.name)} <span style="color:#a0aaa4;font-weight:400;">· ${_esc(m.label)}</span>`;
+
+    const bodyText = m.text.split('\n').filter(l => l.trim()).join(' ');
+
+    html += `
+      <div style="display:flex;gap:10px;margin-bottom:14px;${flexDir}">
+        <img src="${m.av}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid ${avBorder};">
+        <div style="flex:1;">
+          <div style="font-size:12px;font-weight:700;color:${nameColor};margin-bottom:4px;${nameAlign}">${nameHtml}</div>
+          <div style="background:${bubbleBg};border:1px solid ${bubbleBdr};border-radius:${bubbleR};padding:10px 13px;font-size:13px;line-height:1.65;color:#3a463f;">
+            ${_esc(bodyText)}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  el.innerHTML = html;
+  el.scrollTop = el.scrollHeight;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOCK HELPER
+══════════════════════════════════════════════════════════════ */
+function _mockRound(idx) {
+  if (idx >= MOCK_DATA.rounds.length) {
+    _showFinal(MOCK_DATA.final);
+    return;
+  }
+  const rd = MOCK_DATA.rounds[idx];
+  _updateRound(rd.roundNum);
+  _loadingBubble('left');
+  _loadingBubble('right');
+
+  setTimeout(() => {
+    _fillBubble('left', rd.pro, []);
+    setTimeout(() => {
+      _fillBubble('right', rd.con, []);
+      setTimeout(() => {
+        if (S.mode === 'aiuser') {
+          _showActionBar({ wait_type: 'user_turn' });
+        } else {
+          _showActionBar({ wait_type: 'user_choice', extra_available: idx < MOCK_DATA.rounds.length - 1 });
+        }
+      }, 500);
+    }, 800);
+  }, 800);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════════ */
+function _setEl(id, prop, val) {
+  const el = document.getElementById(id);
+  if (el) el[prop] = val;
+}
+
+function _esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function _getCsrf() {
+  return document.cookie.split(';')
+    .map(c => c.trim())
+    .find(c => c.startsWith('csrftoken='))
+    ?.split('=')[1] || '';
+}
+
+/* ── Expose globals for onclick ────────────────────────────── */
+window.startDebate       = startDebate;
+window.showDifficulty    = showDifficulty;
+window.backToIntroStep1  = backToIntroStep1;
+window.startWithDifficulty = startWithDifficulty;
+window.sendAction        = sendAction;
+window.submitUserInput   = submitUserInput;
+window.openAskModal      = openAskModal;
+window.updateAskCharCount = updateAskCharCount;
+window.submitQuestion    = submitQuestion;
+window.addQuestionToRecord = addQuestionToRecord;
+window.setAskTarget      = setAskTarget;
+
+window.openSource        = openSource;
+window.openMemo          = openMemo;
+window.closeMemo         = closeMemo;
+window.restartDebate     = restartDebate;
+</script>
+{% endblock %}
+

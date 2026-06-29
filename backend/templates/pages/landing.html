@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="landing-page">
+
+  <div class="sky-clouds" aria-hidden="true"></div>
+
+  <section class="landing-content container-fluid px-0">
+
+    <section class="landing-top-row row g-0 align-items-start justify-content-center">
+
+      <!-- 왼쪽 소개 영역 -->
+      <div class="col-12 col-lg-5 landing-intro-col">
+        <section class="landing-intro-area">
+
+          <h1 class="landing-title">
+            폴리시티에 오신 것을<br>
+            <span>환영해요!</span>
+          </h1>
+
+          <p class="landing-desc">
+            PoliCity는 정책, 뉴스를 쉽게 이해하고,<br>
+            대화와 토론을 통해 생각을 넓혀가는 공간입니다.
+          </p>
+
+          <a id="landing-start-btn" href="{% url 'page-login' %}" class="landing-start-btn">
+            폴리시티 시작하기
+            <i class="bi bi-play-fill"></i>
+          </a>
+          <script>
+            (function () {
+              if (localStorage.getItem('access_token')) {
+                document.getElementById('landing-start-btn').href = "{% url 'page-chatbot' %}";
+              }
+            })();
+          </script>
+
+        </section>
+      </div>
+
+      <!-- 오른쪽 카드 영역 -->
+      <div class="col-12 col-lg-7 landing-card-col">
+        <section class="landing-card-area">
+
+          <div class="landing-card landing-card-1">
+            <div class="landing-card-head">
+              <span class="landing-card-num">01</span>
+              <h2>대화형 추천 챗봇</h2>
+            </div>
+            <p>궁금한 건 바로 질문</p>
+            <img class="landing-card-img landing-card-img-1" src="{% static 'assets/landing_3.png' %}" alt="">
+          </div>
+
+          <div class="landing-card landing-card-2">
+            <div class="landing-card-head">
+              <span class="landing-card-num">02</span>
+              <h2>정책 투어</h2>
+            </div>
+            <p>정책 둘러보기</p>
+            <img class="landing-card-img landing-card-img-2" src="{% static 'assets/landing_1.png' %}" alt="">
+          </div>
+
+          <div class="landing-card landing-card-3">
+            <div class="landing-card-head">
+              <span class="landing-card-num">03</span>
+              <h2>정보 카드</h2>
+            </div>
+            <p>정책과 이슈 쉽게 읽기</p>
+            <img class="landing-card-img landing-card-img-3" src="{% static 'assets/landing_2.png' %}" alt="">
+          </div>
+
+          <div class="landing-card landing-card-4">
+            <div class="landing-card-head">
+              <span class="landing-card-num">04</span>
+              <h2>토론 광장</h2>
+            </div>
+            <p>뉴스 카드를 읽고 생각 넓히기</p>
+            <img class="landing-card-img landing-card-img-4" src="{% static 'assets/landing_4.png' %}" alt="">
+          </div>
+
+        </section>
+      </div>
+
+    </section>
+
+    <!-- 하단 동물 영역 -->
+    <section class="landing-character-area" aria-hidden="true">
+
+      <div class="landing-speech speech-polly">
+        <strong>폴리</strong>
+        <span>안녕, 난 폴리야.<br>정책과 뉴스를 쉽고<br>재미있게 알려줄게!</span>
+      </div>
+
+      <img class="landing-animal landing-polly" src="{% static 'assets/polly.png' %}" alt="">
+      <img class="landing-animal landing-chani" src="{% static 'assets/chani.png' %}" alt="">
+      <img class="landing-animal landing-bani"  src="{% static 'assets/bani_thumbsup.png' %}" alt="">
+
+      <div class="landing-speech speech-chani">
+        <strong>차니</strong>
+        <span>다양한 의견 중<br>찬성 쪽 시선을<br>쉽게 풀어줄게!</span>
+      </div>
+
+      <div class="landing-speech speech-bani">
+        <strong>바니</strong>
+        <span>반대 의견도<br>쉽게 이해할 수 있게<br>도와줄게!</span>
+      </div>
+
+    </section>
+
+  </section>
+
+</main>
+
+<div class="ground" aria-hidden="true">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="">
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+</script>
+{% endblock %}

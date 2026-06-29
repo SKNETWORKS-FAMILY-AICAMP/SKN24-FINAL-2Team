@@ -1,0 +1,25 @@
+# 수집
+aiohttp
+requests
+beautifulsoup4
+lxml
+trafilatura
+apscheduler
+pandas
+python-dotenv
+
+# 파싱
+pdfplumber
+kiwipiepy
+
+# 저장
+pymysql
+boto3
+qdrant-client
+
+# 임베딩
+# (RunPod은 API 호출이라 별도 패키지 없음)
+
+# 기타
+openai
+tqdm

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}정책 버스 정류장 · PoliCity{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cards/bus_stop.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="bus-stop-page">
+
+  <!-- 타이틀 -->
+  <section class="bus-stop-title">
+    <h1>
+      <span class="spark" aria-hidden="true"></span>
+      <span><span class="hl">정책</span> 버스 정류장</span>
+      <span class="spark" aria-hidden="true"></span>
+    </h1>
+    <p class="sub">버스를 타고 분야별 정책을 쉽고 재미있게 둘러보세요!</p>
+  </section>
+
+  <!-- 정류장 씬: 지붕(z:2) + 버스(z:3) + 폴리(z:5) -->
+  <section class="bus-scene" aria-label="정책 버스 정류장">
+
+    <!-- 정류장 지붕 — 버스 뒤 -->
+    <img
+      class="bus-shelter-img"
+      src="{% static 'assets/bus_stop_only.png' %}"
+      alt="" aria-hidden="true" draggable="false"
+    >
+
+    <!-- 버스 카드 6개 — 버스 전체가 링크 -->
+    <div class="bus-row">
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=jobs">
+        <img class="bus-img" src="{% static 'assets/bus_1.png' %}" alt="1호차 일자리 버스" draggable="false">
+      </a>
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=housing">
+        <img class="bus-img" src="{% static 'assets/bus_2.png' %}" alt="2호차 주거 버스" draggable="false">
+      </a>
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=education">
+        <img class="bus-img" src="{% static 'assets/bus_3.png' %}" alt="3호차 교육 버스" draggable="false">
+      </a>
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=culture">
+        <img class="bus-img" src="{% static 'assets/bus_4.png' %}" alt="4호차 문화 버스" draggable="false">
+      </a>
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=welfare">
+        <img class="bus-img" src="{% static 'assets/bus_5.png' %}" alt="5호차 생활복지 버스" draggable="false">
+      </a>
+
+      <a class="bus-card" href="{% url 'page-bus-detail' %}?category=finance">
+        <img class="bus-img" src="{% static 'assets/bus_6.png' %}" alt="6호차 금융 버스" draggable="false">
+      </a>
+
+    </div>
+
+    <!-- 폴리 — 씬 좌측 하단 -->
+    <div class="polly-wrap" aria-hidden="true">
+      <img src="{% static 'assets/polly.png' %}" alt="" draggable="false">
+    </div>
+
+  </section>
+
+  <!-- 설명 박스 — 중앙 정렬, 적당한 너비 -->
+  <div class="info-bar" role="list">
+    <div class="info-item" role="listitem">
+      <span class="info-title">🚌 분야별 정책 탐색</span>
+      <span class="info-desc">6개 분야 버스를 통해 다양한 정책을 쉽고 빠르게 찾아보세요.</span>
+    </div>
+    <div class="info-item" role="listitem">
+      <span class="info-title">📋 핵심 정책 안내</span>
+      <span class="info-desc">각 버스의 주요 정책을 한눈에 확인할 수 있어요.</span>
+    </div>
+    <div class="info-item" role="listitem">
+      <span class="info-title">🔍 상세 정보 확인</span>
+      <span class="info-desc">관심 있는 정책을 선택하면 자세한 내용과 지원 정보를 알려드려요.</span>
+    </div>
+    <div class="info-item" role="listitem">
+      <span class="info-title">🔖 관심 정책 저장</span>
+      <span class="info-desc">마음에 드는 정책은 저장해서 나중에 다시 확인하세요.</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- 다른 페이지와 동일한 바닥 배경 -->
+<div class="ground" aria-hidden="true">
+  <img class="plaza" src="{% static 'assets/plaza_trim.png' %}" alt="" draggable="false">
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  window.POLICITY_CLOUD_SRC = "{% static 'assets/cloud.png' %}";
+</script>
+{% endblock %}

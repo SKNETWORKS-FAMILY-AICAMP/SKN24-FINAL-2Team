@@ -1,0 +1,16 @@
+<!-- ===== generic modal (shared across pages) ===== -->
+<div id="genericModal" style="
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,.35); align-items:center; justify-content:center;">
+  <div style="
+    background:#fff; border-radius:var(--border-radius-lg);
+    padding:28px 28px 22px; max-width:400px; width:90%;
+    box-shadow:var(--shadow-lg); text-align:center;">
+    <div id="genericModalIcon" style="font-size:28px; margin-bottom:10px;"></div>
+    <div id="genericModalTitle"
+      style="font-weight:800; font-size:var(--font-size-lg); color:var(--text-primary); margin-bottom:8px;"></div>
+    <div id="genericModalMsg"
+      style="font-size:var(--font-size-md); color:var(--text-secondary); margin-bottom:22px; line-height:1.6; white-space:pre-line;"></div>
+    <div id="genericModalBtns" style="display:flex; gap:10px; justify-content:center;"></div>
+  </div>
+</div>
