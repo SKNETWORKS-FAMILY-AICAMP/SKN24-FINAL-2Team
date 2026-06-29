@@ -15,8 +15,8 @@
 # 2. 프로젝트 개요
 
 ## 2-1. 프로젝트 명
- <img src="./readme_images/logo.png" width="200"/>  
- <img src="./readme_images/poly_wave.png" width="200"/>
+<img width="1600" height="500" alt="image" src="https://github.com/user-attachments/assets/12984aea-1992-4b43-bd11-9a9e41f6df93" />
+
 
 ## 2-2. 프로젝트 소개
 - 청년층의 정치 참여 장벽을 낮추기 위해 설계된 AI 기반 정치 입문 플랫폼
@@ -300,3 +300,7 @@ LangGraph는 파이프라인 안에 포함된 하나의 단계이며, 그 출력
 - AI 기반 토론 학습 환경 제공으로 청년의 정치적 이해도 향상에 기여할 수 있습니다.
 
 # 11. 향후 개선사항
+- 뉴스 데이터 키워드 수집 보완
+- 추천에 토론 대화 내역 반영
+- 편향 모델 데이터 추가 수집 및 고도화
+- AI vs. USER 고도화 (찬이 반이 토론 보조)
