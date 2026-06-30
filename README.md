@@ -75,7 +75,7 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 ---
 
 # 5. ERD
-<img width="4850" height="2172" alt="final project (1)" src="https://github.com/user-attachments/assets/9b30bcaa-e787-4103-bd94-037b1fd88048" />
+<img width="4850" height="2172" src="./readme_images/policity_ERD.png"/>
 
 # 6. 사용한 모델 및 테스트 결과
 ## 6-1. 편향 분류 모델(KR-ELECTRA)
@@ -228,10 +228,10 @@ https://docs.google.com/spreadsheets/d/1opU1mVYwNAtQ2xCDJ8987yVDSA7gmTgXsWlMCGEG
 | 레이어 | 구성 요소 | 역할 |
 |---|---|---|
 | **파이프라인** | 욕설/혐오 검사 게이트, SSE 조립 루프 | 요청 처리 및 스트리밍 |
-| **LangGraph** | `prep → classify` StateGraph | 의도 분류 및 라우팅 결정 |
+| **LangGraph** | `prep node→ classify node` StateGraph | 의도 분류 및 라우팅 결정 |
 | **멀티 에이전트** | 후보 생성 + 편향 검사 루프 | 병렬 답변 생성 및 검증 |
 
-LangGraph는 파이프라인 안에 포함된 하나의 단계이며, 그 출력이 다음에 실행할 멀티 에이전트 핸들러를 결정한다.
+LangGraph, 멀티 에이전트 는 파이프라인 안에 포함된 하나의 단계이며, 그 출력이 다음에 실행할 멀티 에이전트 핸들러를 결정한다.
 
 **멀티 에이전트 구조**
 - 단순한 LLM 호출이 아닌, **욕설·편향·사실 불일치**의 각 위험 계층마다 독립된 에이전트가 **병렬로** 감시한다.
@@ -243,6 +243,8 @@ LangGraph는 파이프라인 안에 포함된 하나의 단계이며, 그 출력
 | **경고-재작성 루프** | 추천 메시지 생성 → 일치성 검사 → 불일치 시 즉시 재작성 |
 | **욕설 검사** | 정규식/Qdrant 레이어 + LLM 레이어 병렬 실행, 둘 중 하나 거부 시 차단 |
 
+
+## 카드 추천 
 **RAG 파이프라인**
 - retrieve-then-rerank 2단계 패턴을 기반으로, 검색 이후 맥락 손실을 최소화하는 구조다.
 - 4단계의 인접 청크 확장(`chunk stitching`)은 청크를 작게 분할할 때 발생하는 맥락 손실을 검색 이후 단계에서 보완하는 핵심 기법이다.
